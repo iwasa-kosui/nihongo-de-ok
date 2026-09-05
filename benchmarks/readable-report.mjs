@@ -68,8 +68,7 @@ function candidateHtml(record, stage, verdict) {
     <div class="document">${renderMarkdown(attempt.response.body)}</div>
     <footer class="candidate-footer"><a href="${documentPath(record, index)}">この本文をMarkdownで開く</a>
       <details class="notes"><summary>本文外の注記${attempt.response.notes ? "" : "（なし）"}</summary>${attempt.response.notes ? renderMarkdown(attempt.response.notes) : "<p>注記はありません。</p>"}</details>
-      ${lintDetails(attempt)}
-      ${attempt.metrics.exactEdit === null ? "" : `<p>部分修正の完全一致: ${attempt.metrics.exactEdit ? "一致" : "不一致"}</p>`}
+      ${lintDetails(attempt)}${attempt.metrics.exactEdit === null ? "" : `<p>部分修正の完全一致: ${attempt.metrics.exactEdit ? "一致" : "不一致"}</p>`}
       <details><summary>この稿の生成量・時間</summary><p>入力 ${attempt.usage.input_tokens.toLocaleString("en-US")}トークン（内cache ${attempt.usage.cached_input_tokens.toLocaleString("en-US")}）／出力 ${attempt.usage.output_tokens.toLocaleString("en-US")}トークン／${(attempt.elapsedMs / 1000).toFixed(1)}秒</p></details>
     </footer>
   </article>`;
