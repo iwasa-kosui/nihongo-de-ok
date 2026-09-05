@@ -1,0 +1,181 @@
+import test from "node:test";
+import assert from "node:assert/strict";
+import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
+import { lintFiles, readSkillConfig } from "../scripts/lint.mjs";
+
+const root = fileURLToPath(new URL("..", import.meta.url));
+const cli = join(root, "scripts/lint.mjs");
+
+function config(overrides = {}) {
+  return {
+    rules: {
+      "preset-japanese": false,
+      "no-ai-jargon": false,
+      "no-opaque-compound": false,
+      "no-vague-action": false,
+      "stock-boundary": false,
+      ...overrides
+    }
+  };
+}
+
+async function withFile(text, callback, name = "input.md") {
+  const dir = await mkdtemp(join(tmpdir(), "nihongo-lint-"));
+  const file = join(dir, name);
+  await writeFile(file, text);
+  try {
+    return await callback({ dir, file });
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+}
+
+async function messages(type, text, lintConfig, name) {
+  return withFile(text, async ({ file }) => (await lintFiles(type, [file], lintConfig))[0].messages, name);
+}
+
+function runCli(args, cwd) {
+  return spawnSync(process.execPath, [cli, ...args], { cwd, encoding: "utf8" });
+}
+
+test("no-ai-jargon reports every visible occurrence with exact positions", async () => {
+  const found = await messages("flow", "レバレッジとレバレッジ。\n[レバレッジ](https://example.test/レバレッジ)\n`レバレッジ`\n> レバレッジ\n> > レバレッジ\nhttps://example.test/レバレッジ\n", config({ "no-ai-jargon": { allow: [] } }));
+  const jargon = found.filter((message) => message.ruleId === "no-ai-jargon");
+  assert.deepEqual(jargon.map(({ line, column }) => [line, column]), [[1, 1], [1, 7], [2, 2]]);
+});
+
+test("no-ai-jargon keeps a finite phrase dictionary with concrete alternatives", async () => {
+  const found = await messages("flow", "ホリスティックに検討し、プロアクティブに進める。ロバストな実装で価値を解き放つ。ゲームチェンジャーとしてアラインメントを取る。", config({ "no-ai-jargon": { allow: [] } }));
+  const jargon = found.filter((message) => message.ruleId === "no-ai-jargon");
+  assert.equal(jargon.length, 6);
+  assert.ok(jargon.every((message) => message.message.includes("対象と動作を具体化")));
+});
+
+test("no-opaque-compound is a finite dictionary and supports allow", async () => {
+  const visible = await messages("flow", "価値創出最大化基盤と意思決定高度化レイヤー。\n[価値創出最大化基盤](https://example.test/価値創出最大化基盤)\n`価値創出最大化基盤`\n> 価値創出最大化基盤\nhttps://example.test/価値創出最大化基盤\n価値提供と課題解決は具体的に書く。\n", config({ "no-opaque-compound": { allow: [] } }));
+  assert.deepEqual(visible.filter((message) => message.ruleId === "no-opaque-compound").map(({ line, column }) => [line, column]), [[1, 1], [1, 11], [2, 2]]);
+  const allowed = await messages("flow", "価値創出最大化基盤", config({ "no-opaque-compound": { allow: ["価値創出最大化基盤"] } }));
+  assert.equal(allowed.length, 0);
+});
+
+test("no-vague-action catches polite conjugations, repeated hits, and excludes code, quotes, and URLs", async () => {
+  const found = await messages("flow", "適切に対応します。必要に応じて対応する。これを実施した。\n[適切に対応する](https://example.test/適切に対応する)\n`適切に対応する`\n> 適切に対応する\nhttps://example.test/適切に対応する\n", config({ "no-vague-action": { allow: [] } }));
+  const vague = found.filter((message) => message.ruleId === "no-vague-action");
+  assert.deepEqual(vague.map(({ line, column }) => [line, column]), [[1, 1], [1, 10], [1, 21], [2, 2]]);
+  const allowed = await messages("flow", "適切に対応する", config({ "no-vague-action": { allow: ["適切に対応する"] } }));
+  assert.equal(allowed.length, 0);
+});
+
+test("stock boundary reports headings, checkboxes, PRs, tracker links, and Jira IDs", async () => {
+  const text = "## 進捗\n- [ ] 実装\nPR #12\n[PR](https://github.com/acme/repo/pull/3)\nABC-12\nhttps://jira.example.test/browse/DEV-3\n";
+  const found = await messages("stock", text, config({ "stock-boundary": { allow: [] } }));
+  const stock = found.filter((message) => message.ruleId === "stock-boundary");
+  assert.deepEqual(stock.map(({ line, column }) => [line, column]), [[1, 1], [2, 1], [3, 1], [4, 6], [5, 1], [6, 1]]);
+  assert.ok(stock.every((message) => message.message.includes("作業追跡はチケットまたは進捗文書へ移して")));
+});
+
+test("stock boundary accepts document IDs, ADR business states, dates, and configured Jira allow entries", async () => {
+  const accepted = "ADR-001\nPRD-001\nRFC-9110\nREQ-001\nISO-8601\n状態：処理中\n状態: 完了\n状態: 採用\n状態: 廃止\n状態: 置換\n2026-09-05\n";
+  const found = await messages("adr", accepted, config({ "stock-boundary": { allow: ["ABC-12"] } }));
+  assert.equal(found.length, 0);
+  const allowed = await messages("adr", "ABC-12\nDEV-3", config({ "stock-boundary": { allow: ["ABC-12"] } }));
+  assert.deepEqual(allowed.map(({ line, column }) => [line, column]), [[2, 1]]);
+});
+
+test("stock checks inline code and links but excludes fenced and nested block quotes", async () => {
+  const found = await messages("design-doc", "`PR #12` [ticket](https://github.com/a/b/issues/9)\n```md\nPR #13\n```\n> PR #14\n> > DEV-3\n> ## 進捗\n> - [ ] 引用内の作業\n", config({ "stock-boundary": { allow: [] } }));
+  const stock = found.filter((message) => message.ruleId === "stock-boundary");
+  assert.deepEqual(stock.map(({ line, column }) => [line, column]), [[1, 2], [1, 19]]);
+});
+
+test("stock masking follows AST ranges for variable fences and quoted fences, then resumes scanning", async () => {
+  const found = await messages("stock", "````md\n``` literal fence\n````\n> ```md\n> PR #12\n> ```\n> lazy quote PR #13\nPR #14\n", config({ "stock-boundary": { allow: [] } }));
+  const stock = found.filter((message) => message.ruleId === "stock-boundary");
+  assert.deepEqual(stock.map(({ line, column }) => [line, column]), [[8, 1]]);
+});
+
+test("stock finds ATX and Setext progress headings plus enterprise tracker URLs", async () => {
+  const found = await messages("stock", "進捗状況\n====\n\n## ステータス詳細\nhttps://git.acme.test/team/repo/pull/42\nhttps://tracker.acme.test/browse/OPS-5\n", config({ "stock-boundary": { allow: [] } }));
+  const stock = found.filter((message) => message.ruleId === "stock-boundary");
+  assert.deepEqual(stock.map(({ line, column }) => [line, column]), [[1, 1], [4, 1], [5, 1], [6, 1]]);
+});
+
+test("stock exempts ordinary protocol identifiers but treats API-style IDs as possible Jira keys", async () => {
+  const found = await messages("stock", "UTF-8\nTLS-1\nAPI-123\n", config({ "stock-boundary": { allow: [] } }));
+  assert.deepEqual(found.map(({ line, column }) => [line, column]), [[3, 1]]);
+});
+
+test("stock rule is limited to stock-bearing profiles", async () => {
+  const text = "PR #12\nABC-12\n";
+  for (const type of ["flow", "record"]) {
+    const found = await messages(type, text, config({ "stock-boundary": { allow: [] } }));
+    assert.equal(found.length, 0, type);
+  }
+  for (const type of ["design-doc", "prd", "adr", "rfc", "stock"]) {
+    const found = await messages(type, text, config({ "stock-boundary": { allow: [] } }));
+    assert.equal(found.filter((message) => message.ruleId === "stock-boundary").length, 2, type);
+  }
+});
+
+test("stock distinguishes HTTP and decision status from work progress", async () => {
+  const accepted = "## HTTPステータス\nHTTPステータス: 200\n## ステータスコード\nステータス: 採用\n状態: 完了\n";
+  assert.deepEqual(await messages("stock", accepted, config({ "stock-boundary": true })), []);
+  const found = await messages("stock", "プルリクエスト#42\n進捗状況: 80%\nステータス: 実装中\n", config({ "stock-boundary": true }));
+  assert.deepEqual(found.map(({ line, column }) => [line, column]), [[1, 1], [2, 1], [3, 1]]);
+});
+
+test("CLI uses the skill-root config and caller-relative paths despite a hostile external config", async () => {
+  await withFile("レバレッジ", async ({ dir, file }) => {
+    await writeFile(join(dir, ".textlintrc.json"), JSON.stringify({ rules: { "no-ai-jargon": false } }));
+    const result = runCli(["--type", "flow", "--format", "json", "input.md"], dir);
+    assert.equal(result.status, 1);
+    const json = JSON.parse(result.stdout);
+    assert.equal(json[0].messages[0].ruleId, "no-ai-jargon");
+    assert.equal(json[0].filePath, await import("node:fs/promises").then(({ realpath }) => realpath(file)));
+    const pretty = runCli(["--type", "flow", "input.md"], dir);
+    assert.equal(pretty.status, 1);
+    assert.match(pretty.stdout, /直訳調/);
+  });
+});
+
+test("CLI rejects invalid invocations with exit status 2", async () => {
+  await withFile("ok", async ({ dir, file }) => {
+    await writeFile(join(dir, "input.txt"), "ok");
+    for (const args of [
+      [],
+      ["--type", "unknown", file],
+      ["--type", "flow", "--wat", file],
+      ["--type", "flow"],
+      ["--type", "flow", join(dir, "missing.md")],
+      ["--type", "flow", dir],
+      ["--type", "flow", join(dir, "input.txt")],
+      ["--type", "flow", "--format", "bad", file]
+    ]) {
+      const result = runCli(args, dir);
+      assert.equal(result.status, 2, args.join(" "));
+    }
+  });
+});
+
+test("linting never rewrites its source document and root options reach the descriptor", async () => {
+  await withFile("レバレッジ\n", async ({ file }) => {
+    const before = await readFile(file, "utf8");
+    await lintFiles("flow", [file]);
+    assert.equal(await readFile(file, "utf8"), before);
+  });
+  const rootConfig = readSkillConfig();
+  assert.deepEqual(rootConfig.rules["no-ai-jargon"].allow, []);
+  assert.deepEqual(rootConfig.rules["stock-boundary"].allow, []);
+});
+
+test("preset-japanese options in the skill config override preset defaults", async () => {
+  const baseline = config({ "preset-japanese": true });
+  const overridden = config({ "preset-japanese": { "sentence-length": { max: 10 } } });
+  const text = "あいうえおかきくけこさしすせそたちつてと。";
+  assert.equal((await messages("flow", text, baseline)).filter((message) => message.ruleId === "sentence-length").length, 0);
+  assert.equal((await messages("flow", text, overridden)).filter((message) => message.ruleId === "sentence-length").length, 1);
+});
