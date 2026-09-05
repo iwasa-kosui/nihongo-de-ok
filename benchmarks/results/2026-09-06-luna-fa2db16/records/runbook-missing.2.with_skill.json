@@ -1,0 +1,29 @@
+{
+  "id": "runbook-missing.2.with_skill",
+  "caseId": "runbook-missing",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 本番キャッシュ再起動手順\n\n## 手順\n\n監視でエラーを検知したら、キャッシュを再起動する。\n\n## 未確定事項\n\n以下は資料に記載がなく、実施前に決める必要がある。\n\n- 再起動コマンド\n- 再起動してよい条件、停止条件\n- 復旧確認方法\n- 連絡先",
+        "notes": "最小限の手順として作成。再起動コマンド、停止条件、復旧確認方法、連絡先が未確定のため、当番が単独で実行できるRunbookとしては未完成です。検査は未実施です。"
+      },
+      "usage": {
+        "input_tokens": 7037,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 289,
+        "reasoning_output_tokens": 108
+      },
+      "elapsedMs": 9355,
+      "metrics": {
+        "characters": 128,
+        "headings": 3,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "2afb3484724b35de6eced59de684190bd041fa05c885d6f249a7e4bbd784cdd7"
+    }
+  ]
+}

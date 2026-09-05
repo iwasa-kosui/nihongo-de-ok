@@ -1,0 +1,65 @@
+{
+  "caseId": "surgical-edit",
+  "repeat": 2,
+  "mapping": {
+    "A": "without_skill",
+    "B": "with_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "失敗率「7%を超えたら」、当番、配信停止を正確に保持している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "新たな監視条件、復旧手順、通知先を追加していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "タイトル、前2文、改行を維持し、末尾文だけを置換している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "旧文は残らず、当番が失敗率7%超時に配信を停止することが明確である。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "本文は要求された改稿後全文のみである。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "失敗率「7%を超えたら」、当番、配信停止を正確に保持している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "本文に新たな監視条件、復旧手順、通知先を追加していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文はタイトル、前2文、改行を維持し、末尾文だけを置換している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "本文では旧文が残らず、誰がいつ何をするかが明確である。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "本文外notesに、要求されていない段落番号と検査状況の補足が追加されている。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 4751,
+      "cached_input_tokens": 3840,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 554,
+      "reasoning_output_tokens": 188
+    },
+    "elapsedMs": 15239
+  },
+  "promptHash": "1ef8530f201973c2023c22636b04ac79c48a979ba68a95b7d9d2bc9621f2b693"
+}

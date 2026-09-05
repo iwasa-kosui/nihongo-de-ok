@@ -1,0 +1,29 @@
+{
+  "id": "runbook-missing.1.with_skill",
+  "caseId": "runbook-missing",
+  "repeat": 1,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 本番キャッシュ再起動手順\n\n監視でエラーを検知したら、キャッシュを再起動する。\n\n## 未決定事項\n\n- 再起動コマンド\n- 再起動を停止・中止する条件\n- 復旧確認方法\n- 連絡先",
+        "notes": "採用段: 3。資料だけでは当番が安全に実行できる手順にならないため、確定している一文と未決定事項に限定しました。textlintは未実施です。"
+      },
+      "usage": {
+        "input_tokens": 7439,
+        "cached_input_tokens": 1792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 242,
+        "reasoning_output_tokens": 100
+      },
+      "elapsedMs": 7766,
+      "metrics": {
+        "characters": 93,
+        "headings": 2,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "ca64470692a825943cb5dee13af8888f4c6ffbc377e001b6feb86d30190b5ac2"
+    }
+  ]
+}

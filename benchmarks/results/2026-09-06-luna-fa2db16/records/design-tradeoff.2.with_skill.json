@@ -1,0 +1,29 @@
+{
+  "id": "design-tradeoff.2.with_skill",
+  "caseId": "design-tradeoff",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# ファイル取込の設計\n\n## 背景と目的\nファイル取込を非同期化し、APIの処理と解析を分離する。APIはファイルを受け付け、ワーカーが解析結果をDBへ保存する。\n\n## 対象外\nキューへの登録に失敗した場合の回復方法は、この設計では決めない。\n\n## 設計\n1. APIはファイル本体をオブジェクトストレージへ保存する。\n2. APIは保存先をキューへ登録する。\n3. ワーカーはキューから保存先を受け取り、オブジェクトストレージからファイルを読み込む。\n4. ワーカーは解析結果をDBへ保存する。\n\nファイル本体はキューに載せない。ファイルサイズが10MBの場合、キューの1MB制限を超えるためである。\n\n## 失敗時の動作\n- オブジェクトストレージへの保存に失敗した場合、APIは503を返し、キューへ登録しない。\n- キューへの登録に失敗した場合の回復方法は未決定である。\n\n## 影響と未解決点\n非同期化により、利用者が解析結果を確認できるまでの時間が長くなる。キューへの登録失敗時に、保存済みファイルをどう扱い、どのように再登録するかを決める必要がある。",
+        "notes": "採用段: 5。API、ワーカー、失敗時の動作、制約、未解決点を分けて示す必要があるためです。textlintはこの環境では実行していません。進行メモ（DATA-64、PR #203、今週の作業、担当者）はDesign Docの対象外のため本文から除外しました。"
+      },
+      "usage": {
+        "input_tokens": 8244,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 490,
+        "reasoning_output_tokens": 41
+      },
+      "elapsedMs": 15373,
+      "metrics": {
+        "characters": 485,
+        "headings": 6,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "e047a7e2049bdcceb320044cbce54c4d44d0572b3c39157a50e214eed0bff18b"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "caseId": "progress-retention",
+  "repeat": 1,
+  "mapping": {
+    "A": "without_skill",
+    "B": "with_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "期間の両端、担当の鈴木、BILL-218の受付API実装済み、PR #106のレビュー待ち、次作業の再試行処理をすべて記載している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "PRをレビュー完了・マージ済みとはしておらず、未提示の回数・仕様・担当を追加していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "PR #106と最大回数未決定による停止を残し、PdMへの判断依頼を報告している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "最大回数が未決定のため作業停止中であることと、PdMへ8月24日までの判断を求めることが明確に結び付いている。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "単一の簡潔な箇条書きで構成され、同一状況の重複がない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "期間の両端、担当の鈴木、BILL-218の受付API実装済み、PR #106のレビュー待ち、次作業の再試行処理をすべて記載している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "PRをレビュー完了・マージ済みと誤記せず、再試行の最大回数以外の仕様や担当を補っていない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "課題である最大回数未決定とPR #106の追跡情報を維持し、PdMへの判断依頼を含めている。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "最大回数未決定で開始できないことと、PdMが2026年8月24日までに判断する依頼が明示されている。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "簡潔な箇条書きのみで報告しており、本文内に重複した説明はない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 4972,
+      "cached_input_tokens": 1792,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 606,
+      "reasoning_output_tokens": 108
+    },
+    "elapsedMs": 15030
+  },
+  "promptHash": "1000a7273d18b8e5ed8c1e7da10ea4c1c6a4ee7bf3f536d9d70406389cd04c20"
+}

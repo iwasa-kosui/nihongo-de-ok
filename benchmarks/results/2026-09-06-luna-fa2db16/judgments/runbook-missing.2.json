@@ -1,0 +1,65 @@
+{
+  "caseId": "runbook-missing",
+  "repeat": 2,
+  "mapping": {
+    "A": "with_skill",
+    "B": "without_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "監視でエラーを検知した際のキャッシュ再起動を対象とし、再起動コマンド、停止条件、復旧確認方法、連絡先を未確定事項として残している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "資料にないコマンド、数値、環境名、連絡先を補っておらず、安全に実行できるとも断言していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "notesで「未完成」「検査は未実施」と明示している。"
+        },
+        "clarity": {
+          "pass": false,
+          "evidence": "未確定事項は列挙しているが、本文の「監視でエラーを検知したら、キャッシュを再起動する」が直ちに実行可能な指示に見える。実行前に確認・決定すべきこととして再起動を保留する表現が不足している。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "明示された作成依頼に対し、最小限の草稿と必要な不足事項のみを示している。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "監視エラー時の本番キャッシュ再起動を扱い、再起動コマンド、停止条件、復旧確認方法、連絡先を未定として明記している。"
+        },
+        "grounding": {
+          "pass": false,
+          "evidence": "資料にない「当番責任者」「承認」「対象サービス・ホスト」「作業時間帯」「エラー率」「レイテンシー」などを運用手順・確認項目として追加している。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文タイトルの「未確定事項あり」と、notesの「暫定手順」により完成版ではないことを明示している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "この文書だけでは再起動してはいけないと明記し、実行前に確定・確認すべき項目を具体的に示している。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "不足情報だけで作れる最小草稿を超え、原資料にない承認、記録、影響確認、保管場所など多数の項目を追加している。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 5384,
+      "cached_input_tokens": 1792,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 862,
+      "reasoning_output_tokens": 320
+    },
+    "elapsedMs": 19926
+  },
+  "promptHash": "afd9ee1ccc5ce16d538002e0f73af7a109dd71c3e9d81a566a8ed369d62c51d8"
+}

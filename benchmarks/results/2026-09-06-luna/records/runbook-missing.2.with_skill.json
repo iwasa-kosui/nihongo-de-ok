@@ -1,0 +1,29 @@
+{
+  "id": "runbook-missing.2.with_skill",
+  "caseId": "runbook-missing",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 本番キャッシュ再起動手順（草稿）\n\n## 検知\n監視でエラーを確認したら、当番は本番キャッシュの再起動を検討する。\n\n## 手順\n1. 再起動コマンドを確認する（未決定）。\n2. 再起動してよい条件を確認する（未決定）。\n3. 条件を満たす場合、キャッシュを再起動する。\n4. 復旧確認方法に従って状態を確認する（未決定）。\n5. 復旧しない場合、連絡先へ連絡する（未決定）。\n\n## 未決定事項\n- 再起動コマンド\n- 再起動してよい条件\n- 復旧確認方法\n- 連絡先",
+        "notes": "採用段: 4（手順が中心のため）。根拠不足のため、未決定事項を補わず草稿とした。textlint は未検証。"
+      },
+      "usage": {
+        "input_tokens": 7441,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 339,
+        "reasoning_output_tokens": 83
+      },
+      "elapsedMs": 10330,
+      "metrics": {
+        "characters": 237,
+        "headings": 4,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "ca64470692a825943cb5dee13af8888f4c6ffbc377e001b6feb86d30190b5ac2"
+    }
+  ]
+}

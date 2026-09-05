@@ -15,6 +15,16 @@ const json = async (path) => JSON.parse(await text(path));
 const save = (path, value) => writeFile(path, JSON.stringify(value, null, 2) + "\n");
 export const hash = (value) => createHash("sha256").update(value).digest("hex");
 
+async function ruleFiles(directory = "rules") {
+  const names = [];
+  for (const entry of await readdir(join(root, directory), { withFileTypes: true })) {
+    const name = `${directory}/${entry.name}`;
+    if (entry.isDirectory()) names.push(...await ruleFiles(name));
+    else if (entry.name.endsWith(".mjs")) names.push(name);
+  }
+  return names.sort();
+}
+
 export function validateCases(cases) {
   if (!Array.isArray(cases) || cases.length === 0) throw new Error("No cases");
   const ids = new Set();
@@ -273,7 +283,7 @@ async function run(o) {
   const files = {};
   for (const name of ["SKILL.md", "references/delegation.md", "references/japanese.md", "references/document-types.md", "references/document-shapes.md"]) files[name] = await text(join(root, name));
   const sourceHashes = {};
-  for (const name of [...Object.keys(files), "package-lock.json", ".textlintrc.json", "scripts/lint.mjs", "benchmarks/benchmark.mjs", "benchmarks/cases.json", "benchmarks/author-instructions.txt", "benchmarks/judge-instructions.txt", "benchmarks/author.schema.json", ...(await readdir(join(root, "rules"))).filter((n) => n.endsWith(".mjs")).map((n) => `rules/${n}`)]) sourceHashes[name] = hash(await text(join(root, name)));
+  for (const name of [...Object.keys(files), "package-lock.json", ".textlintrc.json", "scripts/lint.mjs", "benchmarks/benchmark.mjs", "benchmarks/cases.json", "benchmarks/author-instructions.txt", "benchmarks/judge-instructions.txt", "benchmarks/author.schema.json", ...await ruleFiles()]) sourceHashes[name] = hash(await text(join(root, name)));
   const settings = { model: o.model, judgeModel: o.judgeModel, effort: o.effort, repeats: o.repeats, seed: o.seed, jobs: o.jobs, timeout: o.timeout, maxLintRevisions: 1 };
   const plan = makePlan(cases, o.repeats, o.seed);
   const contexts = Object.fromEntries(cases.map((c) => [c.id, skillContext(c, files)]));
@@ -290,7 +300,9 @@ async function run(o) {
     await mkdir(o.out); // Refuse overwrite, even for a partially initialized run.
     await save(manifestPath, {
       createdAt: new Date().toISOString(), fingerprint, ...specification,
-      skillRevision: execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+      skillRevision: execFileSync("git", ["-C", root, "log", "-1", "--format=%H", "--", "SKILL.md", "references", "rules", "scripts/lint.mjs", ".textlintrc.json", "package-lock.json"], { encoding: "utf8" }).trim(),
+      checkoutRevision: execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
+      skillWorktreeDirty: Boolean(execFileSync("git", ["-C", root, "status", "--porcelain", "--", "SKILL.md", "references", "rules", "scripts/lint.mjs", ".textlintrc.json", "package-lock.json"], { encoding: "utf8" }).trim()),
       codexVersion: execFileSync(process.env.CODEX_BIN || "codex", ["--version"], { encoding: "utf8" }).trim(),
       nodeVersion: process.version, disabledSkillPaths: skills.length,
       isolation: { userConfig: false, projectInstructions: false, nativeSkills: false, plugins: false, tools: false, history: "new ephemeral session per call", builtInInstructions: "replaced by checked-in instruction file" }

@@ -1,0 +1,65 @@
+{
+  "caseId": "surgical-edit",
+  "repeat": 2,
+  "mapping": {
+    "A": "without_skill",
+    "B": "with_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "「失敗率が7%を超えたら」「当番が」「配信を停止する」をすべて保持しており、閾値も7%超のままである。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "新しい監視条件、復旧手順、通知先は追加していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "タイトル、前2文、改行を維持し、末尾の対象文だけを置換している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "「必要に応じて対応する」は残っておらず、失敗率が7%を超えた時に当番が配信を停止することが明確である。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "本文には要求された改稿後全文のみがあり、章や補足を追加していない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "本文に「失敗率が7%を超えたら当番が配信を停止する」とあり、閾値・担当・措置を保持している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "本文には新しい監視条件、復旧手順、通知先を追加していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文はタイトル、前2文、改行を維持し、末尾の対象文のみを置換している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "本文から「必要に応じて対応する」は削除され、誰がいつ何をするかが明確である。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "本文外notesに「採用段」「検査」の補足があり、要求された改稿後全文だけを返す条件を満たさない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 4747,
+      "cached_input_tokens": 1792,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 430,
+      "reasoning_output_tokens": 0
+    },
+    "elapsedMs": 11361
+  },
+  "promptHash": "5cfe4aaab49c876a4c2356b78a27725aff3e3c2f2106df96f3096bbc0b27080c"
+}

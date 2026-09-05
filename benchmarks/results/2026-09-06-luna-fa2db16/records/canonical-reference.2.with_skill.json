@@ -1,0 +1,29 @@
+{
+  "id": "canonical-reference.2.with_skill",
+  "caseId": "canonical-reference",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "経費の領収書は、正本の［領収書の提出］節（https://example.test/expense）を確認し、経費システムへPDFで添付してください。経理から個別に原本提出を求められた場合のみ、原本を提出します。",
+        "notes": "採用段: 1（既存の正本への参照と必要な補足で目的を満たすため）。textlintは未実施です。"
+      },
+      "usage": {
+        "input_tokens": 7077,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 189,
+        "reasoning_output_tokens": 67
+      },
+      "elapsedMs": 7542,
+      "metrics": {
+        "characters": 106,
+        "headings": 0,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "62d3c2b352a61e48fb6616e2af0ae5aeeebbfbf0c4f0b5ed77107b8ebefac7b3"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "caseId": "no-document",
+  "repeat": 1,
+  "mapping": {
+    "A": "with_skill",
+    "B": "without_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "開催前の中止、議論・決定・宿題がないことを理由としている。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "開催会議、参加者、次回予定、規程を創作していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "議事録は不要と判断しており、ひな型や議事録本文を新規作成していない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "「新たな議事録は残さなくてよい」と理由が直接示されている。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "本文が結論文と理由文の二文であり、一文という条件を満たさない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "開催前の中止と、議論・決定・宿題がないことを理由としている。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "開催会議、参加者、次回予定、規程を創作していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "議事録は不要と判断しており、議事録のひな型・本文を作成していない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "「新たな議事録を残す必要はありません」と理由が直接分かる。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "本文が複数文で、さらに予定・運営記録への記載という追加手順を提示している。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 4739,
+      "cached_input_tokens": 1792,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 475,
+      "reasoning_output_tokens": 108
+    },
+    "elapsedMs": 12707
+  },
+  "promptHash": "3adfdf2534c35f2e7ceefd2f8c4c2d9df6aef19da40bbdb839f955c9eaff1ea6"
+}

@@ -1,0 +1,65 @@
+{
+  "caseId": "design-tradeoff",
+  "repeat": 2,
+  "mapping": {
+    "A": "without_skill",
+    "B": "with_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "API→オブジェクトストレージ→保存先をキュー→ワーカー→DBの流れ、保存失敗時の503・キュー未登録、登録失敗回復の未決定、10MB対1MB、非同期化による結果提示遅延を本文に記載している。"
+        },
+        "grounding": {
+          "pass": false,
+          "evidence": "キュー登録失敗時のエラー記録・状態追跡、ワーカーのリトライ／冪等性、利用者の進捗確認仕組み、保持期間・クリーンアップなど、資料にない仕様・運用方針を本文で追加している。"
+        },
+        "role": {
+          "pass": false,
+          "evidence": "本文の「今回の実装範囲」に「今週の作業: API実装」「担当: 佐藤」を記載しており、追跡情報を入れない条件に反する。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "ストレージ保存失敗とキュー登録失敗を別節で区別し、前者は503・未登録、後者は回復未決定と明記している。10MBが1MB制限を超えるため代替案を不採用とした理由も明確である。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "概要、処理フロー、API仕様、エラー処理、確定事項で同じ結論を反復し、さらに依頼外の実装範囲・運用論点・未決事項を多数追加している。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "必要な処理フロー、ストレージ保存失敗時の503とキュー未登録、キュー登録失敗回復の未決定、10MBと1MBの制限、非同期化による結果確認の遅れをすべて本文に含む。"
+        },
+        "grounding": {
+          "pass": false,
+          "evidence": "資料は「10MBのファイル」が1MB制限を超えるとしているだけだが、「ファイルサイズは最大10MB」と未記載の入力制約を確定事項として追加している。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "DATA-64、PR #203、今週の作業、担当佐藤は本文に記載していない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "保存失敗時とキュー登録失敗時の扱いを区別し、ファイル本体をキューに載せない理由を10MB対1MBで明示している。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "必要な論点を簡潔に節分けしており、同じ結論の反復、空の節、依頼外の実装計画はない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 6738,
+      "cached_input_tokens": 3840,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1094,
+      "reasoning_output_tokens": 440
+    },
+    "elapsedMs": 23378
+  },
+  "promptHash": "6dad0d0f6f265b9c00b9b1499893e7a0c0ff40902125c6cc7900ceae4e44007b"
+}

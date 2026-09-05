@@ -1,0 +1,65 @@
+{
+  "caseId": "comparison-rfc",
+  "repeat": 2,
+  "mapping": {
+    "A": "with_skill",
+    "B": "without_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "問題、方式Aの「運用対象は増えない／部分一致は速くならない」、方式Bの高速化・別サービス運用・反映遅延、および方式Bの提案が本文にある。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "60秒は業務側承認が必要な案として記載し、計測値・費用は未確認としている。方式Bを採用決定済みとはしていない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "別サービス運用と60秒許容を合意事項として明記し、本文にSEARCH-88、PR #71、レビュー期限を含めていない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "方式A・Bについて運用と部分一致検索の対応関係が明確で、方式Bの提案と承認待ちの60秒許容を区別している。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "比較、提案、合意事項に必要な内容に収まり、比較の反復や実装計画がない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "問題、方式Aの運用上の利点と部分一致の制限、方式Bの部分一致高速化と運用・反映遅延の代償、方式Bの提案が記載されている。"
+        },
+        "grounding": {
+          "pass": false,
+          "evidence": "「方式Bを採用する」と断定しており、原資料で未確定の採用決定を補っている。60秒の業務側承認未取得や計測値・費用なしの記載だけでは補えない。"
+        },
+        "role": {
+          "pass": false,
+          "evidence": "合意論点は示しているが、本文の「関連情報」にPR #71とレビュー期限8月28日を記載しており、本文に入れない条件を満たさない。"
+        },
+        "clarity": {
+          "pass": false,
+          "evidence": "「方式Bを採用する」という決定表現と、合意を得たうえで進むという合意待ちの記載が併存し、提案・合意待ちの区別が明確でない。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "「判断・進め方」で合意後に設計・検証へ進む計画を追加しており、比較と合意論点に必要な範囲を超える。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 5553,
+      "cached_input_tokens": 1792,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 888,
+      "reasoning_output_tokens": 305
+    },
+    "elapsedMs": 19816
+  },
+  "promptHash": "7176ec21e221e77f30ba865c9a9bc7787a7980c9e834075272d1201df08a3805"
+}

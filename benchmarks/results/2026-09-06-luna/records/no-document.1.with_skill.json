@@ -1,0 +1,29 @@
+{
+  "id": "no-document.1.with_skill",
+  "caseId": "no-document",
+  "repeat": 1,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "新たな議事録は残さなくてよい。定例は開催前に中止され、議論・決定・宿題がなく、中止連絡も参加者へ送信済みのため、後から参照すべき記録がない。",
+        "notes": "採用段: 0。議事録を作らない理由だけで目的を満たすため。textlint検査は対象文書がないため未実施。"
+      },
+      "usage": {
+        "input_tokens": 7436,
+        "cached_input_tokens": 1792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 157,
+        "reasoning_output_tokens": 38
+      },
+      "elapsedMs": 6607,
+      "metrics": {
+        "characters": 70,
+        "headings": 0,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "12a8b73b7c5c5c5066b39e4b9e949b48cf80dbb6b6a255585d20a82bade16306"
+    }
+  ]
+}

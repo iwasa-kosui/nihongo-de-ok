@@ -1,0 +1,29 @@
+{
+  "id": "adr-boundary.2.with_skill",
+  "caseId": "adr-boundary",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 請求書PDF生成をキューで処理する\n\n- 状態: 採用\n- 判断日: 2026-08-20\n\n## 文脈\n\n請求書のPDF生成には最大45秒かかり、同期処理ではAPI接続が切れる。\n\n## 決定\n\n請求書のPDF生成をキューで非同期に処理する。APIは生成完了を待たず、受付IDを返す。\n\n## 理由\n\n同期生成では、処理中にAPI接続が切れるため採用しない。キューで処理すれば、APIの受付とPDF生成を分離できる。\n\n## 結果と代償\n\nAPIは短時間で受付結果を返せる。一方、利用者はPDFの生成完了まで待つ必要がある。\n\n再試行の上限は未決定である。",
+        "notes": "成立する段: 5。採用理由、結果、未決定事項を将来の保守者が参照するため、ADRとして整理しました。原資料にあった作業ID・PR番号・進捗は、ADRの対象外として本文から除外しています。検査は未実施です。"
+      },
+      "usage": {
+        "input_tokens": 8557,
+        "cached_input_tokens": 1792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 351,
+        "reasoning_output_tokens": 48
+      },
+      "elapsedMs": 9455,
+      "metrics": {
+        "characters": 281,
+        "headings": 5,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "128ca6f85c529d3eccc2a4277920efce35088b151ccd5cc83296b5ad05ebc341"
+    }
+  ]
+}

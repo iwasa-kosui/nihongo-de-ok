@@ -1,0 +1,65 @@
+{
+  "caseId": "incident-record",
+  "repeat": 2,
+  "mapping": {
+    "A": "without_skill",
+    "B": "with_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "8月19日、09:10検知、09:17に加藤がロールバック、09:22復旧、検索失敗340件、決済影響なしをすべて本文に記載している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "DB接続枯渇を「原因と考えられます」とし、ログ確認未完了のため未確定と明記している。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "OPS-315、DB接続数の記録追加、担当の加藤、8月26日期限を記載している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "タイムライン、影響、原因、改善課題が節で分かれ、事実・仮説・予定を区別できる。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "概要で検知・ロールバック・復旧を要約した後、タイムラインで同じ経過を再掲しており、事象の要約が重複している。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "8月19日、09:10検知、09:17に加藤が変更を戻す、09:22復旧、340件、決済影響なしをすべて記載している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "DB接続枯渇を仮説として述べ、ログ確認未完了で確定していないと明記している。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "OPS-315、DB接続数の記録追加、加藤、8月26日までの期限を保持している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "影響、時系列、原因、改善が分かれており、観測事実・原因仮説・改善予定を判別できる。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "必要な節と時系列のみで構成され、同じ事象要約の反復や架空の再発防止項目はない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 5130,
+      "cached_input_tokens": 3840,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 682,
+      "reasoning_output_tokens": 184
+    },
+    "elapsedMs": 17743
+  },
+  "promptHash": "481d9db246d0805c8228330c1ca6fe2e7f38b819c4d96c912e7129891cfe4d8f"
+}

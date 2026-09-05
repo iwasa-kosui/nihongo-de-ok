@@ -1,0 +1,29 @@
+{
+  "id": "comparison-rfc.2.with_skill",
+  "caseId": "comparison-rfc",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 商品検索基盤の方式変更RFC\n\n## 問題\n商品検索が遅く、部分一致検索の速度も課題である。計測値と費用は未確認である。\n\n## 提案\n検索専用サービスを導入する（方式B）。部分一致検索の高速化を見込める一方、次の影響がある。\n\n- 検索専用サービスの運用が必要になる\n- DBの更新が検索サービスへ反映されるまで遅延が生じる\n\n検索結果は最大60秒古くても許容する案とする。ただし、業務側はまだ承認していない。\n\n## 代替案\n方式Aとして、既存DBに索引を追加する。運用対象は増えないが、部分一致検索は速くならない。\n\n## 合意が必要な論点\n1. 検索専用サービスを別途運用するか\n2. 検索結果が最大60秒古くなることを許容するか\n\n上記2点の合意後、方式Bの採用を確定する。",
+        "notes": "採用段: 4（比較と合意事項が中心のため、短いRFCとして整理）。textlint: この実行環境では未検証。未確認事項: 計測値、費用、業務側による60秒の許容。"
+      },
+      "usage": {
+        "input_tokens": 8636,
+        "cached_input_tokens": 1792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 402,
+        "reasoning_output_tokens": 62
+      },
+      "elapsedMs": 10658,
+      "metrics": {
+        "characters": 344,
+        "headings": 5,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "3152f3967d6edd8a8807712cfc9b5984f860c394932b92f7710b7978e84a6679"
+    }
+  ]
+}

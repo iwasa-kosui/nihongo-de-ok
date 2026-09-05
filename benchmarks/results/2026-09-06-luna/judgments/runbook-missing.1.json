@@ -1,0 +1,65 @@
+{
+  "caseId": "runbook-missing",
+  "repeat": 1,
+  "mapping": {
+    "A": "without_skill",
+    "B": "with_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "監視エラー時のキャッシュ再起動を対象にし、コマンド・停止条件・復旧確認・連絡先を未確定事項として残している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "具体的なコマンド、閾値、待機時間、環境名、連絡先を補作しておらず、安全に実行可能とも断言していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "表題に「未確定事項あり」とあり、本文でも実行可能な手順を作成できないとして未完成であることを明示している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "実施前に確定すべき情報を具体的に列挙し、未確定の間は本番再起動を実施しないと明記している。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "未確定事項と暫定フローからなる最小限の草稿であり、空の見出しを大量に設けていない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "監視でエラーを検知した際のキャッシュ再起動を述べ、コマンド・停止条件・復旧確認・連絡先を未決定としている。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "具体的なコマンド、数値、環境名、連絡先などを創作しておらず、安全性も断言していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文の「未決定事項」に必須情報が残っており、完成した実行手順ではないことが明示されている。"
+        },
+        "clarity": {
+          "pass": false,
+          "evidence": "「監視でエラーを検知したら、キャッシュを再起動する」と即時実行を促す記述がある一方、未決定事項が確定するまで実施しない旨や、実施前の確認質問がない。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "確定している一文と必要な未決定事項だけを示した簡潔な草稿である。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 5295,
+      "cached_input_tokens": 3840,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 848,
+      "reasoning_output_tokens": 329
+    },
+    "elapsedMs": 18887
+  },
+  "promptHash": "a19f2ca64866b8e29a3609714ebdb14348c3ebf0f29466d734691eb109cabb9e"
+}
