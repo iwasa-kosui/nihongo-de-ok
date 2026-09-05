@@ -1,5 +1,7 @@
 # 執筆指示ベンチマーク
 
+**[本文を左右に並べて読む（HTML）](comparison.html)**。HTMLはダウンロードしてブラウザで開く。GitHub上では下の課題別リンクから、全文・初稿・採点理由をMarkdownで読める。
+
 実行開始: 2026-09-05T16:59:30.140Z。対象: origin/main / fb6fd0b085bcd2b03ea8381709ae36d5f95d437e。
 
 生成: gpt-5.6-luna / low、評価: gpt-5.6-terra / low。10課題 × 2反復 × 2条件。
@@ -40,18 +42,20 @@
 | RFCで比較と未決定を保つ | 3, 2 | 4, 5 |
 | 曖昧な表現を根拠に沿って具体化 | 4, 5 | 5, 5 |
 
-## 判定根拠と出力
+## 本文・初稿・採点理由を読む
 
-- ADRの判断と作業追跡の分離: [評価1](judgments/adr-boundary.1.json)、[評価2](judgments/adr-boundary.2.json)。[without_skill](records/adr-boundary.1.without_skill.json)、[with_skill](records/adr-boundary.1.with_skill.json)。
-- Design Docの構成・失敗条件・代替案: [評価1](judgments/design-tradeoff.1.json)、[評価2](judgments/design-tradeoff.2.json)。[without_skill](records/design-tradeoff.1.without_skill.json)、[with_skill](records/design-tradeoff.1.with_skill.json)。
-- 進捗報告で追跡情報を保持: [評価1](judgments/progress-retention.1.json)、[評価2](judgments/progress-retention.2.json)。[without_skill](records/progress-retention.1.without_skill.json)、[with_skill](records/progress-retention.1.with_skill.json)。
-- 障害記録の時系列と仮説: [評価1](judgments/incident-record.1.json)、[評価2](judgments/incident-record.2.json)。[without_skill](records/incident-record.1.without_skill.json)、[with_skill](records/incident-record.1.with_skill.json)。
-- 資料不足の手順を完成扱いしない: [評価1](judgments/runbook-missing.1.json)、[評価2](judgments/runbook-missing.2.json)。[without_skill](records/runbook-missing.1.without_skill.json)、[with_skill](records/runbook-missing.1.with_skill.json)。
-- 既存文書の一文だけ修正: [評価1](judgments/surgical-edit.1.json)、[評価2](judgments/surgical-edit.2.json)。[without_skill](records/surgical-edit.1.without_skill.json)、[with_skill](records/surgical-edit.1.with_skill.json)。
-- 正本で済む依頼: [評価1](judgments/canonical-reference.1.json)、[評価2](judgments/canonical-reference.2.json)。[without_skill](records/canonical-reference.1.without_skill.json)、[with_skill](records/canonical-reference.1.with_skill.json)。
-- 文書を作る必要性の判断: [評価1](judgments/no-document.1.json)、[評価2](judgments/no-document.2.json)。[without_skill](records/no-document.1.without_skill.json)、[with_skill](records/no-document.1.with_skill.json)。
-- RFCで比較と未決定を保つ: [評価1](judgments/comparison-rfc.1.json)、[評価2](judgments/comparison-rfc.2.json)。[without_skill](records/comparison-rfc.1.without_skill.json)、[with_skill](records/comparison-rfc.1.with_skill.json)。
-- 曖昧な表現を根拠に沿って具体化: [評価1](judgments/plain-japanese.1.json)、[評価2](judgments/plain-japanese.2.json)。[without_skill](records/plain-japanese.1.without_skill.json)、[with_skill](records/plain-japanese.1.with_skill.json)。
+各比較には、原依頼、両条件の最終稿全文、注記、5基準の判定理由、修正前の初稿とlint指摘を収めている。本文だけのMarkdownにも移動できる。
+
+- ADRの判断と作業追跡の分離: [1回目](comparisons/adr-boundary.1.md)、[2回目](comparisons/adr-boundary.2.md)。
+- Design Docの構成・失敗条件・代替案: [1回目](comparisons/design-tradeoff.1.md)、[2回目](comparisons/design-tradeoff.2.md)。
+- 進捗報告で追跡情報を保持: [1回目](comparisons/progress-retention.1.md)、[2回目](comparisons/progress-retention.2.md)。
+- 障害記録の時系列と仮説: [1回目](comparisons/incident-record.1.md)、[2回目](comparisons/incident-record.2.md)。
+- 資料不足の手順を完成扱いしない: [1回目](comparisons/runbook-missing.1.md)、[2回目](comparisons/runbook-missing.2.md)。
+- 既存文書の一文だけ修正: [1回目](comparisons/surgical-edit.1.md)、[2回目](comparisons/surgical-edit.2.md)。
+- 正本で済む依頼: [1回目](comparisons/canonical-reference.1.md)、[2回目](comparisons/canonical-reference.2.md)。
+- 文書を作る必要性の判断: [1回目](comparisons/no-document.1.md)、[2回目](comparisons/no-document.2.md)。
+- RFCで比較と未決定を保つ: [1回目](comparisons/comparison-rfc.1.md)、[2回目](comparisons/comparison-rfc.2.md)。
+- 曖昧な表現を根拠に沿って具体化: [1回目](comparisons/plain-japanese.1.md)、[2回目](comparisons/plain-japanese.2.md)。
 
 ## 解釈の範囲
 

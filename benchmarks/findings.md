@@ -2,7 +2,7 @@
 
 再評価開始時の`origin/main`（`fb6fd0b085bcd2b03ea8381709ae36d5f95d437e`）で、スキルあり／なしを比較した。スキルあり側は本文と修正回数が減り、初稿・最終稿のlint合格数が増えた。一方、入力トークンは約2.9倍になり、資料にない仕様の補完も残った。
 
-同じ10課題を各2回、`gpt-5.6-luna / low`で生成した。両条件とも最新版のlint指摘による修正は最大1回。最終稿を、条件名を伏せた`gpt-5.6-terra / low`で採点した。過去の評価ファイルは削除し、全40出力・20件の採点を新たに実行している。[再現方法](README.md)と[全結果](results/2026-09-06-main-fb6fd0b/report.md)を参照。
+同じ10課題を各2回、`gpt-5.6-luna / low`で生成した。両条件とも最新版のlint指摘による修正は最大1回。最終稿を、条件名を伏せた`gpt-5.6-terra / low`で採点した。過去の評価ファイルは削除し、全40出力・20件の採点を新たに実行している。[再現方法](README.md)と[全文の比較と集計](results/2026-09-06-main-fb6fd0b/report.md)を参照。
 
 ## 比較結果
 
@@ -29,15 +29,15 @@
 
 ### 作業情報と仕様の扱い
 
-[スキルなしのDesign Doc](results/2026-09-06-main-fb6fd0b/records/design-tradeoff.1.without_skill.json)は、lint修正後も今週の作業と担当者を残し、資料にないメッセージ設計や回復策を追加した。[スキルあり](results/2026-09-06-main-fb6fd0b/records/design-tradeoff.1.with_skill.json)は設計内容に絞られている。進捗報告と障害記録では、両条件とも課題ID・担当・期限を保持した。
+[スキルなしのDesign Doc](results/2026-09-06-main-fb6fd0b/comparisons/design-tradeoff.1.md#without-skill)は、lint修正後も今週の作業と担当者を残し、資料にないメッセージ設計や回復策を追加した。[スキルあり](results/2026-09-06-main-fb6fd0b/comparisons/design-tradeoff.1.md#with-skill)は設計内容に絞られている。進捗報告と障害記録では、両条件とも課題ID・担当・期限を保持した。
 
-[スキルなしのADR](results/2026-09-06-main-fb6fd0b/records/adr-boundary.1.without_skill.json)には、資料にない受付IDによる状態・結果確認や通知の仕様が加わった。スキルあり側ではこれらの追加は見られない。ただし、[スキルありのDesign Docの2回目](results/2026-09-06-main-fb6fd0b/records/design-tradeoff.2.with_skill.json)は「10MBのファイル」を「最大10MB」に変え、入力上限を追加している。採点上のgroundingが20/20でも、創作がなくなったとは結論できない。
+[スキルなしのADR](results/2026-09-06-main-fb6fd0b/comparisons/adr-boundary.1.md#without-skill)には、資料にない受付IDによる状態・結果確認や通知の仕様が加わった。スキルあり側ではこれらの追加は見られない。ただし、[スキルありのDesign Docの2回目](results/2026-09-06-main-fb6fd0b/comparisons/design-tradeoff.2.md#with-skill)は「10MBのファイル」を「最大10MB」に変え、入力上限を追加している。採点上のgroundingが20/20でも、創作がなくなったとは結論できない。
 
 ### 構成と手順
 
-スキルありのADRは、[1回目](results/2026-09-06-main-fb6fd0b/records/adr-boundary.1.with_skill.json)・[2回目](results/2026-09-06-main-fb6fd0b/records/adr-boundary.2.with_skill.json)とも「背景・決定・結果」の章立てを選んだ。小さな題材を一段落に収める既存基準は満たしていない。[RFCの1回目](results/2026-09-06-main-fb6fd0b/records/comparison-rfc.1.with_skill.json)でも、提案・代替案の内容を影響の節で繰り返している。
+スキルありのADRは、[1回目](results/2026-09-06-main-fb6fd0b/comparisons/adr-boundary.1.md#with-skill)・[2回目](results/2026-09-06-main-fb6fd0b/comparisons/adr-boundary.2.md#with-skill)とも「背景・決定・結果」の章立てを選んだ。小さな題材を一段落に収める既存基準は満たしていない。[RFCの1回目](results/2026-09-06-main-fb6fd0b/comparisons/comparison-rfc.1.md#with-skill)でも、提案・代替案の内容を影響の節で繰り返している。
 
-情報不足のRunbookでは、スキルあり側の[1回目](results/2026-09-06-main-fb6fd0b/records/runbook-missing.1.with_skill.json)・[2回目](results/2026-09-06-main-fb6fd0b/records/runbook-missing.2.with_skill.json)とも草稿であることと、未決定事項があるため実行できないことを本文に示した。一文だけを直す`surgical-edit`は、両条件の全4出力が、末尾改行を除いて期待本文と完全一致した。
+情報不足のRunbookでは、スキルあり側の[1回目](results/2026-09-06-main-fb6fd0b/comparisons/runbook-missing.1.md#with-skill)・[2回目](results/2026-09-06-main-fb6fd0b/comparisons/runbook-missing.2.md#with-skill)とも草稿であることと、未決定事項があるため実行できないことを本文に示した。一文だけを直す`surgical-edit`は、両条件の全4出力が、末尾改行を除いて期待本文と完全一致した。
 
 ## 採点の照合メモ
 
@@ -45,17 +45,17 @@
 
 ### 本文外の注記を理由に減点
 
-部分修正のスキルあり側は、[1回目](results/2026-09-06-main-fb6fd0b/judgments/surgical-edit.1.json)・[2回目](results/2026-09-06-main-fb6fd0b/judgments/surgical-edit.2.json)ともnotesの補足を理由にeconomy不合格となった。基準が禁じているのは本文の追加で、実際の本文は期待値と完全一致している。この理由による減点は不適切と考える。
+部分修正のスキルあり側は、[1回目](results/2026-09-06-main-fb6fd0b/comparisons/surgical-edit.1.md#judgments)・[2回目](results/2026-09-06-main-fb6fd0b/comparisons/surgical-edit.2.md#judgments)ともnotesの補足を理由にeconomy不合格となった。基準が禁じているのは本文の追加で、実際の本文は期待値と完全一致している。この理由による減点は不適切と考える。
 
 ### 不合格の見逃し
 
-[文書不要の2回目](results/2026-09-06-main-fb6fd0b/judgments/no-document.2.json)は、スキルあり側の本文が二文なのに、一文を求めるeconomyが合格した。[Design Docの2回目](results/2026-09-06-main-fb6fd0b/judgments/design-tradeoff.2.json)では、資料にない「最大10MB」をgroundingが見逃した。
+[文書不要の2回目](results/2026-09-06-main-fb6fd0b/comparisons/no-document.2.md#judgments)は、スキルあり側の本文が二文なのに、一文を求めるeconomyが合格した。[Design Docの2回目](results/2026-09-06-main-fb6fd0b/comparisons/design-tradeoff.2.md#judgments)では、資料にない「最大10MB」をgroundingが見逃した。
 
 ### 基準より厳しい解釈
 
-[Runbookの2回目](results/2026-09-06-main-fb6fd0b/judgments/runbook-missing.2.json)では、スキルあり側に「誰へ確認すべきか」がないことを理由にclarityが不合格になった。元の基準は具体的な質問または確認事項を求めるが、確認先の特定は必須にしていない。原資料でも連絡先は未定であり、この減点理由には疑義がある。
+[Runbookの2回目](results/2026-09-06-main-fb6fd0b/comparisons/runbook-missing.2.md#judgments)では、スキルあり側に「誰へ確認すべきか」がないことを理由にclarityが不合格になった。元の基準は具体的な質問または確認事項を求めるが、確認先の特定は必須にしていない。原資料でも連絡先は未定であり、この減点理由には疑義がある。
 
-[RFCの採点](results/2026-09-06-main-fb6fd0b/judgments/comparison-rfc.1.json)には、「提案」節の「採用する」を採用済みの決定と読む例もある。見出しと未承認の記述を含めた文脈で判定する必要がある。
+[RFCの採点](results/2026-09-06-main-fb6fd0b/comparisons/comparison-rfc.1.md#judgments)には、「提案」節の「採用する」を採用済みの決定と読む例もある。見出しと未承認の記述を含めた文脈で判定する必要がある。
 
 ## 評価の範囲
 
@@ -65,4 +65,6 @@
 
 ## 検証
 
-対象refを`origin/main`からコミットへ解決し、実行に使うスキル・lint・設定・lockfileのSHA-256をGitの対象コミットと照合した。全40出力・20件の採点は失敗・再開なしで完了し、生成は修正を含め48回となった。テスト35件と`lint:docs`が成功し、保存済み集計の再生成、入力ハッシュ、レポート内リンクを確認した。
+対象refを`origin/main`からコミットへ解決し、実行に使うスキル・lint・設定・lockfileのSHA-256をGitの対象コミットと照合した。全40出力・20件の採点は失敗・再開なしで完了し、生成は修正を含め48回となった。生成・採点を行った際のテスト35件と`lint:docs`が成功し、保存済み集計の再生成、入力ハッシュ、レポート内リンクを確認した。
+
+保存済みの結果から、[ブラウザ用の左右比較](results/2026-09-06-main-fb6fd0b/comparison.html)と課題ごとの比較Markdown、各稿の本文Markdownを生成した。HTMLはダウンロードしてブラウザで開く。表示の追加に際してモデルは呼び直しておらず、元の本文・採点・集計・実行時のmanifestは変更していない。

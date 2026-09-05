@@ -5,6 +5,7 @@ import { homedir, tmpdir } from "node:os";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { lintFiles } from "../scripts/lint.mjs";
+import { writeReadableReports } from "./readable-report.mjs";
 
 export const root = fileURLToPath(new URL("..", import.meta.url));
 export const dimensions = ["facts", "grounding", "role", "clarity", "economy"];
@@ -218,6 +219,7 @@ export function aggregate(records, verdicts) {
 export async function report(out) {
   const manifest = await json(join(out, "manifest.json"));
   const cases = await json(join(out, "cases.json"));
+  validateCases(cases);
   const records = [], verdicts = {}, pairs = [];
   for (const planned of manifest.plan) {
     const r = await json(join(out, "records", `${planned.id}.json`));
@@ -242,7 +244,7 @@ export async function report(out) {
   }, { input_tokens: 0, cached_input_tokens: 0, output_tokens: 0 });
   await save(join(out, "summary.json"), { summary, perCase, judgeUsage });
   const a = summary.without_skill, b = summary.with_skill;
-  const lines = ["# 執筆指示ベンチマーク", "", `実行開始: ${manifest.createdAt}。対象: ${manifest.sourceRef ? `${manifest.sourceRef} / ` : ""}${manifest.skillRevision}。`, "", `生成: ${manifest.settings.model} / ${manifest.settings.effort}、評価: ${manifest.settings.judgeModel} / low。${cases.length}課題 × ${manifest.settings.repeats}反復 × 2条件。`, "", "| 指標 | スキルなし | スキルあり |", "|---|---:|---:|",
+  const lines = ["# 執筆指示ベンチマーク", "", "**[本文を左右に並べて読む（HTML）](comparison.html)**。HTMLはダウンロードしてブラウザで開く。GitHub上では下の課題別リンクから、全文・初稿・採点理由をMarkdownで読める。", "", `実行開始: ${manifest.createdAt}。対象: ${manifest.sourceRef ? `${manifest.sourceRef} / ` : ""}${manifest.skillRevision}。`, "", `生成: ${manifest.settings.model} / ${manifest.settings.effort}、評価: ${manifest.settings.judgeModel} / low。${cases.length}課題 × ${manifest.settings.repeats}反復 × 2条件。`, "", "| 指標 | スキルなし | スキルあり |", "|---|---:|---:|",
     `| 評価基準の合格数 | ${a.rubricPasses}/${a.rubricTotal} | ${b.rubricPasses}/${b.rubricTotal} |`,
     `| 全5基準合格の出力 | ${a.allCriteriaPass}/${a.n} | ${b.allCriteriaPass}/${b.n} |`,
     ...dimensions.map((d) => `| ${d} | ${a.criterionPasses[d]}/${a.n} | ${b.criterionPasses[d]}/${b.n} |`),
@@ -256,9 +258,10 @@ export async function report(out) {
     `| 出力トークン | ${a.outputTokens} | ${b.outputTokens} |`,
     `| 平均生成時間・秒（修正含む） | ${(a.elapsedMs/a.n/1000).toFixed(1)} | ${(b.elapsedMs/b.n/1000).toFixed(1)} |`, "", "## 課題別", "", "各セルは反復ごとの合格基準数（5点満点）。", "", "| 課題 | なし | あり |", "|---|---|---|",
     ...perCase.map((c) => `| ${c.title} | ${c.without_skill.map((r) => r.score).join(", ")} | ${c.with_skill.map((r) => r.score).join(", ")} |`),
-    "", "## 判定根拠と出力", "", ...perCase.map((c) => `- ${c.title}: ${[1, ...Array.from({length: manifest.settings.repeats - 1}, (_, i) => i + 2)].map((r) => `[評価${r}](judgments/${c.id}.${r}.json)`).join("、")}。${arms.map((arm) => `[${arm}](records/${c.id}.1.${arm}.json)`).join("、")}。`),
+    "", "## 本文・初稿・採点理由を読む", "", "各比較には、原依頼、両条件の最終稿全文、注記、5基準の判定理由、修正前の初稿とlint指摘を収めている。本文だけのMarkdownにも移動できる。", "", ...perCase.map((c) => `- ${c.title}: ${Array.from({length: manifest.settings.repeats}, (_, i) => `[${i + 1}回目](comparisons/${c.id}.${i + 1}.md)`).join("、")}。`),
     "", "## 解釈の範囲", "", "これはSKILL.mdと関連資料を明示的に付与する比較であり、スキルの自動発火、親子エージェントの委譲、意味確認からの修正、モデル昇格は測っていない。両条件に同じlintフィードバックを最大1回返すため、スキル一式と通常運用の比較でもない。意味基準は最終稿だけを採点する。", "", "判定は条件名を伏せ、A/Bの位置を均衡化した単一LLMによるもの。人間の盲検評価ではなく、採点の誤りと同系モデルの傾向が残る。課題は作成者がPRの狙いから選んだ10種で、うちADR・進捗・不足手順・部分修正は既存の動作確認を別の題材にした。独立したホールドアウトや40種全体の代表標本ではない。反復数は課題ごとの揺れを観測するもので、基準数を独立標本として扱わない。有意差・一般的な優位・金額の削減率は主張しない。", "", "文字数だけでは品質を判定しない。トークンはCLI報告の実測値で、入力はcacheを含む。時間は並列実行・接続・cacheの影響を含む。評価モデルの利用量はsummary.jsonのjudgeUsageに別計上する。", ""];
   await writeFile(join(out, "report.md"), lines.join("\n"));
+  await writeReadableReports({ out, manifest, cases, records, verdicts });
   return summary;
 }
 
@@ -290,7 +293,7 @@ async function run(o) {
   const files = {};
   for (const name of ["SKILL.md", "references/delegation.md", "references/japanese.md", "references/document-types.md", "references/document-shapes.md"]) files[name] = await text(join(root, name));
   const sourceHashes = {};
-  for (const name of [...Object.keys(files), "package-lock.json", ".textlintrc.json", "scripts/lint.mjs", "benchmarks/benchmark.mjs", "benchmarks/cases.json", "benchmarks/author-instructions.txt", "benchmarks/judge-instructions.txt", "benchmarks/author.schema.json", ...await ruleFiles()]) sourceHashes[name] = hash(await text(join(root, name)));
+  for (const name of [...Object.keys(files), "package-lock.json", ".textlintrc.json", "scripts/lint.mjs", "benchmarks/benchmark.mjs", "benchmarks/readable-report.mjs", "benchmarks/comparison.css", "benchmarks/comparison.js", "benchmarks/cases.json", "benchmarks/author-instructions.txt", "benchmarks/judge-instructions.txt", "benchmarks/author.schema.json", ...await ruleFiles()]) sourceHashes[name] = hash(await text(join(root, name)));
   const settings = { model: o.model, judgeModel: o.judgeModel, effort: o.effort, repeats: o.repeats, seed: o.seed, jobs: o.jobs, timeout: o.timeout, maxLintRevisions: 1 };
   const plan = makePlan(cases, o.repeats, o.seed);
   const contexts = Object.fromEntries(cases.map((c) => [c.id, skillContext(c, files)]));
