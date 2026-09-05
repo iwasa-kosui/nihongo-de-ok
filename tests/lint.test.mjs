@@ -55,6 +55,15 @@ test("no-ai-jargon keeps a finite phrase dictionary with concrete alternatives",
   assert.ok(jargon.every((message) => message.message.includes("対象と動作を具体化")));
 });
 
+test("observation wording prompts concrete verbs while preserving technical terminology and quotations", async () => {
+  const text = "不具合を観測した。\n応答時間を観測する。\n観測時刻を記録する。\n可観測性を改善する。\n`観測した`\n> 観測した\nhttps://example.test/観測\n";
+  const found = await messages("flow", text, config({ "no-ai-jargon": true }));
+  assert.deepEqual(found.map(({ line, column }) => [line, column]), [[1, 5], [2, 6], [3, 1]]);
+  assert.ok(found.every(({ message }) => message.includes("確認・計測・調査")));
+  assert.deepEqual(await messages("flow", "不具合を確認した。応答時間を計測する。", config({ "no-ai-jargon": true })), []);
+  assert.deepEqual(await messages("flow", "天体を観測する。", config({ "no-ai-jargon": { allow: ["観測"] } })), []);
+});
+
 test("no-opaque-compound is a finite dictionary and supports allow", async () => {
   const visible = await messages("flow", "価値創出最大化基盤と意思決定高度化レイヤー。\n[価値創出最大化基盤](https://example.test/価値創出最大化基盤)\n`価値創出最大化基盤`\n> 価値創出最大化基盤\nhttps://example.test/価値創出最大化基盤\n価値提供と課題解決は具体的に書く。\n", config({ "no-opaque-compound": { allow: [] } }));
   assert.deepEqual(visible.filter((message) => message.ruleId === "no-opaque-compound").map(({ line, column }) => [line, column]), [[1, 1], [1, 11], [2, 2]]);

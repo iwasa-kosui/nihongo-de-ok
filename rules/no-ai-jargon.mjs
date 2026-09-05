@@ -1,4 +1,5 @@
 const DEFAULTS = new Map([
+  ["観測", "確認・計測・調査など、実際に行ったことを書く（専門用語として必要な場合は除く）"],
   ["レバレッジ", "活用（文脈に応じて具体化）"],
   ["シームレス", "継ぎ目なく／一貫して（対象を明記）"],
   ["アクショナブル", "実行可能な／実行手順が明確な"],
@@ -16,6 +17,7 @@ function nonUrlMatches(text, word) {
   const matches = [];
   for (let index = text.indexOf(word); index !== -1; index = text.indexOf(word, index + word.length)) {
     if (/https?:\/\/[^\s<>]*$/.test(text.slice(0, index))) continue;
+    if (word === "観測" && text.slice(index - 1, index + word.length + 1) === "可観測性") continue;
     matches.push(index);
   }
   return matches;
