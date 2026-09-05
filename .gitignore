@@ -2,6 +2,8 @@
 .wt/
 .Codex/
 .claude/settings.local.json
+# Generated call diagnostics; parsed outputs and judgments remain reviewable.
+benchmarks/results/*/calls/
 logs
 *.log
 npm-debug.log*

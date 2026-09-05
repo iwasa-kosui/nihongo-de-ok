@@ -75,5 +75,6 @@ Jira課題IDの検出は、大文字のキーと番号から推定する。`ADR-
 - [委譲手順](references/delegation.md): モデルの選択、修正上限、合格条件
 - [日本語の基準](references/japanese.md): 書き換え例と静的検査の限界
 - [rules](rules): textlint カスタムルール
+- [スキルあり／なしのベンチマーク](benchmarks/README.md): 再実行方法、評価条件、全出力と判定理由
 
 MIT License。ponytail の実装やフックへの依存はない。

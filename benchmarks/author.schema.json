@@ -1,0 +1,5 @@
+{
+  "type": "object", "additionalProperties": false,
+  "properties": {"body": {"type": "string"}, "notes": {"type": "string"}},
+  "required": ["body", "notes"]
+}
