@@ -1,4 +1,7 @@
 # Logs
+.wt/
+.Codex/
+.claude/settings.local.json
 logs
 *.log
 npm-debug.log*
