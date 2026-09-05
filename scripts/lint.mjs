@@ -12,6 +12,7 @@ import noAiJargon from "../rules/no-ai-jargon.mjs";
 import noOpaqueCompound from "../rules/no-opaque-compound.mjs";
 import noVagueAction from "../rules/no-vague-action.mjs";
 import stockBoundary from "../rules/stock-boundary.mjs";
+import tableCellLength from "../rules/table-cell-length.mjs";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const configPath = resolve(root, ".textlintrc.json");
@@ -21,7 +22,8 @@ const customRules = {
   "no-ai-jargon": noAiJargon,
   "no-opaque-compound": noOpaqueCompound,
   "no-vague-action": noVagueAction,
-  "stock-boundary": stockBoundary
+  "stock-boundary": stockBoundary,
+  "table-cell-length": tableCellLength
 };
 
 function settingOptions(setting) {
