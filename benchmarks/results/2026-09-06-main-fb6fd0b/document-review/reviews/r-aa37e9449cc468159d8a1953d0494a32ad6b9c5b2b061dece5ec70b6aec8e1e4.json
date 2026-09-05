@@ -1,0 +1,58 @@
+{
+  "reviewId": "r-aa37e9449cc468159d8a1953d0494a32ad6b9c5b2b061dece5ec70b6aec8e1e4",
+  "inputHash": "aa37e9449cc468159d8a1953d0494a32ad6b9c5b2b061dece5ec70b6aec8e1e4",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "実装者がファイル取込の構成、処理・データの流れ、失敗条件、制約、不採用理由、未決定事項を理解するためのDesign Doc。",
+        "status": "revision_needed",
+        "summary": "基本構成と保存失敗時の動作は理解できるが、ファイルサイズ上限とAPI応答待ちに関する記述は修正が必要。キュー登録失敗時の回復設計は、資料上も未決定である。",
+        "strengths": [
+          "APIからストレージ、キュー、ワーカー、DBへ至る処理とデータの流れを説明している。",
+          "保存失敗時の503応答とキューへの非登録を明記している。",
+          "キュー登録失敗時の回復方法を未決定と明示し、保存済みファイルの扱いを確認事項として示している。"
+        ],
+        "findings": [
+          {
+            "severity": "major",
+            "kind": "claim",
+            "basis": "source",
+            "excerpt": "ファイルサイズは最大10MBであり、キューの上限1MBを超えるためである。",
+            "source_excerpt": "ファイル本体をキューに載せる案は、10MBのファイルがキューの1MB制限を超えるため不採用。",
+            "finding": "資料中の「10MBのファイル」を、受け付けるファイルサイズの最大値へ変えている。資料ではファイルサイズ上限は確定していない。",
+            "impact": "実装者が10MBを入力制限として実装し、それを超えるファイルを根拠なく拒否する可能性がある。",
+            "suggested_change": "「最大」を削除し、10MBのファイルがキューの1MB制限を超えるという不採用理由に限定する。"
+          },
+          {
+            "severity": "major",
+            "kind": "claim",
+            "basis": "source",
+            "excerpt": "利用者はAPIの応答を待たずに処理を進められる一方、結果の提示は遅れる。",
+            "source_excerpt": "非同期化で利用者への結果提示が遅れる。",
+            "finding": "解析の非同期化から、API応答を待たなくてよいという利用者側の動作まで断定している。解析完了待ちとAPI応答待ちは異なり、後者を不要とする仕様は資料にない。",
+            "impact": "呼び出し側がAPI応答の確認を省略し、保存失敗時の503を確認せずに取込が受け付けられたものとして進める可能性がある。",
+            "suggested_change": "API応答を待たなくてよいという断定を削除し、非同期解析と結果提示の遅延についての説明に限定する。"
+          }
+        ],
+        "source_gaps": [
+          {
+            "missing_information": "キュー登録失敗時の回復方法と、ストレージに保存済みのファイルの扱い。",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "キューへの登録に失敗した場合の回復方法は未決定である。登録失敗時に、オブジェクトストレージへ保存したファイルをどう扱うかを別途決める必要がある。",
+            "consequence": "通常経路と保存失敗時の実装には使えるが、キュー登録失敗時の回復処理は、この資料だけでは確定・実装できない。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6356,
+        "cached_input_tokens": 2944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1192,
+        "reasoning_output_tokens": 324
+      },
+      "elapsedMs": 41649,
+      "validationErrors": null
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "reviewId": "r-832c391ea9c20fffb4bc96c6eb9007d9caf7033ee6f93a3896550af37c98ddcc",
+  "inputHash": "832c391ea9c20fffb4bc96c6eb9007d9caf7033ee6f93a3896550af37c98ddcc",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "検索基盤の方式と採用条件について、開発チームが合意を判断するための短いRFC。",
+        "status": "revision_needed",
+        "summary": "方式の比較、Bの提案、運用負担と未承認の60秒許容は明確です。ただし、部分一致検索を主要課題と断定する根拠は原資料になく、提案理由の表現を修正する必要があります。",
+        "strengths": [
+          "両方式の部分一致検索への効果と運用上の違いを比較できる。",
+          "60秒の許容を未承認の案として示し、合意が必要な2点を明確にしている。",
+          "計測値と費用の不足を明示している。"
+        ],
+        "findings": [
+          {
+            "severity": "major",
+            "kind": "claim",
+            "basis": "source",
+            "excerpt": "商品検索の主要課題である部分一致検索を改善できるためである。",
+            "source_excerpt": "問題は商品検索が遅いこと。",
+            "finding": "原資料は商品検索の遅さを課題としていますが、部分一致検索が主要課題だとは特定していません。背景の「特に部分一致検索の改善が必要」という記述も同様に、課題の優先順位を補っています。",
+            "impact": "開発チームが、主要な遅延箇所は部分一致検索だと確認済みであると受け取り、Bが中心的な問題を解決すると判断するおそれがあります。",
+            "suggested_change": "背景では商品検索の遅さを課題として示し、提案理由では部分一致検索を改善できるというBの利点にとどめてください。主要課題という位置づけは削除するか、確認が必要な仮説として区別してください。"
+          }
+        ],
+        "source_gaps": [
+          {
+            "missing_information": "性能の計測値と費用。",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "計測値および費用は未取得。",
+            "consequence": "方式の特徴と採用条件は議論できますが、改善幅や費用対効果の定量的な判断はできません。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6388,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1307,
+        "reasoning_output_tokens": 744
+      },
+      "elapsedMs": 51962,
+      "validationErrors": null
+    }
+  ]
+}

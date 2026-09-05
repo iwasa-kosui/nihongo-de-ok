@@ -8,7 +8,8 @@
   "scripts": {
     "test": "node --test tests/*.test.mjs",
     "lint:docs": "node scripts/lint.mjs --type stock README.md references/lint.md",
-    "benchmark": "node benchmarks/benchmark.mjs"
+    "benchmark": "node benchmarks/benchmark.mjs",
+    "benchmark:review": "node benchmarks/document-review.mjs"
   },
   "dependencies": {
     "@textlint/kernel": "^15.8.0",

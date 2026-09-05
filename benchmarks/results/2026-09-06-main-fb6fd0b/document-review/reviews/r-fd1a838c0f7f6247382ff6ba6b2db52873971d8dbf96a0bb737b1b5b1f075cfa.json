@@ -1,0 +1,37 @@
+{
+  "reviewId": "r-fd1a838c0f7f6247382ff6ba6b2db52873971d8dbf96a0bb737b1b5b1f075cfa",
+  "inputHash": "fd1a838c0f7f6247382ff6ba6b2db52873971d8dbf96a0bb737b1b5b1f075cfa",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "検索基盤の方式について、開発チームが比較・提案理由・影響・未承認条件を理解し、合意を判断するための短いRFC。",
+        "status": "usable",
+        "summary": "方式Bを提案する理由と運用上の代償、未承認の60秒許容条件、合意すべき論点が明確で、定性的な合意検討に使える。効果や費用の定量評価はまだできない。",
+        "strengths": [
+          "方式A・Bの部分一致への効果と運用負担が対応しており、提案理由を理解できる。",
+          "最大60秒の古さを許容する案と業務側の承認済み仕様を明確に区別している。",
+          "合意事項を明示し、計測値・費用がないという判断材料の限界も開示している。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "検索性能の計測値と各方式の費用。",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "現時点では計測値と費用がないため、これらを比較した判断材料は不足している。",
+            "consequence": "方式の定性的な比較と合意論点の検討はできるが、改善幅や費用対効果を定量的に判断するには追加資料が必要。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6374,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 640,
+        "reasoning_output_tokens": 270
+      },
+      "elapsedMs": 28691,
+      "validationErrors": null
+    }
+  ]
+}

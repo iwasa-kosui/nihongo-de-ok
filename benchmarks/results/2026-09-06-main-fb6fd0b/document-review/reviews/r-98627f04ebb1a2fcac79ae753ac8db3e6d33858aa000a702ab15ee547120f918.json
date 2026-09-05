@@ -1,0 +1,37 @@
+{
+  "reviewId": "r-98627f04ebb1a2fcac79ae753ac8db3e6d33858aa000a702ab15ee547120f918",
+  "inputHash": "98627f04ebb1a2fcac79ae753ac8db3e6d33858aa000a702ab15ee547120f918",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "検索基盤の方式について、開発チームが合意を判断するための短いRFC",
+        "status": "usable",
+        "summary": "方式A・Bの比較、Bの提案理由、運用上の影響、未承認条件が明確で、方針の合意検討に使える。定量的な効果・費用の評価はまだできない。",
+        "strengths": [
+          "部分一致の性能と運用対象の増加という観点で、両方式の違いを把握できる。",
+          "方式Bの利点だけでなく、別サービスの運用と反映遅延も示している。",
+          "60秒の許容を提案として示し、業務側の承認前であることと合意すべき2点を明記している。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "性能の計測値と費用の情報",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "現時点では、計測値と費用の情報はない。",
+            "consequence": "定性的な方式比較はできるが、改善幅や費用対効果を定量的に判断するには追加情報が必要。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6291,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 576,
+        "reasoning_output_tokens": 248
+      },
+      "elapsedMs": 24017,
+      "validationErrors": null
+    }
+  ]
+}

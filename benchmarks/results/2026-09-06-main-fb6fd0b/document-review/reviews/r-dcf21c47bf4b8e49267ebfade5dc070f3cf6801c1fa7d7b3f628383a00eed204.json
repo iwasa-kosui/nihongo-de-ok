@@ -1,0 +1,58 @@
+{
+  "reviewId": "r-dcf21c47bf4b8e49267ebfade5dc070f3cf6801c1fa7d7b3f628383a00eed204",
+  "inputHash": "dcf21c47bf4b8e49267ebfade5dc070f3cf6801c1fa7d7b3f628383a00eed204",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "当番が使用する本番キャッシュ再起動Runbookの草稿",
+        "status": "source_limited",
+        "summary": "手順の流れと未確定事項を確認する草稿として使える。本番操作に必要な情報は不足しているが、確定まで実行できないことを明示しており、資料の限界を適切に扱っている。",
+        "strengths": [
+          "エラー確認から実施条件、再起動、復旧確認、未復旧時の連絡までを順序立てている。",
+          "未定のコマンドや条件、連絡先を創作していない。",
+          "未確定事項が決まるまで、この文書だけでは本番操作を実行できないと明記している。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "具体的な再起動コマンド",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "再起動コマンド、停止してよい条件、復旧確認方法、連絡先は未定である。",
+            "consequence": "実行すべき操作を特定できない。"
+          },
+          {
+            "missing_information": "停止してよい条件",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "停止してよい条件を確認する。",
+            "consequence": "当番が再起動の実施可否を判断できない。"
+          },
+          {
+            "missing_information": "復旧確認方法",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "復旧確認方法に従い、サービスの状態を確認する。",
+            "consequence": "復旧したか、未復旧として連絡すべきかを判定できない。"
+          },
+          {
+            "missing_information": "連絡先",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "復旧しない場合は、定められた連絡先へ連絡する。",
+            "consequence": "未復旧時の連絡先を特定できない。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6098,
+        "cached_input_tokens": 2944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 875,
+        "reasoning_output_tokens": 343
+      },
+      "elapsedMs": 32139,
+      "validationErrors": null
+    }
+  ]
+}

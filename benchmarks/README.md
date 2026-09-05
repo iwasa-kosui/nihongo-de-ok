@@ -14,6 +14,8 @@ GitHub上では、[課題別の比較一覧](results/2026-09-06-main-fb6fd0b/rep
 
 ## 比較するもの
 
+用途に照らした批判的レビューは[別の結果](results/2026-09-06-main-fb6fd0b/document-review/report.md)に保存する。本文・指摘・修正案は[左右比較](results/2026-09-06-main-fb6fd0b/document-review/comparison.html)と課題ごとのMarkdownで読める。[検討メモ](results/2026-09-06-main-fb6fd0b/document-review/review-notes.md)には、新レビュー自体に疑問が残る判定も示す。以下の5基準による旧採点は変更しない。
+
 同じ原資料、モデル、推論量、出力形式、最大呼び出し回数で、スキル本文・関連資料の付与だけを変える。
 
 | 条件 | 生成時に渡す情報 |
@@ -101,3 +103,36 @@ HTMLとMarkdownは`report`コマンドで毎回生成する。追加の依存関
 金額は算出しない。トークン数と時間は実測し、評価モデルの費用要因は生成側と別に集計する。キャッシュや接続、並列実行が時間に影響する。2反復は揺れの観察用で、有意差検定や一般的な削減率を主張する規模ではない。
 
 CLIの実行方式は[公式の非対話実行ドキュメント](https://learn.chatgpt.com/docs/non-interactive-mode)、設定は[公式の設定リファレンス](https://learn.chatgpt.com/docs/config-file/config-reference)と実機の`codex exec --help`で確認した。0.150.1ではスキル無効化に`SKILL.md`のファイルパスが必要だったため、文書に記載されるディレクトリ形式も含めて両方を指定している。
+
+## 文書としての批判的レビュー
+
+旧採点とは別に、「このADRで判断を追えるか」「この設計書で実装できるか」など、実際の用途から保存済みの最終稿をレビューする。レビューへ渡すのは文書種別、読者の視点、原依頼・原資料、本文だけ。スキル、条件名、旧採点基準・点数、本文外の注記、他候補は渡さない。本文から条件が推測される可能性は残る。
+
+共通指示は[document-review-instructions.txt](document-review-instructions.txt)、課題ごとの視点は[document-review-profiles.json](document-review-profiles.json)に保存する。所定の表や見出しを必須にせず、指摘の件数も要求しない。部分修正や文書を作らない回答は依頼の範囲で評価する。PRDの課題はないので、PRDの品質は評価していない。
+
+各指摘には重大度、本文の引用、原資料の引用、読み手への影響、修正案を付ける。原資料にない情報を補わなかったことは執筆の欠陥にせず、資料不足として分ける。重大・要修正の指摘があれば「文書の修正が必要」、その指摘がなく、適切に明示された資料不足が用途を妨げれば「原資料の不足で利用に制限」、それ以外は「用途を満たす」とする。最後の判定にも改善提案はあり得る。
+
+依頼と本文が同じ場合は1回だけレビューし、同じ結果を共有する。CRLFとLF、末尾改行の差だけを同一視し、その他の空白は保持する。本文の写しは改行も含め元の出力と同一。今回の40出力は36件の固有入力になる。これは判定の揺れを測る実験ではなく、同じ本文への矛盾したラベルを避ける設計である。
+
+```sh
+# 入力を検証。モデル呼び出し・ファイル作成なし
+npm run benchmark:review -- run \
+  --source benchmarks/results/2026-09-06-main-fb6fd0b \
+  --out /tmp/nihongo-document-review-new \
+  --model gpt-6-astra --effort high --dry-run
+
+# 認証済みで対象モデルを利用できるCLIを使う。CODEX_BINで実行ファイルを指定できる
+npm run benchmark:review -- run \
+  --source benchmarks/results/2026-09-06-main-fb6fd0b \
+  --out /tmp/nihongo-document-review-new \
+  --model gpt-6-astra --effort high --jobs 2
+
+# 完了したレビューをHTMLとMarkdownへ変換。モデル呼び出しなし
+npm run benchmark:review -- report --out /tmp/nihongo-document-review-new
+```
+
+出力先は新規ディレクトリに限る。同じ引数と`--resume`で完了分を再利用する。原資料、本文、指示、コード、モデル、CLI版、Node版が変わった場合は再開を拒否する。タイムアウトは既定300秒。構造・引用の完全一致・ステータスの整合性の検証だけ、修正を最大1回求める。CLIの失敗や時間切れはその実行を停止させる。レビュー内容を望ましい結論へ合わせる再試行は行わない。
+
+出力の`artifacts/`は本文だけのMarkdown、`comparisons/`は原資料と両条件のレビュー全文、`comparison.html`は単一ファイルの比較画面。`inputs/`、`reviews/`、`manifest.json`には入力と全レビュー応答・検証修正履歴・実行条件を保存する。`calls/`はローカル診断用でGitへ追加しない。`report`は保存済みの本文・入力のハッシュとレビュー構造を検証し、生成本文やレビュー応答を書き換えずに表示を再生成する。
+
+これは既存結果を見た後に設計した事後評価で、旧採点から方式・モデル・推論量も変えている。旧採点との差を方式だけの効果とは呼ばない。単一モデルの批判的レビューにも誤りはあり、引用が一致することだけで指摘の妥当性は確定しない。判定数は比較の入口とし、具体的な本文と指摘から結果を読む。

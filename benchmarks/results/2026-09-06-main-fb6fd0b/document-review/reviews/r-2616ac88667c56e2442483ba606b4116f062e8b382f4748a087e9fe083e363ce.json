@@ -1,0 +1,37 @@
+{
+  "reviewId": "r-2616ac88667c56e2442483ba606b4116f062e8b382f4748a087e9fe083e363ce",
+  "inputHash": "2616ac88667c56e2442483ba606b4116f062e8b382f4748a087e9fe083e363ce",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "運用チーム向けの短いポストモーテム",
+        "status": "usable",
+        "summary": "検知・対応・復旧確認、影響、改善行動の担当と期限を把握できます。原因は未確定であることが明示され、原資料に忠実です。",
+        "strengths": [
+          "検知、加藤によるロールバック、復旧確認の時刻を区別しています。",
+          "検索失敗340件と決済への影響なしを明確に記載しています。",
+          "原因仮説と確認状況を区別し、改善課題の番号・担当・期限を示しています。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "ログ確認結果と、DB接続枯渇が原因であるかの検証結果",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "ただし、ログ確認は未完了のため、現時点では未確定です。",
+            "consequence": "原因の確定には追加確認が必要ですが、現時点の経過と改善行動を共有する用途には使えます。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6166,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 453,
+        "reasoning_output_tokens": 152
+      },
+      "elapsedMs": 19333,
+      "validationErrors": null
+    }
+  ]
+}

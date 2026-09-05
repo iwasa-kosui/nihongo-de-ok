@@ -1,0 +1,48 @@
+{
+  "reviewId": "r-9454f65b2f0e29ca48b4c745bf320ef419e13920c214b61d32799670c0b58cc3",
+  "inputHash": "9454f65b2f0e29ca48b4c745bf320ef419e13920c214b61d32799670c0b58cc3",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "将来の保守者が、請求書PDF生成の非同期化について採用判断・理由・比較対象・影響を再構成するためのADR。",
+        "status": "revision_needed",
+        "summary": "採用判断と同期生成を却下した理由は把握できる。ただし、原資料にない状態確認・PDF取得方式を採用済みの仕様として記しており、判断の範囲を明確にする修正が必要。",
+        "strengths": [
+          "採用日、キューによる非同期処理、APIが受付IDを返すという決定を明示している。",
+          "同期生成の最大45秒という処理時間と接続切断の問題、非同期化による利用者の待ち時間を説明している。",
+          "再試行上限を未決定として扱い、作業進捗と採用判断を混同していない。"
+        ],
+        "findings": [
+          {
+            "severity": "major",
+            "kind": "claim",
+            "basis": "source",
+            "excerpt": "利用者および呼び出し側は、受付IDを使って生成状況や結果を確認し、完成後にPDFを取得する。",
+            "source_excerpt": "請求書のPDF生成はキューで処理し、APIは受付IDを返す。",
+            "finding": "原資料が確定しているのは受付IDを返すことまでであり、そのIDで生成状況や結果を確認する方式は記載されていない。「決定」内の記述と「保守時の注意」によって、この方式まで採用済みの制約として追加されている。",
+            "impact": "将来の保守者が、状態確認・取得方式もこのADRで決定されたと誤認し、変更時に不要な制約を引き継ぐ。",
+            "suggested_change": "状態確認・取得方式に関する断定と、それを前提とした保守上の指示を除くか、今回の決定範囲外であると明示する。具体的な方式の追記は不要。"
+          }
+        ],
+        "source_gaps": [
+          {
+            "missing_information": "生成ジョブの再試行回数の上限。",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "生成ジョブの再試行回数の上限は、2026-08-20時点で未決定である。",
+            "consequence": "再試行設定の確定には別途判断が必要だが、非同期化の採用判断を理解する用途は妨げない。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6389,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 944,
+        "reasoning_output_tokens": 304
+      },
+      "elapsedMs": 35029,
+      "validationErrors": null
+    }
+  ]
+}

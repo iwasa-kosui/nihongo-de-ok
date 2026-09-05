@@ -1,0 +1,29 @@
+{
+  "reviewId": "r-7135b4df754605f13dafced69d004cdce11e72ee1e63fd161a6b716525ad74c4",
+  "inputHash": "7135b4df754605f13dafced69d004cdce11e72ee1e63fd161a6b716525ad74c4",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "社員に領収書の通常の提出方法と例外条件を伝え、既存の正本へ案内する。",
+        "status": "usable",
+        "summary": "参照先、通常のPDF添付、個別に求められた場合だけの原本提出が明確で、そのまま案内に使えます。",
+        "strengths": [
+          "正本のURLと「領収書の提出」節を明示している。",
+          "通常の提出方法と原本提出が必要な例外条件を、原資料どおりに区別している。",
+          "新しいFAQや未記載の操作手順を追加せず、簡潔な案内に留めている。"
+        ],
+        "findings": [],
+        "source_gaps": []
+      },
+      "usage": {
+        "input_tokens": 6010,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 247,
+        "reasoning_output_tokens": 47
+      },
+      "elapsedMs": 12230,
+      "validationErrors": null
+    }
+  ]
+}

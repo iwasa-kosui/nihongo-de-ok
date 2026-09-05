@@ -1,0 +1,37 @@
+{
+  "reviewId": "r-7361274bb5279653c1a7a5eff3862baca947205653c514e3d02cd4d339ffe134",
+  "inputHash": "7361274bb5279653c1a7a5eff3862baca947205653c514e3d02cd4d339ffe134",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "実装者向けのファイル取込Design Doc",
+        "status": "source_limited",
+        "summary": "通常時の構成・データフロー、保存失敗時の動作、不採用案の理由を理解できる。本文に重大な欠陥はないが、キュー登録失敗時の回復処理は資料でも未決定であり、その実装には追加決定が必要。",
+        "strengths": [
+          "API、オブジェクトストレージ、キュー、ワーカー、DBの役割と処理順序が明確。",
+          "保存失敗時の503応答とキュー登録の禁止、登録失敗時の未決定事項を区別している。",
+          "ファイル本体をキューに載せない理由と、非同期化による結果提示の遅延を正確に説明している。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "キュー登録失敗時の回復方法。",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "キューへの登録に失敗した場合の回復方法は未決定である。",
+            "consequence": "保存済みだがキューに登録されていないファイルの扱いを確定できず、この失敗経路の実装には追加の設計判断が必要。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6340,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 571,
+        "reasoning_output_tokens": 223
+      },
+      "elapsedMs": 23205,
+      "validationErrors": null
+    }
+  ]
+}

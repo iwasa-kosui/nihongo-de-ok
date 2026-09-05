@@ -4,6 +4,7 @@
 .claude/settings.local.json
 # Generated call diagnostics; parsed outputs and judgments remain reviewable.
 benchmarks/results/*/calls/
+benchmarks/results/*/document-review/calls/
 logs
 *.log
 npm-debug.log*

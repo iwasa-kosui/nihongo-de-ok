@@ -1,0 +1,29 @@
+{
+  "reviewId": "r-25338857f146bf9387c47e7e174e3f7c372f1ccdd8945d2ec8285c82aa2143f5",
+  "inputHash": "25338857f146bf9387c47e7e174e3f7c372f1ccdd8945d2ec8285c82aa2143f5",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "CS担当が、請求画面への移動時の通常動作と認証期限切れの例外を利用者に説明する。",
+        "status": "usable",
+        "summary": "既存の認証で請求画面へ移動でき、通常は再ログイン不要であることと、認証期限切れ時の例外が明確です。CS向けの仕様説明として利用できます。",
+        "strengths": [
+          "通常動作と認証期限切れ時の例外を分けて説明しています。",
+          "正式名称ではない造語を除き、利用者に伝えやすい具体的な表現にしています。",
+          "資料にない認証方式や実装の詳細を付け加えていません。"
+        ],
+        "findings": [],
+        "source_gaps": []
+      },
+      "usage": {
+        "input_tokens": 6023,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 370,
+        "reasoning_output_tokens": 162
+      },
+      "elapsedMs": 15868,
+      "validationErrors": null
+    }
+  ]
+}

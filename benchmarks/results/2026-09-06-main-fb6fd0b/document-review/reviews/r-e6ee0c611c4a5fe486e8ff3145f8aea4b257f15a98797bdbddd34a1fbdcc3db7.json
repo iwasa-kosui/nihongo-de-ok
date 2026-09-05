@@ -1,0 +1,28 @@
+{
+  "reviewId": "r-e6ee0c611c4a5fe486e8ff3145f8aea4b257f15a98797bdbddd34a1fbdcc3db7",
+  "inputHash": "e6ee0c611c4a5fe486e8ff3145f8aea4b257f15a98797bdbddd34a1fbdcc3db7",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "定例の議事録を新たに残す必要があるか判断するための回答",
+        "status": "usable",
+        "summary": "新たな議事録は不要という結論と、原資料に基づく理由が明確で、依頼者の判断に使える。",
+        "strengths": [
+          "開催前の中止、議論・決定・宿題がないこと、中止連絡済みという事実を正確に反映している。",
+          "議事録を残さないという結論を冒頭で明示し、不要な文書作成を促していない。"
+        ],
+        "findings": [],
+        "source_gaps": []
+      },
+      "usage": {
+        "input_tokens": 5947,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 236,
+        "reasoning_output_tokens": 56
+      },
+      "elapsedMs": 12480,
+      "validationErrors": null
+    }
+  ]
+}

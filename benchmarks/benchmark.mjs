@@ -110,7 +110,7 @@ export function parseEvents(stdout) {
   return usage;
 }
 
-async function disabledSkills() {
+export async function disabledSkills() {
   const found = new Set();
   const visited = new Set();
   async function walk(path) {
@@ -139,7 +139,7 @@ export function codexArgs({ model, effort, workspace, instructions, schema, outp
     "--output-schema", schema, "--output-last-message", output, "--json", "-"];
 }
 
-async function callModel({ model, effort, prompt, schema, instructionFile, prefix, timeout, skills }) {
+export async function callModel({ model, effort, prompt, schema, instructionFile, prefix, timeout, skills }) {
   // The candidate has an empty working directory and receives only this prompt.
   const workspace = await mkdtemp(join(tmpdir(), "nihongo-benchmark-"));
   const output = join(workspace, "response.json");
@@ -180,7 +180,7 @@ export async function measure(c, response, path) {
 }
 
 async function exists(path) { try { await readFile(path); return true; } catch (e) { if (e.code === "ENOENT") return false; throw e; } }
-async function pool(items, jobs, task) {
+export async function pool(items, jobs, task) {
   let next = 0, failed;
   await Promise.all(Array.from({ length: jobs }, async () => {
     while (!failed && next < items.length) {

@@ -1,0 +1,58 @@
+{
+  "reviewId": "r-bcd738ee29ed947849dcf616a75109466a0da81d6284f2f878eeb02e2c36de29",
+  "inputHash": "bcd738ee29ed947849dcf616a75109466a0da81d6284f2f878eeb02e2c36de29",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "当番向け本番キャッシュ再起動Runbookの草稿",
+        "status": "source_limited",
+        "summary": "未決定事項と実行不可の範囲を把握する草稿として使える。本番作業の開始、再起動、復旧判定、連絡には原資料の補完が必要。",
+        "strengths": [
+          "原資料にないコマンドや条件を創作していない。",
+          "現時点では実行できず、作業を開始しないことを明示している。",
+          "復旧を判断できないことと連絡先の未決定を明示している。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "再起動コマンド",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "再起動コマンドは未決定のため、現時点では実行できない。",
+            "consequence": "当番は再起動操作を実行できない。"
+          },
+          {
+            "missing_information": "停止してよい条件",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "停止してよい条件は未決定のため、作業を開始しない。",
+            "consequence": "エラー検知だけでは本番キャッシュを停止してよいか判断できず、作業を開始できない。"
+          },
+          {
+            "missing_information": "復旧確認方法",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "確認方法は未決定のため、復旧を判断できない。",
+            "consequence": "再起動後に復旧したかを判定できない。"
+          },
+          {
+            "missing_information": "連絡先",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "連絡先は未決定。",
+            "consequence": "この草稿からは、実施可否の相談や未復旧時の連絡先を特定できない。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6044,
+        "cached_input_tokens": 2944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 656,
+        "reasoning_output_tokens": 146
+      },
+      "elapsedMs": 25832,
+      "validationErrors": null
+    }
+  ]
+}

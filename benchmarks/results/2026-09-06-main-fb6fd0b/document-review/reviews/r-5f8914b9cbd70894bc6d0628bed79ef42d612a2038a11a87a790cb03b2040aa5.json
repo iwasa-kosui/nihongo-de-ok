@@ -1,0 +1,29 @@
+{
+  "reviewId": "r-5f8914b9cbd70894bc6d0628bed79ef42d612a2038a11a87a790cb03b2040aa5",
+  "inputHash": "5f8914b9cbd70894bc6d0628bed79ef42d612a2038a11a87a790cb03b2040aa5",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "担当チーム向けに、完了事項・未完了事項・次の作業と、必要な判断の主体・期限を共有する進捗報告。",
+        "status": "usable",
+        "summary": "原資料に忠実で、実装済みとレビュー待ちを区別でき、作業停止の理由とPdMへの判断依頼・期限も明確です。",
+        "strengths": [
+          "対象期間、担当者、BILL-218、PR #106が明記され、進捗を追跡できます。",
+          "次の作業である再試行処理と、最大回数の未決定による停止状況が対応しています。",
+          "判断事項・依頼先・期限が一文で示されています。"
+        ],
+        "findings": [],
+        "source_gaps": []
+      },
+      "usage": {
+        "input_tokens": 6041,
+        "cached_input_tokens": 2944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 277,
+        "reasoning_output_tokens": 67
+      },
+      "elapsedMs": 14104,
+      "validationErrors": null
+    }
+  ]
+}

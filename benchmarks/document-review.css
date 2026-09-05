@@ -1,0 +1,21 @@
+.review { padding: 8px 24px 24px; font-size: 14px; overflow-wrap: anywhere; }
+.review h4 { margin: 24px 0 10px; font-size: 16px; }
+.review h5 { font-size: 14px; margin: 0 0 12px; }
+.intended, .perspective { color: #586b64; font-size: 13px; }
+.status { display: block; margin-top: 4px; font-size: 13px; }
+.usable { color: #32604b; }
+.revision_needed { color: #954816; }
+.source_limited { color: #70602e; }
+.artifact { border-bottom: 1px solid #e4e8e1; }
+.artifact > summary { padding: 14px 24px; }
+.finding { padding: 16px; margin: 16px 0; border: 1px solid #e5d9cf; border-left: 4px solid #bc7645; border-radius: 5px; background: #fffcf8; }
+.finding.minor { border-left-color: #8b9992; background: #f9fbf8; }
+.finding.critical { border-left-color: #a33f32; }
+.finding h5 span { display: inline-block; color: #875331; }
+.finding .basis, .quote-label { font-size: 12px; color: #69746b; margin-bottom: 6px; }
+.exact { white-space: pre-wrap; font-size: 13px; line-height: 1.85; margin-top: 6px; overflow-wrap: anywhere; }
+.source-gap { background: #f6f5ed; padding: 16px; margin: 16px 0; border: 1px solid #dfdecf; border-radius: 5px; }
+.source-gap p { font-size: 13px; }
+.method { font-size: 13px; margin: 14px 0; max-width: 1000px; }
+.shared { padding: 10px 14px; background: #e8f0e9; font-size: 13px; }
+@media (max-width: 760px) { .review { padding: 6px 18px 18px; } .finding, .source-gap { padding: 14px; } }

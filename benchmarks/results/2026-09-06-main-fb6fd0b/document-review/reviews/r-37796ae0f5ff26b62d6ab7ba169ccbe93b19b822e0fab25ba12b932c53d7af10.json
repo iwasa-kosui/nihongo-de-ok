@@ -1,0 +1,29 @@
+{
+  "reviewId": "r-37796ae0f5ff26b62d6ab7ba169ccbe93b19b822e0fab25ba12b932c53d7af10",
+  "inputHash": "37796ae0f5ff26b62d6ab7ba169ccbe93b19b822e0fab25ba12b932c53d7af10",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "社員に既存の正本を案内し、領収書の通常の提出方法と例外条件を伝える。",
+        "status": "usable",
+        "summary": "参照先、通常のPDF添付、個別に求められた場合のみの原本提出が明確で、そのまま案内に使えます。",
+        "strengths": [
+          "通常の提出先と形式が、経費システムへのPDF添付と明示されています。",
+          "原本提出の例外条件が、経理から個別に求められた場合だけに限定されています。",
+          "新しいFAQを増やさず、内容の分かるリンクで既存の正本へ案内しています。"
+        ],
+        "findings": [],
+        "source_gaps": []
+      },
+      "usage": {
+        "input_tokens": 5998,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 286,
+        "reasoning_output_tokens": 85
+      },
+      "elapsedMs": 14253,
+      "validationErrors": null
+    }
+  ]
+}

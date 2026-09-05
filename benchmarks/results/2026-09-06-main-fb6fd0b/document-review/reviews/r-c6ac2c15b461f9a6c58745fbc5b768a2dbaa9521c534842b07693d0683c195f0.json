@@ -1,0 +1,55 @@
+{
+  "reviewId": "r-c6ac2c15b461f9a6c58745fbc5b768a2dbaa9521c534842b07693d0683c195f0",
+  "inputHash": "c6ac2c15b461f9a6c58745fbc5b768a2dbaa9521c534842b07693d0683c195f0",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "運用チーム向けの短いポストモーテム",
+        "status": "revision_needed",
+        "summary": "対応経過、影響、原因仮説、改善の担当・期限は把握できます。ただし、検知から復旧確認までの時間帯を障害の発生期間として示しており、修正が必要です。",
+        "strengths": [
+          "ロールバックと復旧確認の時刻を区別し、対応者も明示しています。",
+          "検索失敗340件と決済への影響なしを正確に記載しています。",
+          "原因を未確定の仮説として扱い、改善課題の番号・担当・期限を明示しています。"
+        ],
+        "findings": [
+          {
+            "severity": "major",
+            "kind": "claim",
+            "basis": "source",
+            "excerpt": "- **発生日時:** 8月19日 09:10〜09:22",
+            "source_excerpt": "8月19日09:10に請求検索のエラー増加を検知。09:17に当番の加藤が直前の変更を戻し、09:22に復旧を確認。",
+            "finding": "資料が示す検知時刻と復旧確認時刻を、障害の発生期間として表示しています。実際の発生時刻や復旧した瞬間は資料から確定できません。",
+            "impact": "障害の継続時間が12分だった、または発生直後に検知できたと誤認し、影響時間や検知性能の評価を誤るおそれがあります。",
+            "suggested_change": "見出しを「検知〜復旧確認」に変更し、実際の障害継続時間を確定した表現にしないでください。"
+          }
+        ],
+        "source_gaps": [
+          {
+            "missing_information": "実際の障害発生時刻と復旧時刻",
+            "blocks_use": false,
+            "handled_appropriately": false,
+            "excerpt": "- **発生日時:** 8月19日 09:10〜09:22",
+            "consequence": "正確な障害継続時間は算出できませんが、検知・復旧確認の時刻として示せば経過共有には使えます。"
+          },
+          {
+            "missing_information": "ログ確認の結果と原因仮説を検証する証拠",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "- **原因:** DB接続枯渇が原因と推測。ログ確認は未完了で、確定には至っていない",
+            "consequence": "原因の確定はできませんが、本文はその限界を明示しており、暫定的なポストモーテムとして共有できます。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6159,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1092,
+        "reasoning_output_tokens": 409
+      },
+      "elapsedMs": 37566,
+      "validationErrors": null
+    }
+  ]
+}
