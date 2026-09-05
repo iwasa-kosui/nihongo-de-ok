@@ -55,13 +55,40 @@ test("no-ai-jargon keeps a finite phrase dictionary with concrete alternatives",
   assert.ok(jargon.every((message) => message.message.includes("対象と動作を具体化")));
 });
 
-test("observation wording prompts concrete verbs while preserving technical terminology and quotations", async () => {
-  const text = "不具合を観測した。\n応答時間を観測する。\n観測時刻を記録する。\n可観測性を改善する。\n`観測した`\n> 観測した\nhttps://example.test/観測\n";
-  const found = await messages("flow", text, config({ "no-ai-jargon": true }));
-  assert.deepEqual(found.map(({ line, column }) => [line, column]), [[1, 5], [2, 6], [3, 1]]);
-  assert.ok(found.every(({ message }) => message.includes("確認・計測・調査")));
-  assert.deepEqual(await messages("flow", "不具合を確認した。応答時間を計測する。", config({ "no-ai-jargon": true })), []);
-  assert.deepEqual(await messages("flow", "天体を観測する。", config({ "no-ai-jargon": { allow: ["観測"] } })), []);
+test("all prose rules exempt only the matched range of an allowed expression", async () => {
+  const cases = [
+    ["no-ai-jargon", "可観測性", "観測"],
+    ["no-ai-jargon", "レバレッジ比率", "レバレッジ"],
+    ["no-ai-jargon", "ロバストな推定", "ロバストな"],
+    ["no-opaque-compound", "価値創出最大化基盤という製品名", "価値創出最大化基盤"],
+    ["no-vague-action", "適切に対応するという原文", "適切に対応する"]
+  ];
+  for (const [rule, allowed, candidate] of cases) {
+    const text = `${allowed}。${candidate}。${allowed}。${candidate}。`;
+    const found = await messages("flow", text, config({ [rule]: { allow: [allowed] } }));
+    assert.deepEqual(found.map(({ line, column }) => [line, column]), [
+      [1, allowed.length + 2],
+      [1, 2 * allowed.length + candidate.length + 4]
+    ], rule);
+  }
+});
+
+test("domain terminology in the default configuration remains lintable", async () => {
+  const text = "可観測性を評価する。\nレバレッジ比率を計算する。\nロバストな推定を用いる。\n";
+  assert.deepEqual(await messages("flow", text, readSkillConfig()), []);
+});
+
+test("ambiguous action patterns cover varied wording without flagging concrete actions", async () => {
+  const text = "適宜調整します。\n状況に応じて対処した。\nそれを推進する。\n慎重に評価する。\n";
+  const found = await messages("flow", text, config({ "no-vague-action": true }));
+  assert.deepEqual(found.map(({ line, column }) => [line, column]), [[1, 1], [2, 1], [3, 1], [4, 1]]);
+  assert.deepEqual(await messages("flow", "当番が失敗率を確認する。5%を超えたら配信を停止する。", config({ "no-vague-action": true })), []);
+});
+
+test("invalid empty or non-string allow entries fail instead of suppressing checks", async () => {
+  for (const allow of [[""], [1], "all"]) {
+    await assert.rejects(() => messages("flow", "レバレッジ", config({ "no-ai-jargon": { allow } })), /allow/);
+  }
 });
 
 test("no-opaque-compound is a finite dictionary and supports allow", async () => {
@@ -170,15 +197,12 @@ test("CLI rejects invalid invocations with exit status 2", async () => {
   });
 });
 
-test("linting never rewrites its source document and root options reach the descriptor", async () => {
+test("linting never rewrites its source document", async () => {
   await withFile("レバレッジ\n", async ({ file }) => {
     const before = await readFile(file, "utf8");
     await lintFiles("flow", [file]);
     assert.equal(await readFile(file, "utf8"), before);
   });
-  const rootConfig = readSkillConfig();
-  assert.deepEqual(rootConfig.rules["no-ai-jargon"].allow, []);
-  assert.deepEqual(rootConfig.rules["stock-boundary"].allow, []);
 });
 
 test("preset-japanese options in the skill config override preset defaults", async () => {

@@ -1,32 +1,10 @@
-const PATTERNS = [
-  [/適切に対応(?:する|します|し(?:た|て|ない|ます))/, "何をどの基準で対応するか"],
-  [/適切に実施(?:する|します|し(?:た|て|ない|ます))/, "誰が何をどの手順で実施するか"],
-  [/これを実施(?:する|します|し(?:た|て|ない|ます))/, "「これ」が指す対象"],
-  [/必要に応じて対応(?:する|します|し(?:た|て|ない|ます))/, "対応の条件と担当者"],
-  [/十分に検討(?:する|します|し(?:た|て|ない|ます))/, "検討項目と判断基準"]
+import { phraseRule } from "./lib/phrase-rule.mjs";
+
+const actionEnding = "(?:する|します|した|して|しない)";
+const expressions = [
+  [new RegExp(`(?:適切に|適宜|必要に応じて|状況に応じて)(?:対応|対処|実施|調整)${actionEnding}`), "実施条件、判断基準、担当者と動作"],
+  [new RegExp(`(?:これ|それ|本件|当該事項)を(?:実施|推進)${actionEnding}`), "指示語が指す対象と、実際に行うこと"],
+  [new RegExp(`(?:十分に|慎重に)(?:検討|評価)${actionEnding}`), "検討項目と判断基準"]
 ];
 
-function nonUrlMatches(text, pattern) {
-  const matches = [];
-  const expression = new RegExp(pattern.source, `${pattern.flags.replace("g", "")}g`);
-  for (const match of text.matchAll(expression)) {
-    if (/https?:\/\/[^\s<>]*$/.test(text.slice(0, match.index))) continue;
-    matches.push(match);
-  }
-  return matches;
-}
-export default function noVagueAction(context, options = {}) {
-  const allow = new Set(options.allow ?? []);
-  const { Syntax, getSource, report, RuleError, locator } = context;
-  let quoteDepth = 0;
-  return { [Syntax.BlockQuote]() { quoteDepth += 1; }, [Syntax.BlockQuoteExit]() { quoteDepth -= 1; }, [Syntax.Code]() {}, [Syntax.Str](node) {
-    if (quoteDepth > 0) return;
-    const text = getSource(node);
-    for (const [pattern, detail] of PATTERNS) {
-      for (const match of nonUrlMatches(text, pattern)) {
-        if (allow.has(pattern.source) || allow.has(match[0])) continue;
-        report(node, new RuleError(`曖昧な動作です。${detail}を具体化してください。`, { padding: locator.range([match.index, match.index + match[0].length]) }));
-      }
-    }
-  }};
-}
+export default phraseRule(expressions, (suggestion) => `曖昧な動作の候補です。${suggestion}を具体化してください。`);
