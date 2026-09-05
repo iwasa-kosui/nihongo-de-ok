@@ -1,10 +1,8 @@
 # スキルあり／なしの執筆ベンチマーク
 
-[PR #1](https://github.com/iwasa-kosui/nihongo-de-ok/pull/1) の執筆指示が出力に与える効果を比較する。[評価の要点と採点の照合メモ](findings.md)、[実測結果](results/2026-09-06-luna/report.md)を参照。全出力と判定理由へのリンクを残している。
+`origin/main`の日本語執筆スキルを、同じ課題・モデル・修正上限で比較する。[評価の要点と採点の照合メモ](findings.md)、[実測結果](results/2026-09-06-main-fb6fd0b/report.md)を参照。全出力と判定理由へのリンクを残している。
 
-主結果は更新版`3a8c676`を対象とする。実行中にPRが更新されたため、最初の`fa2db16`を対象とした結果も[旧版の参考結果](results/2026-09-06-luna-fa2db16/report.md)として保存した。更新版でも同じ10課題・同じ基準を使い、両条件を新たに生成・採点する。版による差には生成と採点の揺れも含まれる。
-
-結果作成中に追加された`d3730fa`（箇条書きの構造化）は未評価。保存結果を現在のPR先頭の評価と混同しない。
+保存結果は、再評価開始時に取得した`origin/main`の`fb6fd0b085bcd2b03ea8381709ae36d5f95d437e`を対象とする。両条件の40出力と20件の採点を新たに実行した。過去の評価ファイルは削除し、この結果だけを保存する。
 
 ## 比較するもの
 
@@ -41,39 +39,46 @@
 
 意味の採点は単一LLMの判定であり、誤判定を含み得る。`judgments/`に各合否の理由を残す。併せて、型を指定したlint、本文文字数、見出し数、部分修正の完全一致を機械的に計測する。lint合格や短さだけで意味の正しさを判定しない。
 
+
+再評価でも課題・採点基準は固定した。ADR課題は「再試行上限が未決定」を本文に残すことを求めるが、最新スキルは判断を左右しない後続の詳細設計をADRから分ける。この基準と方針の差による不合格を、直ちに品質の回帰と見なさない。また、最新の箇条書き・表セル・見出しと論旨に関する全要件を、この10課題で網羅するものではない。表セル長は最新版のlintで両条件とも検査する。
+
 ## 実行
 
 Node.js 22以上、依存関係、認証済みのCodex CLIを用意する。実測時のCLIは0.150.1。モデル名は環境で使えるものを明示し、利用できない場合に別モデルへ自動変更しない。実行はアカウントのモデル利用枠を消費する。`npm test`と`--dry-run`はモデルを呼ばない。
 
 ```sh
+# 取得したorigin/mainの内容を取り込んだcheckoutで実行する
+git fetch origin main
 npm ci
 npm test
 
 # 入力、参照資料、実行順の検証だけ
 npm run benchmark -- run --out /tmp/nihongo-bench-new \
-  --model gpt-5.6-luna --judge-model gpt-5.6-terra --dry-run
+  --source-ref origin/main --model gpt-5.6-luna --judge-model gpt-5.6-terra --dry-run
 
 # 10課題 × 2反復 × 2条件。生成40〜80回、採点20回
 npm run benchmark -- run --out /tmp/nihongo-bench-new \
-  --model gpt-5.6-luna --judge-model gpt-5.6-terra \
+  --source-ref origin/main --model gpt-5.6-luna --judge-model gpt-5.6-terra \
   --repeats 2 --seed 20260906 --jobs 2
 
 # 同じ引数に--resumeを付けて再開する
 npm run benchmark -- run --out /tmp/nihongo-bench-new \
-  --model gpt-5.6-luna --judge-model gpt-5.6-terra \
+  --source-ref origin/main --model gpt-5.6-luna --judge-model gpt-5.6-terra \
   --repeats 2 --seed 20260906 --jobs 2 --resume
 
 # 保存済みの出力・判定・計測から再集計。モデル呼び出しなし
-npm run benchmark -- report --out benchmarks/results/2026-09-06-luna
+npm run benchmark -- report --out benchmarks/results/2026-09-06-main-fb6fd0b
 ```
+
+`--source-ref`は対象refをコミットへ解決し、生成に使うスキル・lintコード・設定・lockfileがそのコミットと一致するか検証する。不一致ならモデルを呼ばずに失敗する。再実行対象を同じ版に固定するには、`origin/main`の代わりに保存済みのコミットIDを指定する。
 
 `--cases adr-boundary,progress-retention`で課題を絞れる。`--effort`は生成側の推論量、評価側は`low`に固定。`--timeout`は呼び出しごとの秒数で、既定180秒。`CODEX_BIN`でCLIのパスを指定できる。`--seed`は課題の実行順だけを固定し、モデル出力の乱数seedではない。同じ設定でも結果は変わる。
 
-出力先は新しいディレクトリに限る。`--resume`では原資料、基準、スキル、lint、実行コード、主要設定のハッシュが一致しなければ拒否する。完了した出力と採点だけを再利用する。途中で失敗した出力は初稿から再実行し、失敗時の利用量は集計に含めない。本番結果では失敗・再開の有無を別途記録する。
+出力先は新しいディレクトリに限る。`--resume`では原資料、基準、スキル、lint、実行コード、主要設定のハッシュと対象ref・解決済みコミットが一致しなければ拒否する。完了した出力と採点だけを再利用する。途中で失敗した出力は初稿から再実行し、失敗時の利用量は集計に含めない。本番結果では失敗・再開の有無を別途記録する。
 
 ## 保存する証拠
 
-- `manifest.json`: 対象コミット、入力・コードのSHA-256、モデル、CLI版、実行順、反復数、実行設定。
+- `manifest.json`: 対象ref・コミット、入力・コードのSHA-256、モデル、CLI版、実行順、反復数、実行設定。
 - `cases.json` / `skill-snapshot.json`: 実行時の課題・基準・スキルの写し。
 - `records/`: 初稿と修正稿の本文・注記、lint指摘、文字数、トークン、時間、プロンプトのハッシュ。
 - `judgments/`: A/Bと条件の対応、評価モデルの全判定と理由、評価の利用量。

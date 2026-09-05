@@ -1,0 +1,65 @@
+{
+  "caseId": "adr-boundary",
+  "repeat": 2,
+  "mapping": {
+    "A": "with_skill",
+    "B": "without_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "本文に「採用」「2026-08-20」「キュー」「受付ID」、同期生成では最大45秒でAPI接続が切れること、利用者が完成まで待つ代償、再試行上限が未決定であることがすべてある。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "結果確認API・通知方法・再試行回数を追加しておらず、再試行上限も未決定のまま記載している。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文にはBILL-218、PR #106、進捗70%のいずれも含まれない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "キュー処理と受付ID返却を採用し、同期生成は45秒処理による接続切断のため不採用、完成待ちを代償として明示している。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "タイトルに加えて「背景」「決定」「結果」の章見出しを並べており、短い箇条書き等で済ませる条件を満たさない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "本文に採用日、キューによる非同期処理、受付ID、最大45秒の同期生成での接続切断、完成待ちの代償、再試行回数上限が未決定であることがある。"
+        },
+        "grounding": {
+          "pass": false,
+          "evidence": "原資料にない、受付IDを使った生成状況・結果の確認、完成後のPDF取得という後続処理を本文で創作している。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文にはBILL-218、PR #106、進捗70%を含めていない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "採用判断、同期生成を不採用とする理由、非同期化の代償が明確に対応している。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "多数の章見出しと「同期生成」の説明の反復があり、一段落または短い箇条書きで簡潔に済ませる条件を満たさない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 5401,
+      "cached_input_tokens": 1792,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 655,
+      "reasoning_output_tokens": 122
+    },
+    "elapsedMs": 25851
+  },
+  "promptHash": "b6d765ba0802baf0d87ccaa983925d7bcff1e917e9a766f63feca83be0aed450"
+}

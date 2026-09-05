@@ -1,0 +1,29 @@
+{
+  "id": "no-document.2.with_skill",
+  "caseId": "no-document",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "新たな議事録は残さない。定例は開催前に中止され、議論・決定・宿題がなく、中止連絡も参加者へ送信済みのため、議事録で後から追う情報がない。",
+        "notes": "成立段0：記録すべき情報がなく、新規文書を作成する必要がないため。"
+      },
+      "usage": {
+        "input_tokens": 10297,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 169,
+        "reasoning_output_tokens": 67
+      },
+      "elapsedMs": 6581,
+      "metrics": {
+        "characters": 68,
+        "headings": 0,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "41e34dda8328e9977c06da407aee8fe918c594cef4ea90150ba0841e255f05dc"
+    }
+  ]
+}

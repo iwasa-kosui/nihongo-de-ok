@@ -1,0 +1,65 @@
+{
+  "caseId": "design-tradeoff",
+  "repeat": 1,
+  "mapping": {
+    "A": "with_skill",
+    "B": "without_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "ストレージ保存→保存先のキュー登録→ワーカーの読込・解析→DB保存、保存失敗時の503・非登録、登録失敗回復の未決定、10MB対1MB、非同期化による結果確認の遅れを記載している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "キュー登録失敗の回復については未決定・別途決定とするにとどめ、再送や削除などを確定仕様として追加していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文にDATA-64、PR #203、今週の作業、担当者の追跡情報を含めていない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "ストレージ保存失敗時の503・キュー非登録と、キュー登録失敗時の回復未決定を明確に区別し、ファイル本体をキューに載せない理由も示している。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "必要な方式、失敗時動作、影響に絞られており、空の節や依頼外の実装計画はない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "必要な処理フロー、保存失敗時の503・キュー非登録、キュー登録失敗回復の未決定、10MBと1MBの制約、非同期化による結果提示の遅れを含む。"
+        },
+        "grounding": {
+          "pass": false,
+          "evidence": "保存失敗時のエラー記録・クライアント再試行、ジョブIDやメッセージ項目、状態取得API、削除・再送・再試行・隔離・冪等性など、資料にない仕様や回復策を多数追加している。"
+        },
+        "role": {
+          "pass": false,
+          "evidence": "本文の「進行状況」に今週のAPI実装および担当・佐藤を記載している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "保存失敗とキュー登録失敗を別節で扱い、前者の503・非登録と後者の回復未決定を区別している。ファイル本体方式を採らないサイズ上の理由も明確である。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "依頼外の詳細なメッセージ設計、運用・再試行設計、実装方針、進行状況を追加しており、必要論点に対して過剰である。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 6637,
+      "cached_input_tokens": 0,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 879,
+      "reasoning_output_tokens": 265
+    },
+    "elapsedMs": 19640
+  },
+  "promptHash": "51155cf43fba7b4441d94003bfb2ba0c5634482904351d0b339c3949a550c262"
+}

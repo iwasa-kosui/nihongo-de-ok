@@ -1,0 +1,65 @@
+{
+  "caseId": "plain-japanese",
+  "repeat": 1,
+  "mapping": {
+    "A": "with_skill",
+    "B": "without_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "既存の認証情報で請求画面へ移動でき、再ログイン不要、認証の有効期限切れの場合はログイン画面を表示する、という全確定事項を本文に含む。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "資料にない認証方式、自動更新、追加のエラー時動作を補っていない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "CSが利用者へそのまま説明できる仕様本文であり、書き換え手順は本文に含まれない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "抽象語を用いず、遷移条件とログイン画面の表示条件を具体的に記載している。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "一つの短い段落で、見出しや重複なく必要事項を伝えている。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "既存認証での請求画面への移動、再ログイン不要、有効期限切れ時のみログイン画面を表示する条件を本文に含む。"
+        },
+        "grounding": {
+          "pass": false,
+          "evidence": "「画面の案内に従ってログインしてください」は、資料にない案内の存在および追加の利用者対応を本文に加えている。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文はCSが利用者へ説明するための記述であり、書き換え手順は混在していない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "草稿の抽象表現を使わず、認証状態に応じた具体的な画面遷移を記載している。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "短い二段落で構成され、見出しの列挙や同内容の反復はない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 4853,
+      "cached_input_tokens": 3840,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 591,
+      "reasoning_output_tokens": 138
+    },
+    "elapsedMs": 15207
+  },
+  "promptHash": "90453ac6ba2770e8e7cb6c90bb1b4f4a72397243bfb69ecc010b37a3d2923968"
+}

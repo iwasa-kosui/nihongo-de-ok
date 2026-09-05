@@ -1,0 +1,29 @@
+{
+  "id": "no-document.2.without_skill",
+  "caseId": "no-document",
+  "repeat": 2,
+  "arm": "without_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "新たに議事録を残す必要はありません。\n\n議論・決定・宿題がなく、開催前に中止され、参加者への連絡も済んでいるためです。必要であれば、予定表や運営記録に「開催前に中止（参加者連絡済み）」と簡単に記録する程度で十分です。",
+        "notes": ""
+      },
+      "usage": {
+        "input_tokens": 2617,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 103,
+        "reasoning_output_tokens": 0
+      },
+      "elapsedMs": 5199,
+      "metrics": {
+        "characters": 108,
+        "headings": 0,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "5839b7abbd1c2fbdb46da6ea579d82684c2970f8a899e95e95fbb72f9c394f0e"
+    }
+  ]
+}

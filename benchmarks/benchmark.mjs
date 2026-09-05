@@ -15,6 +15,13 @@ const json = async (path) => JSON.parse(await text(path));
 const save = (path, value) => writeFile(path, JSON.stringify(value, null, 2) + "\n");
 export const hash = (value) => createHash("sha256").update(value).digest("hex");
 
+export function verifySourceSnapshot(sourceHashes, readSource) {
+  for (const [name, expected] of Object.entries(sourceHashes)) {
+    if (name.startsWith("benchmarks/")) continue;
+    if (hash(readSource(name)) !== expected) throw new Error(`Source revision does not match working tree: ${name}`);
+  }
+}
+
 async function ruleFiles(directory = "rules") {
   const names = [];
   for (const entry of await readdir(join(root, directory), { withFileTypes: true })) {
@@ -235,7 +242,7 @@ export async function report(out) {
   }, { input_tokens: 0, cached_input_tokens: 0, output_tokens: 0 });
   await save(join(out, "summary.json"), { summary, perCase, judgeUsage });
   const a = summary.without_skill, b = summary.with_skill;
-  const lines = ["# PR #1 執筆指示ベンチマーク", "", `実行開始: ${manifest.createdAt}。対象: ${manifest.skillRevision}。`, "", `生成: ${manifest.settings.model} / ${manifest.settings.effort}、評価: ${manifest.settings.judgeModel} / low。${cases.length}課題 × ${manifest.settings.repeats}反復 × 2条件。`, "", "| 指標 | スキルなし | スキルあり |", "|---|---:|---:|",
+  const lines = ["# 執筆指示ベンチマーク", "", `実行開始: ${manifest.createdAt}。対象: ${manifest.sourceRef ? `${manifest.sourceRef} / ` : ""}${manifest.skillRevision}。`, "", `生成: ${manifest.settings.model} / ${manifest.settings.effort}、評価: ${manifest.settings.judgeModel} / low。${cases.length}課題 × ${manifest.settings.repeats}反復 × 2条件。`, "", "| 指標 | スキルなし | スキルあり |", "|---|---:|---:|",
     `| 評価基準の合格数 | ${a.rubricPasses}/${a.rubricTotal} | ${b.rubricPasses}/${b.rubricTotal} |`,
     `| 全5基準合格の出力 | ${a.allCriteriaPass}/${a.n} | ${b.allCriteriaPass}/${b.n} |`,
     ...dimensions.map((d) => `| ${d} | ${a.criterionPasses[d]}/${a.n} | ${b.criterionPasses[d]}/${b.n} |`),
@@ -258,7 +265,7 @@ export async function report(out) {
 function options(argv) {
   const [command, ...args] = argv;
   const o = { command, repeats: 2, seed: "20260906", jobs: 2, timeout: 180, effort: "low", resume: false, dryRun: false };
-  const names = { "--out": "out", "--model": "model", "--judge-model": "judgeModel", "--repeats": "repeats", "--seed": "seed", "--jobs": "jobs", "--timeout": "timeout", "--effort": "effort", "--cases": "caseIds" };
+  const names = { "--out": "out", "--model": "model", "--judge-model": "judgeModel", "--repeats": "repeats", "--seed": "seed", "--jobs": "jobs", "--timeout": "timeout", "--effort": "effort", "--cases": "caseIds", "--source-ref": "sourceRef" };
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--resume") o.resume = true;
     else if (args[i] === "--dry-run") o.dryRun = true;
@@ -287,7 +294,12 @@ async function run(o) {
   const settings = { model: o.model, judgeModel: o.judgeModel, effort: o.effort, repeats: o.repeats, seed: o.seed, jobs: o.jobs, timeout: o.timeout, maxLintRevisions: 1 };
   const plan = makePlan(cases, o.repeats, o.seed);
   const contexts = Object.fromEntries(cases.map((c) => [c.id, skillContext(c, files)]));
-  const specification = { settings, sourceHashes, caseIds: cases.map((c) => c.id), plan };
+  let sourceRevision = null;
+  if (o.sourceRef) {
+    sourceRevision = execFileSync("git", ["-C", root, "rev-parse", "--verify", "--end-of-options", `${o.sourceRef}^{commit}`], { encoding: "utf8" }).trim();
+    verifySourceSnapshot(sourceHashes, (name) => execFileSync("git", ["-C", root, "show", `${sourceRevision}:${name}`]));
+  }
+  const specification = { settings, sourceHashes, sourceRef: o.sourceRef ?? null, sourceRevision, caseIds: cases.map((c) => c.id), plan };
   if (o.dryRun) { console.log(JSON.stringify(specification, null, 2)); return; }
   const skills = await disabledSkills();
   const fingerprint = hash(JSON.stringify(specification));
@@ -300,7 +312,7 @@ async function run(o) {
     await mkdir(o.out); // Refuse overwrite, even for a partially initialized run.
     await save(manifestPath, {
       createdAt: new Date().toISOString(), fingerprint, ...specification,
-      skillRevision: execFileSync("git", ["-C", root, "log", "-1", "--format=%H", "--", "SKILL.md", "references", "rules", "scripts/lint.mjs", ".textlintrc.json", "package-lock.json"], { encoding: "utf8" }).trim(),
+      skillRevision: sourceRevision ?? execFileSync("git", ["-C", root, "log", "-1", "--format=%H", "--", "SKILL.md", "references", "rules", "scripts/lint.mjs", ".textlintrc.json", "package-lock.json"], { encoding: "utf8" }).trim(),
       checkoutRevision: execFileSync("git", ["-C", root, "rev-parse", "HEAD"], { encoding: "utf8" }).trim(),
       skillWorktreeDirty: Boolean(execFileSync("git", ["-C", root, "status", "--porcelain", "--", "SKILL.md", "references", "rules", "scripts/lint.mjs", ".textlintrc.json", "package-lock.json"], { encoding: "utf8" }).trim()),
       codexVersion: execFileSync(process.env.CODEX_BIN || "codex", ["--version"], { encoding: "utf8" }).trim(),

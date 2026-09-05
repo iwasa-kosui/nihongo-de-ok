@@ -1,0 +1,29 @@
+{
+  "id": "surgical-edit.1.with_skill",
+  "caseId": "surgical-edit",
+  "repeat": 1,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 配信の確認\n\n当番は監視画面を開く。\n成功件数と失敗件数を確認する。\n失敗率が7%を超えたら当番が配信を停止する。",
+        "notes": "段2（既存手順の該当箇所のみ改稿）。検査は未実施。"
+      },
+      "usage": {
+        "input_tokens": 10337,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 147,
+        "reasoning_output_tokens": 51
+      },
+      "elapsedMs": 6182,
+      "metrics": {
+        "characters": 59,
+        "headings": 1,
+        "lint": [],
+        "exactEdit": true
+      },
+      "promptHash": "d520abb5f71df1888bf98959b1b9f1102bebaefb272b8b7bd54cab7fe1ef4f1c"
+    }
+  ]
+}

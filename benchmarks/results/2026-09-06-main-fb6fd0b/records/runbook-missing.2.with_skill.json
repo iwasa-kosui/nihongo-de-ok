@@ -1,0 +1,29 @@
+{
+  "id": "runbook-missing.2.with_skill",
+  "caseId": "runbook-missing",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 本番キャッシュ再起動手順（草稿）\n\n## 実施条件\n監視でエラーを検知した場合に、キャッシュを再起動する。\n\n## 手順\n再起動コマンドは未決定のため、現時点では実行できない。\n\n## 復旧確認\n確認方法は未決定のため、復旧を判断できない。\n\n## 停止条件\n停止してよい条件は未決定のため、作業を開始しない。\n\n## 連絡先\n連絡先は未決定。",
+        "notes": "採用段: 3。資料だけでは当番が安全に実行できるRunbookの必須情報（前提、確認、停止条件、連絡先）が不足しているため、未決定事項を補わず草稿とした。textlintは未実行。"
+      },
+      "usage": {
+        "input_tokens": 10302,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 304,
+        "reasoning_output_tokens": 84
+      },
+      "elapsedMs": 8942,
+      "metrics": {
+        "characters": 174,
+        "headings": 6,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "b0cda18afe4894dd617d4483924cb84ef2ec940ce2b97eb3cea3fa883891ed0c"
+    }
+  ]
+}

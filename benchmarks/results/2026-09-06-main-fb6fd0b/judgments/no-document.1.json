@@ -1,0 +1,65 @@
+{
+  "caseId": "no-document",
+  "repeat": 1,
+  "mapping": {
+    "A": "with_skill",
+    "B": "without_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "開催前中止、議論・決定・宿題なしを理由としている。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "開催会議・参加者・次回予定・規程を創作していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "議事録は残さないと判断し、新規の議事録本文やひな型を作成していない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "「新たな議事録は残さない」と理由が直接示されている。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "本文が結論文と理由文の二文であり、一文という条件を満たさない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "開催前中止および議論・決定・宿題なしを理由としている。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "開催された会議、参加者、次回予定、規程を創作していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "新たな議事録は不要と結論づけ、議事録本文やひな型を新規作成していない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "新たに議事録を残す必要がない結論と理由が明確である。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "複数文であり、既存記録への追記という追加手順も含む。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 4717,
+      "cached_input_tokens": 3840,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 446,
+      "reasoning_output_tokens": 86
+    },
+    "elapsedMs": 12148
+  },
+  "promptHash": "657d03d01edd35321943d8233c4aef3aa462bf507b35fd062ba5307e4eb56c65"
+}

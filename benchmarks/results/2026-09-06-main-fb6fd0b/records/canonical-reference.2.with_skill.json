@@ -1,0 +1,29 @@
+{
+  "id": "canonical-reference.2.with_skill",
+  "caseId": "canonical-reference",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "経費の領収書は、経費システムにPDFを添付して提出してください。\n\n経理から個別に原本の提出を求められた場合に限り、原本を提出してください。\n\n詳しくは、[経費申請の「領収書の提出」](https://example.test/expense)を確認してください。",
+        "notes": "採用段: 1（既存の正本を案内し、必要なルールと例外だけ補足）。textlint は未実行です。"
+      },
+      "usage": {
+        "input_tokens": 10336,
+        "cached_input_tokens": 1792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 168,
+        "reasoning_output_tokens": 31
+      },
+      "elapsedMs": 6883,
+      "metrics": {
+        "characters": 132,
+        "headings": 0,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "893daa9012735e2670cb527e3a1db4c6a2ad68532a65a916a6ae5ee2c0b1183b"
+    }
+  ]
+}

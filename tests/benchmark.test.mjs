@@ -4,10 +4,18 @@ import { mkdtemp, readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { execFileSync } from "node:child_process";
-import { root, dimensions, arms, validateCases, makePlan, skillContext, authorPrompt, validateAuthor, validateJudge, parseEvents, codexArgs, measure, aggregate } from "../benchmarks/benchmark.mjs";
+import { root, dimensions, arms, validateCases, makePlan, skillContext, authorPrompt, validateAuthor, validateJudge, parseEvents, codexArgs, measure, aggregate, hash, verifySourceSnapshot } from "../benchmarks/benchmark.mjs";
 
 const cases = JSON.parse(await readFile(join(root, "benchmarks/cases.json"), "utf8"));
 const files = Object.fromEntries(await Promise.all(["SKILL.md", "references/document-types.md", "references/document-shapes.md", "references/japanese.md", "references/delegation.md"].map(async (name) => [name, await readFile(join(root, name), "utf8")])));
+
+test("pinned source validation rejects stale skill or lint code before a model call", () => {
+  const source = { "SKILL.md": "skill", "rules/table-cell-length.mjs": "rule" };
+  const hashes = { ...Object.fromEntries(Object.entries(source).map(([name, content]) => [name, hash(content)])), "benchmarks/benchmark.mjs": hash("local harness") };
+  verifySourceSnapshot(hashes, (name) => Buffer.from(source[name]));
+  assert.throws(() => verifySourceSnapshot(hashes, (name) => name === "SKILL.md" ? "old skill" : source[name]), /SKILL.md/);
+  assert.throws(() => verifySourceSnapshot(hashes, (name) => name.startsWith("rules/") ? "old rule" : source[name]), /table-cell-length/);
+});
 
 test("all cases have complete private rubrics and resolvable skill context", () => {
   validateCases(cases);

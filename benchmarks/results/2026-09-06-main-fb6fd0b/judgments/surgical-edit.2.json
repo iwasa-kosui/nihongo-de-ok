@@ -1,0 +1,65 @@
+{
+  "caseId": "surgical-edit",
+  "repeat": 2,
+  "mapping": {
+    "A": "without_skill",
+    "B": "with_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "「失敗率が7%を超えたら」「当番が」「配信を停止する」を正確に保持している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "監視条件・復旧手順・通知先を追加していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "タイトル、前2文、改行を維持し、末尾の対象文だけを置換している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "旧文は残っておらず、当番が失敗率7%超で配信を停止することが明確である。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "本文は要求された改稿後全文だけで、追加の章や補足がない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "本文に「失敗率が7%を超えたら当番が配信を停止する」とあり、条件・担当・措置を保持している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "本文には新しい監視条件、復旧手順、通知先が追加されていない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文ではタイトル、前2文、改行を維持し、末尾文のみを置換している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "本文から、当番が失敗率7%超で配信停止することを明確に読め、旧文も残っていない。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "本文外notesに「採用段」および外部検査の補足があり、要求された改稿後全文だけを返す条件を満たさない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 4754,
+      "cached_input_tokens": 1792,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 409,
+      "reasoning_output_tokens": 0
+    },
+    "elapsedMs": 11529
+  },
+  "promptHash": "45cbdd117d4999e0c04afa0c2963e26edfd7b5112672c43c0e8a0ded17c36214"
+}

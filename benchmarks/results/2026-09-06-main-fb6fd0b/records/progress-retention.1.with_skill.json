@@ -1,0 +1,29 @@
+{
+  "id": "progress-retention.1.with_skill",
+  "caseId": "progress-retention",
+  "repeat": 1,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "## 進捗報告（2026-08-17〜2026-08-21）\n\n担当は鈴木です。BILL-218の受付APIを実装しました。PR #106はレビュー待ちです。\n\n次は再試行処理の実装です。再試行の最大回数が未決定のため、作業を停止しています。PdMは2026年8月24日までに最大回数を判断してください。",
+        "notes": "進捗報告として、必要情報が一段落で揃う最小構成（段3）を採用しました。検査は外部実行系で行ってください。"
+      },
+      "usage": {
+        "input_tokens": 10335,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 244,
+        "reasoning_output_tokens": 76
+      },
+      "elapsedMs": 10617,
+      "metrics": {
+        "characters": 152,
+        "headings": 1,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "beafb00290386fe8f1379d307056592ab9a74f41fe9de6ae2bc28f1de5cd0be0"
+    }
+  ]
+}
