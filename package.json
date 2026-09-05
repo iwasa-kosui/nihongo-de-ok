@@ -3,7 +3,10 @@
   "private": true,
   "type": "module",
   "engines": {"node": ">=22"},
-  "scripts": {"test": "node --test tests/*.test.mjs"},
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "lint:docs": "node scripts/lint.mjs --type stock README.md references/lint.md"
+  },
   "dependencies": {
     "@textlint/kernel": "^15.8.0",
     "@textlint/module-interop": "^15.8.0",
