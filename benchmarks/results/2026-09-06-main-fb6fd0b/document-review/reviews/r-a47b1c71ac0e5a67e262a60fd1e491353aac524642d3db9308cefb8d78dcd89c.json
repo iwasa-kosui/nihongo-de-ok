@@ -1,0 +1,44 @@
+{
+  "reviewId": "r-a47b1c71ac0e5a67e262a60fd1e491353aac524642d3db9308cefb8d78dcd89c",
+  "inputHash": "a47b1c71ac0e5a67e262a60fd1e491353aac524642d3db9308cefb8d78dcd89c",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "検索基盤の方式について、開発チームが採用方針と条件への合意を判断する短いRFC。",
+        "status": "usable",
+        "summary": "方式Bの提案理由、比較上の不利益、未承認の条件が明確で、方針の合意判断に使える。性能・費用の定量評価と60秒条件の承認は未了である。",
+        "strengths": [
+          "方式A・Bの部分一致性能と運用上の違いが対応づけられ、Bを提案する理由が分かる。",
+          "60秒は許容案であり、業務側の承認が必要な採用条件であることを明示している。",
+          "別サービスの運用と鮮度許容を合意対象として絞り、実測や障害時の扱いを未確定事項として区別している。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "方式A・Bの性能計測値と費用情報。",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "計測値・費用見積もりは未取得。",
+            "consequence": "方針の議論はできるが、改善幅や費用対効果の定量的な判断はできない。"
+          },
+          {
+            "missing_information": "最大60秒の鮮度許容に対する業務側の承認。",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "ただし、60秒の鮮度許容については業務側の承認が未完了であり、採用条件として確認が必要である。",
+            "consequence": "合意対象として議論できるが、60秒の許容を承認済みの要件として扱うことはできない。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6437,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 755,
+        "reasoning_output_tokens": 286
+      },
+      "elapsedMs": 32423,
+      "validationErrors": null
+    }
+  ]
+}

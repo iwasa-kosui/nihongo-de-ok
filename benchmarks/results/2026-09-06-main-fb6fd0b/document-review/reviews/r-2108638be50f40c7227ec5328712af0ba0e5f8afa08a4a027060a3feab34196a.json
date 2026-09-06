@@ -1,0 +1,28 @@
+{
+  "reviewId": "r-2108638be50f40c7227ec5328712af0ba0e5f8afa08a4a027060a3feab34196a",
+  "inputHash": "2108638be50f40c7227ec5328712af0ba0e5f8afa08a4a027060a3feab34196a",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "既存Runbookの指定された末尾だけを確定事項に置き換える部分修正。",
+        "status": "usable",
+        "summary": "指定された末尾だけが依頼どおりに置き換わり、タイトル・既存本文・改行も保持されています。そのまま改稿後の全文として使えます。",
+        "strengths": [
+          "条件「失敗率が7%を超えたら」、主体「当番」、行動「配信を停止する」が指定どおりです。",
+          "修正対象以外の変更や追加がありません。"
+        ],
+        "findings": [],
+        "source_gaps": []
+      },
+      "usage": {
+        "input_tokens": 6004,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 196,
+        "reasoning_output_tokens": 26
+      },
+      "elapsedMs": 10432,
+      "validationErrors": null
+    }
+  ]
+}

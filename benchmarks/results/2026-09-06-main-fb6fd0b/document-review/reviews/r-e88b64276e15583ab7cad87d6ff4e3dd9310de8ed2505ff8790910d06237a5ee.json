@@ -1,0 +1,37 @@
+{
+  "reviewId": "r-e88b64276e15583ab7cad87d6ff4e3dd9310de8ed2505ff8790910d06237a5ee",
+  "inputHash": "e88b64276e15583ab7cad87d6ff4e3dd9310de8ed2505ff8790910d06237a5ee",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "将来の保守者が、請求書PDF生成をキュー処理にする採用判断と、その背景・比較対象・影響を再構成するためのADR。",
+        "status": "usable",
+        "summary": "採用日、判断内容、同期生成を採らない理由、非同期化の不利益が明確で、ADRとして利用できる。再試行上限は未確定だが、採用判断の理解を妨げない。",
+        "strengths": [
+          "最大45秒の生成時間と接続切断を、同期生成を採らない理由として示している。",
+          "キュー処理と受付IDの返却を一つの判断として記録し、利用者が完成を待つ影響も示している。",
+          "作業メモの進捗情報を混在させず、採用済みの判断と未確定の詳細を区別している。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "再試行の上限。",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "再試行の上限は、この判断では定めない。",
+            "consequence": "再試行回数の実装には別途決定が必要だが、このADRの採用判断は理解できる。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6146,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 513,
+        "reasoning_output_tokens": 174
+      },
+      "elapsedMs": 22935,
+      "validationErrors": null
+    }
+  ]
+}

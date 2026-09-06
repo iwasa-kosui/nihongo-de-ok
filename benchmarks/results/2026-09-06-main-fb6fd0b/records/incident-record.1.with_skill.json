@@ -1,0 +1,29 @@
+{
+  "id": "incident-record.1.with_skill",
+  "caseId": "incident-record",
+  "repeat": 1,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 請求検索エラー増加のポストモーテム\n\n## 影響\n請求検索に340件の失敗が発生した。決済への影響はなかった。\n\n## 経過\n- 8月19日09:10：運用チームがエラー増加を検知。\n- 09:17：当番の加藤が直前の変更を戻した。\n- 09:22：復旧を確認。\n\n## 原因\nDB接続枯渇が原因と推測しているが、ログの確認は完了していない。\n\n## 改善\n加藤が8月26日までに接続数の記録を追加する。追跡課題はOPS-315。",
+        "notes": "record・段4。原資料にない発生原因や再発防止策は補っていません。textlintは外部の実行系で検査してください。"
+      },
+      "usage": {
+        "input_tokens": 10385,
+        "cached_input_tokens": 1792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 292,
+        "reasoning_output_tokens": 58
+      },
+      "elapsedMs": 9679,
+      "metrics": {
+        "characters": 217,
+        "headings": 5,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "2279e4fa21f1e8e2b4eef9ad5a5034a7f86541793fbbad45921c45a49a7f089f"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "reviewId": "r-b422332afdfe8b0d1e9ff17e189baeceeb3529ea426cd8802169a64ad1dda2e7",
+  "inputHash": "b422332afdfe8b0d1e9ff17e189baeceeb3529ea426cd8802169a64ad1dda2e7",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "担当チーム向けに、完了事項、未完了事項、阻害要因、次の作業と必要な判断を共有する進捗報告。",
+        "status": "usable",
+        "summary": "実装済みとレビュー待ちを区別し、次の作業、停止理由、判断を求める相手と期限を簡潔に示しています。担当チームの状況把握と追跡に利用できます。",
+        "strengths": [
+          "対象期間、担当者、チケット番号、PR番号が明記され、追跡できます。",
+          "受付APIの実装完了とPRのレビュー待ちが区別されています。",
+          "再試行の最大回数が阻害要因であることと、PdMへの判断依頼期限が明確です。"
+        ],
+        "findings": [],
+        "source_gaps": []
+      },
+      "usage": {
+        "input_tokens": 6024,
+        "cached_input_tokens": 2944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 273,
+        "reasoning_output_tokens": 52
+      },
+      "elapsedMs": 14852,
+      "validationErrors": null
+    }
+  ]
+}

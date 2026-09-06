@@ -1,0 +1,37 @@
+{
+  "reviewId": "r-db2db06e4ec9ff8be2f741a6af70e3a79ac1d038f5e6219ee536a3fe07970ff9",
+  "inputHash": "db2db06e4ec9ff8be2f741a6af70e3a79ac1d038f5e6219ee536a3fe07970ff9",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "将来の保守者が、請求書PDF生成の非同期化という採用判断と、その背景・比較対象・影響を再構成するためのADR。",
+        "status": "usable",
+        "summary": "採用日、決定内容、同期生成を退けた理由、利用者への影響が明確で、判断を再構成できる。再試行の上限は未決定だが、ADRとしての利用を妨げない。",
+        "strengths": [
+          "キュー処理と受付IDの返却を、一つの採用判断として明示している。",
+          "同期生成の最大45秒という所要時間と接続切断を、不採用の理由として結び付けている。",
+          "非同期化の効果と利用者の待ち時間を併記し、再試行の上限を確定事項として補っていない。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "再試行の上限。",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "再試行の上限は未決定である。",
+            "consequence": "具体的な再試行設定は別途決定が必要だが、非同期化の採用理由と影響は理解できる。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6123,
+        "cached_input_tokens": 2944,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 459,
+        "reasoning_output_tokens": 123
+      },
+      "elapsedMs": 17922,
+      "validationErrors": null
+    }
+  ]
+}

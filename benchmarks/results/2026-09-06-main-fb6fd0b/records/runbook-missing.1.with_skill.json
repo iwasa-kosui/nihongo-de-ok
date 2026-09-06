@@ -1,0 +1,29 @@
+{
+  "id": "runbook-missing.1.with_skill",
+  "caseId": "runbook-missing",
+  "repeat": 1,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 本番キャッシュ再起動手順（草稿）\n\n## 前提\n監視でエラーを検知した場合に、本番キャッシュの再起動を検討する。\n\n## 手順\n1. 監視でエラーを確認する。\n2. 停止してよい条件を確認する。\n3. 定められた再起動コマンドを実行する。\n4. 復旧確認方法に従い、サービスの状態を確認する。\n5. 復旧しない場合は、定められた連絡先へ連絡する。\n\n## 未確定事項\n再起動コマンド、停止してよい条件、復旧確認方法、連絡先は未定である。これらが決まるまで、この文書だけでは本番操作を実行できない。",
+        "notes": "採用段: 4。提示資料だけで再現可能な手順を確定できないため、既知の条件と未確定事項を分けた草稿とした。textlint は未実施。"
+      },
+      "usage": {
+        "input_tokens": 10302,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 338,
+        "reasoning_output_tokens": 74
+      },
+      "elapsedMs": 9941,
+      "metrics": {
+        "characters": 250,
+        "headings": 4,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "b0cda18afe4894dd617d4483924cb84ef2ec940ce2b97eb3cea3fa883891ed0c"
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "caseId": "canonical-reference",
+  "repeat": 2,
+  "mapping": {
+    "A": "with_skill",
+    "B": "without_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "正本URL、 「領収書の提出」への参照、経費システムへのPDF添付、経理から個別に求められた場合のみ原本提出という例外をすべて本文に記載している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "期限、ファイルサイズ、システム名などの根拠のない情報を追加していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "新規FAQや別の正本を作らず、既存の正本URLへの参照を案内している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "通常はPDF添付、例外的に個別依頼時のみ原本提出と明確に区別されている。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "短い案内であり、章立て、FAQ一覧、依頼外の操作手順はない。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "正本URL、「領収書の提出」節、経費システムへのPDF添付、経理が個別に求めた場合のみ原本提出を本文にすべて記載している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "提出期限、ファイルサイズ、固有のシステム名などを創作していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "新規FAQや別の正本を設けず、既存の正本の該当節を参照する案内である。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "通常のPDF添付と、個別依頼時だけの原本提出が明確に区別されている。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "簡潔で、章立て、FAQ一覧、依頼外の操作手順を含まない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 4804,
+      "cached_input_tokens": 1792,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 512,
+      "reasoning_output_tokens": 68
+    },
+    "elapsedMs": 13693
+  },
+  "promptHash": "ab0ece557307a68517e6ee0533b1863e1a738ab6284e026c53fbdd8dd675747b"
+}

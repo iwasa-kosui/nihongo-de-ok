@@ -1,0 +1,893 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-upPdfiUdPXYGPU6Q0bLHG1YhwTBudNjiR26ji+i2hzw='; style-src 'sha256-vSBeJZn2dcE2+uVrqfL4GdM8qobUamcgc390PV85D88='; base-uri 'none'; form-action 'none'"><title>スキルあり／なしを読み比べる</title><style>:root { color-scheme: light; font-family: -apple-system, BlinkMacSystemFont, "Noto Sans JP", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif; color: #223239; background: #f5f5f0; font-synthesis: none; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; line-height: 1.75; }
+a { color: #28655f; text-underline-offset: 3px; overflow-wrap: anywhere; }
+button, select { font: inherit; color: inherit; }
+button, select, summary, a { -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid #c57325; outline-offset: 3px; }
+button { cursor: pointer; }
+button:disabled { cursor: default; opacity: .4; }
+.shell { max-width: 1460px; padding: 24px 28px; margin: 0 auto; }
+.page-header { margin-bottom: 18px; }
+.eyebrow { font: 700 11px/1.4 ui-monospace, monospace; letter-spacing: .16em; color: #617474; margin: 0 0 8px; }
+h1 { font-size: clamp(24px, 3vw, 30px); letter-spacing: -.03em; line-height: 1.3; margin: 0 0 8px; }
+.page-header p { margin: 4px 0; }
+.provenance { color: #5e7175; font-size: 12px; }
+.page-header nav { display: flex; gap: 20px; font-size: 13px; }
+.controls { display: flex; align-items: end; flex-wrap: wrap; gap: 18px; padding: 14px 16px; background: #e8eeeb; border: 1px solid #d5dfda; border-radius: 12px; }
+.controls label, .stage-control { display: flex; flex-direction: column; gap: 5px; font-size: 12px; font-weight: 600; }
+.case-control { flex: 1 1 320px; min-width: 0; }
+select { height: 44px; max-width: 100%; padding: 0 36px 0 12px; background: #fff; border: 1px solid #b9c7c1; border-radius: 6px; font-size: 14px; }
+.segmented { display: flex; padding: 3px; gap: 3px; border-radius: 7px; background: #d6e0dc; }
+.segmented button { min-width: 75px; height: 38px; padding: 0 16px; background: transparent; border: 0; border-radius: 5px; font-size: 14px; }
+.segmented [aria-pressed="true"] { color: white; background: #315c54; }
+.pagination { display: flex; gap: 20px; align-items: center; justify-content: space-between; margin: 8px 0 18px; color: #627570; font-size: 12px; }
+.pagination button { background: transparent; border: 0; padding: 5px 12px 5px 0; font-size: 12px; }
+.pair { margin-bottom: 36px; }
+.pair-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 14px; }
+.pair-heading h2 { font-size: 20px; margin: 0 0 12px; line-height: 1.6; }
+.pair-heading h2 small { display: inline-block; font-size: 13px; font-weight: 500; color: #687b75; margin-left: 8px; }
+.pair-heading > a { font-size: 12px; white-space: nowrap; }
+summary { cursor: pointer; font-size: 13px; font-weight: 600; }
+details > summary { padding: 9px 0; }
+.prompt { border-top: 1px solid #dce2dd; border-bottom: 1px solid #dce2dd; margin-bottom: 14px; }
+.prompt > div { max-width: 1000px; padding: 0 14px 10px; font-size: 14px; }
+.stage-label { color: #60706e; font-size: 12px; margin: 10px 0; }
+.columns { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.candidate { background: #fff; border: 1px solid #d7ded8; border-radius: 9px; overflow: hidden; }
+.candidate-header { display: flex; gap: 14px; justify-content: space-between; padding: 12px 20px; background: #f3f3ef; border-top: 4px solid #88908d; border-bottom: 1px solid #e5e8e3; }
+.with_skill .candidate-header { background: #edf5f0; border-top-color: #477a66; }
+.candidate-header h3 { margin: 0; font-size: 17px; }
+.candidate-header span { font-size: 11px; color: #63716b; }
+.metrics { font-size: 11px; line-height: 1.8; text-align: right; color: #5c6a64; }
+.document { padding: 24px 28px 28px; font-size: 15px; line-height: 1.95; overflow-wrap: anywhere; }
+.document > :first-child { margin-top: 0; }
+.document > :last-child { margin-bottom: 0; }
+.document h3 { font-size: 21px; line-height: 1.65; margin: 1.5em 0 .8em; }
+.document h4 { font-size: 17px; margin: 1.6em 0 .65em; }
+.document h5, .document h6 { font-size: 15px; margin: 1.4em 0 .5em; }
+.document p { margin: .9em 0; }
+.document ul, .document ol { padding-left: 1.5em; }
+.document li + li { margin-top: .4em; }
+.document li > p { margin: .2em 0; }
+blockquote { border-left: 3px solid #ced9d2; padding-left: 16px; margin-left: 0; color: #566b60; }
+code { font-family: ui-monospace, monospace; font-size: .9em; background: #f1f3ee; border-radius: 3px; padding: 2px 4px; }
+pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+pre code { display: block; padding: 16px; }
+.literal { white-space: pre-wrap; }
+.table-scroll { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; line-height: 1.7; }
+th, td { text-align: left; border: 1px solid #dce2dd; padding: 8px 10px; }
+th { background: #f0f4ee; }
+.candidate-footer { border-top: 1px solid #e4e8e1; padding: 12px 24px; font-size: 12px; color: #57675e; }
+.candidate-footer > a { display: inline-block; margin-bottom: 8px; }
+.candidate-footer details + details { border-top: 1px solid #edf0ea; }
+.candidate-footer summary { font-size: 12px; }
+.candidate-footer p { overflow-wrap: anywhere; }
+.lint-message { margin: 10px 0 18px; font-size: 12px; }
+.lint-message pre { font: inherit; }
+.judgments { margin-top: 24px; padding: 10px 24px; background: #edf0e9; border: 1px solid #d8e0d2; border-radius: 9px; }
+.judgments > summary { font-size: 15px; }
+.caveat { font-size: 12px; color: #6d6a52; }
+.criterion { border-top: 1px solid #d7dfd0; padding: 12px 0 20px; }
+.criterion h3 { font-size: 15px; margin: 4px 0; }
+.criterion h3 small { font-size: 11px; font-weight: 400; color: #6d7b6d; margin-left: 5px; }
+.criterion-source { font-size: 13px; margin: 6px 0 15px; }
+.judgment { padding: 15px 18px; background: #fff; border-radius: 6px; font-size: 13px; }
+.judgment p { margin-bottom: 0; }
+.pass, .fail { font-size: 11px; border-radius: 4px; padding: 3px 6px; margin-left: 5px; }
+.pass { background: #e6f2e9; color: #25533d; }
+.fail { background: #f9e8dc; color: #80441c; }
+.page-footer { padding: 20px 0; border-top: 1px solid #dce2dd; font-size: 12px; color: #738077; }
+@media (max-width: 760px) {
+  .shell { padding: 24px 16px; }
+  .columns { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .controls { gap: 12px; padding: 14px; }
+  .case-control { flex-basis: 100%; }
+  .pair-heading { display: block; }
+  .pair-heading > a { display: inline-block; margin-bottom: 12px; }
+  .pagination { gap: 8px; flex-wrap: wrap; }
+  .document { padding: 22px; }
+  .candidate-header { padding: 14px 18px; }
+  .judgments { padding: 8px 16px; }
+}
+@media print {
+  .controls, .pagination, .page-header nav, .candidate-footer > a { display: none !important; }
+  .shell { max-width: none; padding: 0; }
+  .columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+}
+</style></head>
+<body><div class="shell"><header class="page-header"><p class="eyebrow">NIHONGO-DE-OK / BENCHMARK</p><h1>スキルあり／なしを読み比べる</h1><p>左がスキルなし、右がスキルあり。同じ依頼から生成された本文を、全文表示します。</p><p class="provenance">評価対象 origin/main @ fb6fd0b · gpt-5.6-luna · 10課題 × 2回</p><nav><a href="report.md">集計</a><a href="../../findings.md">評価の要点・採点の照合メモ</a></nav></header>
+<div class="controls" hidden><label class="case-control">課題<select id="case-select"><option value="adr-boundary">01 · ADRの判断と作業追跡の分離</option><option value="design-tradeoff">02 · Design Docの構成・失敗条件・代替案</option><option value="progress-retention">03 · 進捗報告で追跡情報を保持</option><option value="incident-record">04 · 障害記録の時系列と仮説</option><option value="runbook-missing">05 · 資料不足の手順を完成扱いしない</option><option value="surgical-edit">06 · 既存文書の一文だけ修正</option><option value="canonical-reference">07 · 正本で済む依頼</option><option value="no-document">08 · 文書を作る必要性の判断</option><option value="comparison-rfc">09 · RFCで比較と未決定を保つ</option><option value="plain-japanese">10 · 曖昧な表現を根拠に沿って具体化</option></select></label><label>反復<select id="repeat-select"><option value="1">1回目</option><option value="2">2回目</option></select></label><div class="stage-control"><span>表示する稿</span><div class="segmented" role="group" aria-label="表示する稿"><button data-stage="final" aria-pressed="true">最終稿</button><button data-stage="initial" aria-pressed="false">初稿</button></div></div></div>
+<div class="pagination" hidden><div><button id="previous">← 前の比較</button><button id="next">次の比較 →</button></div><span id="position" aria-live="polite"></span><a id="permalink" href="#">この比較へのリンク</a></div>
+<main><section class="pair" id="adr-boundary.1" data-case="adr-boundary" data-repeat="1"><div class="pair-heading"><h2>ADRの判断と作業追跡の分離 <small>1回目</small></h2><a href="comparisons/adr-boundary.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>将来の保守者向けにADRを書いて。2026-08-20に採用した判断。請求書のPDF生成はキューで処理し、APIは受付IDを返す。同期生成は最大45秒かかって接続が切れるため採らない。非同期では利用者が完成まで待つ必要がある。再試行の上限は未決定。原資料の作業メモには BILL-218、PR #106、進捗70% とある。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>最終稿 · lint修正後</span></div><div class="metrics">435字 · 5見出し<br>最終稿の採点 3/5</div></header>
+    <div class="document"><h3>ADR: 請求書PDF生成を非同期キュー処理にする</h3><ul><li><p><strong>日付</strong>: 2026-08-20</p></li><li><p><strong>ステータス</strong>: 採用</p></li></ul><h4>コンテキスト</h4><p>請求書PDFの生成には最大45秒かかる場合があり、同期処理ではAPI接続が切断される。利用者がリクエスト完了まで待ち続ける方式は、安定性とユーザー体験の面で適さない。</p><h4>決定</h4><p>請求書PDFの生成をキューによる非同期処理で行う。APIは生成処理を受け付けた時点で受付IDを返し、クライアントはその受付IDを使って処理状況や生成結果を確認する。</p><h4>影響</h4><ul><li><p>API接続を長時間維持する必要がなくなる。</p></li><li><p>利用者はPDFの完成まで待つ必要がある。</p></li><li><p>クライアントは受付IDに基づく状態確認や完了通知の仕組みを実装する必要がある。</p></li><li><p>生成失敗時の再試行方針が必要になる。</p></li></ul><h4>未決事項</h4><p>再試行回数の上限は未決定である。運用開始前に、無限再試行を避ける上限、失敗時の状態、通知方法を決定すること。</p></div>
+    <footer class="candidate-footer"><a href="documents/adr-boundary.1.without_skill.2.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>作業追跡用の課題ID、PR番号、進捗情報はADR本文から除外しました。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 3,214トークン（内cache 1,792）／出力 424トークン／10.9秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">270字 · 4見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><h3>請求書PDF生成をキュー処理にする</h3><p>状態: 採用<br>判断日: 2026-08-20</p><h4>背景</h4><p>請求書のPDF生成には最大45秒かかり、同期処理ではAPI接続が切れる。そのため、APIの応答中に生成完了を待つ方式は採用できない。</p><h4>決定</h4><p>請求書のPDF生成をキューで処理する。APIは生成要求を受け付けた時点で受付IDを返し、PDFの生成完了を待たずに応答する。</p><h4>結果</h4><p>API接続が生成時間によって切断される問題を避けられる。一方、利用者はPDFの完成まで待つ必要がある。再試行の上限は、この判断では定めない。</p></div>
+    <footer class="candidate-footer"><a href="documents/adr-boundary.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>ADRとして最小構成（背景・決定・結果）で作成しました。原資料の作業追跡情報（BILL-218、PR #106、進捗70%）は本文から除外しました。textlintは実行していません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,104トークン（内cache 0）／出力 385トークン／11.3秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿 · lint修正前</span></div><div class="metrics">469字 · 5見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>ADR: 請求書PDF生成を非同期キュー処理にする</h3><ul><li><p><strong>日付</strong>: 2026-08-20</p></li><li><p><strong>ステータス</strong>: 採用</p></li><li><p><strong>関連</strong>: BILL-218、PR #106（進捗70%）</p></li></ul><h4>コンテキスト</h4><p>請求書PDFの生成には最大45秒かかる場合があり、同期処理ではAPI接続が切断される。利用者がリクエスト完了まで待ち続ける方式は、安定性とユーザー体験の面で適さない。</p><h4>決定</h4><p>請求書PDFの生成をキューによる非同期処理で行う。APIは生成処理を受け付けた時点で受付IDを返し、クライアントはその受付IDを使って処理状況や生成結果を確認する。</p><h4>影響</h4><ul><li><p>API接続を長時間維持する必要がなくなる。</p></li><li><p>利用者はPDFの完成まで待つ必要がある。</p></li><li><p>クライアントは受付IDに基づく状態確認や完了通知の仕組みを実装する必要がある。</p></li><li><p>生成失敗時の再試行方針が必要になる。</p></li></ul><h4>未決事項</h4><p>再試行回数の上限は未決定である。運用開始前に、無限再試行を避ける上限、失敗時の状態、通知方法を決定すること。</p></div>
+    <footer class="candidate-footer"><a href="documents/adr-boundary.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>原資料の作業メモに記載された関連情報（BILL-218、PR #106、進捗70%）を反映しました。</p></details>
+      <details class="lint"><summary>lint: 2件の指摘</summary><div class="lint-message"><strong>stock-boundary · 5行 11列</strong><pre>文書にJira課題IDが含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div><div class="lint-message"><strong>stock-boundary · 5行 20列</strong><pre>文書にPR番号が含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,666トークン（内cache 1,792）／出力 437トークン／11.8秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">270字 · 4見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>請求書PDF生成をキュー処理にする</h3><p>状態: 採用<br>判断日: 2026-08-20</p><h4>背景</h4><p>請求書のPDF生成には最大45秒かかり、同期処理ではAPI接続が切れる。そのため、APIの応答中に生成完了を待つ方式は採用できない。</p><h4>決定</h4><p>請求書のPDF生成をキューで処理する。APIは生成要求を受け付けた時点で受付IDを返し、PDFの生成完了を待たずに応答する。</p><h4>結果</h4><p>API接続が生成時間によって切断される問題を避けられる。一方、利用者はPDFの完成まで待つ必要がある。再試行の上限は、この判断では定めない。</p></div>
+    <footer class="candidate-footer"><a href="documents/adr-boundary.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>ADRとして最小構成（背景・決定・結果）で作成しました。原資料の作業追跡情報（BILL-218、PR #106、進捗70%）は本文から除外しました。textlintは実行していません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,104トークン（内cache 0）／出力 385トークン／11.3秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">採用、2026-08-20、キュー、受付ID、同期45秒による接続切断、完成待ちの代償、再試行上限未決定をすべて残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>採用日、キュー処理、受付ID、同期では最大45秒で接続切断、完成待ちの代償、再試行上限未決定を本文に記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>採用日、キュー処理、受付ID、同期の最大45秒による接続切断、完成待ち、再試行上限を定めないことをすべて記載している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">結果確認API、通知方法、再試行回数を創作せず、未決定を確定に変えない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>受付IDでの処理状況・生成結果確認、完了通知、再試行時の状態など、原資料にない仕様・決定事項を追加している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>結果確認API・通知方法・再試行回数を創作せず、再試行上限を未決定のまま記載している。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">文書本文にBILL-218、PR #106、進捗70%を含めない。除外の説明として本文に再掲した場合も不合格。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文にBILL-218、PR #106、進捗70%は含まれない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文にBILL-218、PR #106、進捗70%は含まれない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">採った判断と不採用理由と代償の関係が一意に分かる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>非同期キュー処理を採る判断、同期を採らない理由、利用者が完成まで待つ代償が明確に対応している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>採用したキュー処理、同期を不採用とする接続切断の理由、完成待ちという代償の関係が明確である。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">一段落か短い箇条書きで済ませる。章見出しを並べず、理由や結論を繰り返さない。タイトル1つは許容する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>コンテキスト、決定、影響、未決事項と章見出しを並べており、短い段落または箇条書きに収める条件を満たさない。</p></div><div class="judgment"><strong>スキルあり <span class="fail">不合格</span></strong><p>短いものの、「背景」「決定」「結果」の章見出しを並べており、見出しを並べない条件を満たさない。</p></div></div></section></details></section>
+<section class="pair" id="adr-boundary.2" data-case="adr-boundary" data-repeat="2"><div class="pair-heading"><h2>ADRの判断と作業追跡の分離 <small>2回目</small></h2><a href="comparisons/adr-boundary.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>将来の保守者向けにADRを書いて。2026-08-20に採用した判断。請求書のPDF生成はキューで処理し、APIは受付IDを返す。同期生成は最大45秒かかって接続が切れるため採らない。非同期では利用者が完成まで待つ必要がある。再試行の上限は未決定。原資料の作業メモには BILL-218、PR #106、進捗70% とある。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>最終稿 · lint修正後</span></div><div class="metrics">613字 · 8見出し<br>最終稿の採点 3/5</div></header>
+    <div class="document"><h3>ADR: 請求書PDF生成を非同期キュー処理にする</h3><ul><li><p><strong>ステータス</strong>: 採用</p></li><li><p><strong>決定日</strong>: 2026-08-20</p></li></ul><h4>コンテキスト</h4><p>請求書PDFの生成には最大45秒かかる場合があり、同期生成ではAPI接続が切断される可能性がある。その結果、生成したPDFを安定して返却できない。</p><p>一方、非同期処理を採用すると、利用者はPDFの完成まで待つ必要がある。</p><h4>決定</h4><p>請求書PDFの生成をキューに投入し、非同期で処理する。APIは生成完了を待たず、受付IDを返す。</p><p>利用者および呼び出し側は、受付IDを使って生成状況や結果を確認し、完成後にPDFを取得する。</p><h4>却下した選択肢</h4><h5>同期生成</h5><p>同期生成は採用しない。最大45秒の処理中にAPI接続が切れる可能性があり、安定性に問題があるためである。</p><h5>トレードオフ</h5><p>非同期化によって接続切断の問題を回避できる。ただし、API呼び出し時点でPDFを返せず、利用者は完成まで待つ必要がある。</p><h4>未決定事項</h4><p>生成ジョブの再試行回数の上限は、2026-08-20時点で未決定である。運用上の失敗時対応とあわせて、別途決定する。</p><h4>保守時の注意</h4><p>キュー投入後にAPIが返す受付IDと、後続の状態確認・PDF取得処理との対応関係を維持すること。同期処理へ戻す場合は、最大45秒の処理時間と接続切断リスクを再評価すること。</p></div>
+    <footer class="candidate-footer"><a href="documents/adr-boundary.2.without_skill.2.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>作業追跡情報および進捗は、ADRではなくチケットや進捗文書で管理してください。</p></details>
+      <details class="lint"><summary>lint: 2件の指摘</summary><div class="lint-message"><strong>no-doubled-joshi · 8行 46列</strong><pre>一文に二回以上利用されている助詞 &quot;が&quot; がみつかりました。
+
+次の助詞が連続しているため、文を読みにくくしています。
+
+- &quot;が&quot;
+- &quot;が&quot;
+
+同じ助詞を連続して利用しない、文の中で順番を入れ替える、文を分割するなどを検討してください。
+</pre></div><div class="lint-message"><strong>no-doubled-joshi · 22行 34列</strong><pre>一文に二回以上利用されている助詞 &quot;が&quot; がみつかりました。
+
+次の助詞が連続しているため、文を読みにくくしています。
+
+- &quot;が&quot;
+- &quot;が&quot;
+
+同じ助詞を連続して利用しない、文の中で順番を入れ替える、文を分割するなどを検討してください。
+</pre></div></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 3,614トークン（内cache 0）／出力 550トークン／14.5秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">224字 · 4見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><h3>請求書PDF生成を非同期化する</h3><ul><li><p>状態: 採用</p></li><li><p>判断日: 2026-08-20</p></li></ul><h4>背景</h4><p>請求書のPDF生成は最大45秒かかり、同期処理ではAPI接続が切れる。</p><h4>決定</h4><p>請求書のPDF生成をキューで処理する。APIは生成要求を受け付けた時点で受付IDを返す。同期生成は採用しない。</p><h4>結果</h4><p>APIの接続を生成完了まで維持する必要がなくなる。一方、利用者はPDFの完成まで待つ必要がある。再試行の上限は未決定である。</p></div>
+    <footer class="candidate-footer"><a href="documents/adr-boundary.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用した段: 3。背景・決定・結果が短文で揃うため。textlintは外部実行系で未検証。作業メモのBILL-218、PR #106、進捗70%はADRの正本情報ではないため本文から除外。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,104トークン（内cache 1,792）／出力 376トークン／11.7秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿 · lint修正前</span></div><div class="metrics">657字 · 8見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>ADR: 請求書PDF生成を非同期キュー処理にする</h3><ul><li><p><strong>ステータス</strong>: 採用</p></li><li><p><strong>決定日</strong>: 2026-08-20</p></li><li><p><strong>関連情報</strong>: BILL-218、PR #106（作業メモ上の進捗: 70%）</p></li></ul><h4>コンテキスト</h4><p>請求書PDFの生成には最大45秒かかる場合があり、同期的に生成するとAPI接続が切断される可能性がある。これにより、生成結果を安定して返却できない。</p><p>一方、非同期処理では、利用者はPDFの完成まで待つ必要がある。</p><h4>決定</h4><p>請求書PDFの生成をキューに投入して非同期で処理する。APIは生成完了を待たず、受付IDを返す。</p><p>利用者および呼び出し側は、受付IDを使って生成状況や結果を確認し、完成後にPDFを取得する設計とする。</p><h4>却下した選択肢</h4><h5>同期生成</h5><p>同期生成は採用しない。最大45秒の処理中にAPI接続が切れる可能性があるため、安定性に問題がある。</p><h5>トレードオフ</h5><p>非同期化により接続切断の問題は回避できるが、API呼び出し時点でPDFを返せず、利用者は完成まで待つ必要がある。</p><h4>未決定事項</h4><p>生成ジョブの再試行回数の上限は、2026-08-20時点では未決定である。運用上の失敗時対応とあわせて、別途決定する必要がある。</p><h4>保守時の注意</h4><p>キュー投入後にAPIが返す受付IDと、後続の状態確認・PDF取得処理の対応関係を維持すること。同期処理へ戻す場合は、最大45秒の処理時間と接続切断リスクを再評価すること。</p></div>
+    <footer class="candidate-footer"><a href="documents/adr-boundary.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>原資料の作業メモに記載された進捗70%は、その時点の進捗情報として記載しています。</p></details>
+      <details class="lint"><summary>lint: 5件の指摘</summary><div class="lint-message"><strong>stock-boundary · 5行 13列</strong><pre>文書にJira課題IDが含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div><div class="lint-message"><strong>stock-boundary · 5行 22列</strong><pre>文書にPR番号が含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div><div class="lint-message"><strong>stock-boundary · 5行 36列</strong><pre>文書に進捗の記述が含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div><div class="lint-message"><strong>no-doubled-joshi · 9行 49列</strong><pre>一文に二回以上利用されている助詞 &quot;が&quot; がみつかりました。
+
+次の助詞が連続しているため、文を読みにくくしています。
+
+- &quot;が&quot;
+- &quot;が&quot;
+
+同じ助詞を連続して利用しない、文の中で順番を入れ替える、文を分割するなどを検討してください。
+</pre></div><div class="lint-message"><strong>no-doubled-joshi · 23行 34列</strong><pre>一文に二回以上利用されている助詞 &quot;が&quot; がみつかりました。
+
+次の助詞が連続しているため、文を読みにくくしています。
+
+- &quot;が&quot;
+- &quot;が&quot;
+
+同じ助詞を連続して利用しない、文の中で順番を入れ替える、文を分割するなどを検討してください。
+</pre></div></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,664トークン（内cache 1,792）／出力 558トークン／13.8秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">224字 · 4見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>請求書PDF生成を非同期化する</h3><ul><li><p>状態: 採用</p></li><li><p>判断日: 2026-08-20</p></li></ul><h4>背景</h4><p>請求書のPDF生成は最大45秒かかり、同期処理ではAPI接続が切れる。</p><h4>決定</h4><p>請求書のPDF生成をキューで処理する。APIは生成要求を受け付けた時点で受付IDを返す。同期生成は採用しない。</p><h4>結果</h4><p>APIの接続を生成完了まで維持する必要がなくなる。一方、利用者はPDFの完成まで待つ必要がある。再試行の上限は未決定である。</p></div>
+    <footer class="candidate-footer"><a href="documents/adr-boundary.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用した段: 3。背景・決定・結果が短文で揃うため。textlintは外部実行系で未検証。作業メモのBILL-218、PR #106、進捗70%はADRの正本情報ではないため本文から除外。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,104トークン（内cache 1,792）／出力 376トークン／11.7秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">採用、2026-08-20、キュー、受付ID、同期45秒による接続切断、完成待ちの代償、再試行上限未決定をすべて残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文に採用日、キューによる非同期処理、受付ID、最大45秒の同期生成での接続切断、完成待ちの代償、再試行回数上限が未決定であることがある。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文に「採用」「2026-08-20」「キュー」「受付ID」、同期生成では最大45秒でAPI接続が切れること、利用者が完成まで待つ代償、再試行上限が未決定であることがすべてある。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">結果確認API、通知方法、再試行回数を創作せず、未決定を確定に変えない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>原資料にない、受付IDを使った生成状況・結果の確認、完成後のPDF取得という後続処理を本文で創作している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>結果確認API・通知方法・再試行回数を追加しておらず、再試行上限も未決定のまま記載している。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">文書本文にBILL-218、PR #106、進捗70%を含めない。除外の説明として本文に再掲した場合も不合格。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文にはBILL-218、PR #106、進捗70%を含めていない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文にはBILL-218、PR #106、進捗70%のいずれも含まれない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">採った判断と不採用理由と代償の関係が一意に分かる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>採用判断、同期生成を不採用とする理由、非同期化の代償が明確に対応している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>キュー処理と受付ID返却を採用し、同期生成は45秒処理による接続切断のため不採用、完成待ちを代償として明示している。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">一段落か短い箇条書きで済ませる。章見出しを並べず、理由や結論を繰り返さない。タイトル1つは許容する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>多数の章見出しと「同期生成」の説明の反復があり、一段落または短い箇条書きで簡潔に済ませる条件を満たさない。</p></div><div class="judgment"><strong>スキルあり <span class="fail">不合格</span></strong><p>タイトルに加えて「背景」「決定」「結果」の章見出しを並べており、短い箇条書き等で済ませる条件を満たさない。</p></div></div></section></details></section>
+<section class="pair" id="design-tradeoff.1" data-case="design-tradeoff" data-repeat="1"><div class="pair-heading"><h2>Design Docの構成・失敗条件・代替案 <small>1回目</small></h2><a href="comparisons/design-tradeoff.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>実装者向けにファイル取込のDesign Docを作成して。確定した資料: APIはファイルをオブジェクトストレージへ保存し、その保存先をキューへ登録する。保存に失敗したら503を返し、キューには登録しない。ワーカーは保存先から読み、解析結果をDBへ保存する。キューへの登録失敗時の回復方法は未決定。ファイル本体をキューに載せる案は、10MBのファイルがキューの1MB制限を超えるため不採用。非同期化で利用者への結果提示が遅れる。進行メモ: DATA-64、PR #203、今週はAPI実装、担当佐藤。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>最終稿 · lint修正後</span></div><div class="metrics">1963字 · 15見出し<br>最終稿の採点 2/5</div></header>
+    <div class="document"><h3>ファイル取込 Design Doc</h3><h4>1. 概要</h4><p>ファイル本体をオブジェクトストレージに保存し、保存先をキューへ登録する非同期取込方式を採用する。ワーカーはキューから保存先を取得し、オブジェクトストレージ上のファイルを読み込んで解析し、結果をDBへ保存する。</p><h4>2. 背景と制約</h4><ul><li><p>ファイル本体をキューに載せる方式は不採用とする。</p><ul><li><p>キューのメッセージ上限は1MB。</p></li><li><p>取込対象ファイルは最大10MBであり、制限を超える可能性がある。</p></li></ul></li><li><p>非同期処理のため、利用者が解析結果を確認できるまでの時間は従来より遅くなる。</p></li></ul><h4>3. 処理フロー</h4><h5>API</h5><ol start="1"><li><p>APIがファイルを受け取る。</p></li><li><p>ファイルをオブジェクトストレージへ保存する。</p></li><li><p>保存に成功した場合、保存先を示す情報をキューへ登録する。</p></li><li><p>リクエストには受付済みを示すレスポンスを返す。</p></li></ol><p>保存に失敗した場合は、以下のように処理する。</p><ul><li><p>HTTP 503を返す。</p></li><li><p>キューには登録しない。</p></li><li><p>クライアントが再試行できるよう、エラーを記録する。</p></li></ul><h5>ワーカー</h5><ol start="1"><li><p>キューから保存先情報を受け取る。</p></li><li><p>オブジェクトストレージからファイルを読み込む。</p></li><li><p>ファイルを解析する。</p></li><li><p>解析結果をDBへ保存する。</p></li><li><p>成功時にメッセージを完了扱いにする。</p></li></ol><h4>4. メッセージ設計</h4><p>キューにはファイル本体ではなく、少なくとも次の情報を含むメッセージを登録する。</p><pre><code>{
+  &quot;job_id&quot;: &quot;取込ジョブを一意に識別するID&quot;,
+  &quot;object_key&quot;: &quot;オブジェクトストレージ上の保存先&quot;,
+  &quot;created_at&quot;: &quot;受付日時&quot;
+}</code></pre><p><code>object_key</code> は利用者入力をそのままパスとして使用せず、サーバー側で生成した一意なキーを使用する。ワーカーが解析結果とジョブを対応付けられるよう、<code>job_id</code> を必須とする。</p><h4>5. API仕様の方針</h4><ul><li><p>保存成功かつキュー登録成功の場合、非同期受付済みとしてジョブIDを返す。</p></li><li><p>オブジェクトストレージへの保存失敗時は503を返す。</p></li><li><p>保存成功後にキュー登録が失敗した場合の回復方法は未決定であり、実装前に仕様を確定する。</p></li><li><p>非同期処理中の状態確認方法（ジョブ状態取得APIなど）は、既存のAPI設計に合わせて決定する。</p></li></ul><h4>6. エラー処理と運用上の注意</h4><h5>保存失敗</h5><p>保存処理の失敗を検知したら、キュー登録を行わず503を返す。不要な一時オブジェクトが残る場合は、削除またはライフサイクル設定を検討する。</p><h5>キュー登録失敗</h5><p>オブジェクトストレージへの保存後にキュー登録が失敗すると、ファイルは保存済みだが処理されない状態になり得る。回復方法は未決定のため、少なくとも以下を記録できるようにする。</p><ul><li><p><code>job_id</code></p></li><li><p>オブジェクトストレージのキー</p></li><li><p>キュー登録の失敗内容</p></li><li><p>リトライ回数と最終失敗時刻</p></li></ul><p>回復方式の候補には、登録リトライ、未処理ジョブの定期スキャン、再送可能な中間状態のDB管理などがあるが、採用案は別途決定する。</p><h5>ワーカー処理失敗</h5><p>解析またはDB保存に失敗した場合は、メッセージを再処理可能な状態にする。再試行回数、恒久失敗時の隔離先、重複処理を防ぐための冪等性については、利用するキューと既存基盤の仕様に合わせて設計する。</p><h4>7. 実装方針</h4><ul><li><p>API実装では、保存処理とキュー登録処理を明確に分離する。</p></li><li><p>保存先キーとジョブIDを生成し、ログおよび後続処理で一貫して利用する。</p></li><li><p>外部サービスのタイムアウト、失敗、再試行回数を監視可能にする。</p></li><li><p>ワーカーはキューのメッセージからファイルを取得し、ファイル本体をメッセージとして扱わない。</p></li><li><p>解析結果のDB保存は、同一ジョブの再処理を考慮して冪等にする。</p></li><li><p>結果提示の遅延を利用者へ伝えられるよう、受付状態と処理状態を区別する。</p></li></ul><h4>8. 未決事項</h4><ol start="1"><li><p>APIがオブジェクトストレージへの保存後にキュー登録へ失敗した場合の回復方法。</p></li><li><p>キュー登録失敗時にAPIへ返すHTTPステータスと利用者向けメッセージ。</p></li><li><p>ジョブ状態の保持先と状態確認APIの仕様。</p></li><li><p>ワーカーの再試行回数、デッドレター処理、重複実行時の扱い。</p></li><li><p>保存済みだが未処理となったオブジェクトの削除・再送・保持期間。</p></li></ol><h4>9. 進行状況</h4><ul><li><p>今週の対象: API実装</p></li><li><p>担当: 佐藤</p></li></ul><p>作業追跡情報は、チケットまたは進捗管理文書で管理する。</p></div>
+    <footer class="candidate-footer"><a href="documents/design-tradeoff.1.without_skill.2.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>作業追跡用の課題IDとPR番号はDesign Docから除外し、チケットまたは進捗管理文書で管理する旨に変更しました。確定事項と未決事項の意味は維持しています。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 4,293トークン（内cache 0）／出力 1,569トークン／31.6秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">482字 · 5見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h3>ファイル取込の設計</h3><h4>背景と範囲</h4><p>ファイル取込を非同期で処理する。APIはファイルを受け付け、ワーカーが解析結果をデータベースへ保存する。本稿では、APIからワーカーまでのファイル受け渡しと保存処理を扱う。</p><h4>処理方式</h4><p>APIは受け取ったファイルをオブジェクトストレージへ保存し、保存先をキューへ登録する。ワーカーはキューから保存先を取得し、オブジェクトストレージのファイルを読み込んで解析する。解析結果はデータベースへ保存する。</p><p>ファイル本体はキューに登録しない。10MBのファイルがキューの1MB制限を超えるためである。</p><h4>失敗時の動作</h4><p>APIによるオブジェクトストレージへの保存に失敗した場合、APIは503を返し、保存先をキューへ登録しない。</p><p>キューへの登録に失敗した場合の回復方法は未決定である。登録失敗時にファイルを再処理する方法は、別途決定する。</p><h4>影響</h4><p>解析を非同期化するため、利用者が解析結果を確認できるまでの時間が延びる。ファイル本体をキューへ送らず保存先だけを渡すことで、キューのサイズ制限を回避する。</p></div>
+    <footer class="candidate-footer"><a href="documents/design-tradeoff.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>Design Doc（stock）の最小構成で作成。進行メモ（DATA-64、PR #203、今週の作業、担当者）は本文に含めていない。未確認事項はキューへの登録失敗時の回復方法。textlintは実行していない。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,192トークン（内cache 1,792）／出力 466トークン／12.2秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿 · lint修正前</span></div><div class="metrics">1963字 · 15見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>ファイル取込 Design Doc</h3><h4>1. 概要</h4><p>ファイル本体をオブジェクトストレージに保存し、保存先をキューへ登録する非同期取込方式を採用する。ワーカーはキューから保存先を取得し、オブジェクトストレージ上のファイルを読み込んで解析し、結果をDBへ保存する。</p><h4>2. 背景と制約</h4><ul><li><p>ファイル本体をキューに載せる方式は不採用とする。</p><ul><li><p>キューのメッセージ上限は1MB。</p></li><li><p>取込対象ファイルは最大10MBであり、制限を超える可能性がある。</p></li></ul></li><li><p>非同期処理のため、利用者が解析結果を確認できるまでの時間は従来より遅くなる。</p></li></ul><h4>3. 処理フロー</h4><h5>API</h5><ol start="1"><li><p>APIがファイルを受け取る。</p></li><li><p>ファイルをオブジェクトストレージへ保存する。</p></li><li><p>保存に成功した場合、保存先を示す情報をキューへ登録する。</p></li><li><p>リクエストには受付済みを示すレスポンスを返す。</p></li></ol><p>保存に失敗した場合は、以下のように処理する。</p><ul><li><p>HTTP 503を返す。</p></li><li><p>キューには登録しない。</p></li><li><p>クライアントが再試行できるよう、エラーを記録する。</p></li></ul><h5>ワーカー</h5><ol start="1"><li><p>キューから保存先情報を受け取る。</p></li><li><p>オブジェクトストレージからファイルを読み込む。</p></li><li><p>ファイルを解析する。</p></li><li><p>解析結果をDBへ保存する。</p></li><li><p>成功時にメッセージを完了扱いにする。</p></li></ol><h4>4. メッセージ設計</h4><p>キューにはファイル本体ではなく、少なくとも次の情報を含むメッセージを登録する。</p><pre><code>{
+  &quot;job_id&quot;: &quot;取込ジョブを一意に識別するID&quot;,
+  &quot;object_key&quot;: &quot;オブジェクトストレージ上の保存先&quot;,
+  &quot;created_at&quot;: &quot;受付日時&quot;
+}</code></pre><p><code>object_key</code> は利用者入力をそのままパスとして使用せず、サーバー側で生成した一意なキーを使用する。ワーカーが解析結果とジョブを対応付けられるよう、<code>job_id</code> を必須とする。</p><h4>5. API仕様の方針</h4><ul><li><p>保存成功かつキュー登録成功の場合、非同期受付済みとしてジョブIDを返す。</p></li><li><p>オブジェクトストレージへの保存失敗時は503を返す。</p></li><li><p>保存成功後にキュー登録が失敗した場合の回復方法は未決定であり、実装前に仕様を確定する。</p></li><li><p>非同期処理中の状態確認方法（ジョブ状態取得APIなど）は、既存のAPI設計に合わせて決定する。</p></li></ul><h4>6. エラー処理と運用上の注意</h4><h5>保存失敗</h5><p>保存処理の失敗を検知したら、キュー登録を行わず503を返す。不要な一時オブジェクトが残る場合は、削除またはライフサイクル設定を検討する。</p><h5>キュー登録失敗</h5><p>オブジェクトストレージへの保存後にキュー登録が失敗すると、ファイルは保存済みだが処理されない状態になり得る。回復方法は未決定のため、少なくとも以下を記録できるようにする。</p><ul><li><p><code>job_id</code></p></li><li><p>オブジェクトストレージのキー</p></li><li><p>キュー登録の失敗内容</p></li><li><p>リトライ回数と最終失敗時刻</p></li></ul><p>回復方式の候補には、登録リトライ、未処理ジョブの定期スキャン、再送可能な中間状態のDB管理などがあるが、採用案は別途決定する。</p><h5>ワーカー処理失敗</h5><p>解析またはDB保存に失敗した場合は、メッセージを再処理可能な状態にする。再試行回数、恒久失敗時の隔離先、重複処理を防ぐための冪等性については、利用するキューと既存基盤の仕様に合わせて設計する。</p><h4>7. 実装方針</h4><ul><li><p>API実装では、保存処理とキュー登録処理を明確に分離する。</p></li><li><p>保存先キーとジョブIDを生成し、ログおよび後続処理で一貫して利用する。</p></li><li><p>外部サービスのタイムアウト、失敗、再試行回数を監視可能にする。</p></li><li><p>ワーカーはキューのメッセージからファイルを取得し、ファイル本体をメッセージとして扱わない。</p></li><li><p>解析結果のDB保存は、同一ジョブの再処理を考慮して冪等にする。</p></li><li><p>結果提示の遅延を利用者へ伝えられるよう、受付状態と処理状態を区別する。</p></li></ul><h4>8. 未決事項</h4><ol start="1"><li><p>APIがオブジェクトストレージへの保存後にキュー登録へ失敗した場合の回復方法。</p></li><li><p>キュー登録失敗時にAPIへ返すHTTPステータスと利用者向けメッセージ。</p></li><li><p>ジョブ状態の保持先と状態確認APIの仕様。</p></li><li><p>ワーカーの再試行回数、デッドレター処理、重複実行時の扱い。</p></li><li><p>保存済みだが未処理となったオブジェクトの削除・再送・保持期間。</p></li></ol><h4>9. 進行状況</h4><ul><li><p>チケット: DATA-64</p></li><li><p>関連PR: #203</p></li><li><p>今週の対象: API実装</p></li><li><p>担当: 佐藤</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/design-tradeoff.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>確定事項と未決事項を分離して記載しています。キュー登録失敗時の回復方法は未決定のため、実装前に仕様確定が必要です。</p></details>
+      <details class="lint"><summary>lint: 1件の指摘</summary><div class="lint-message"><strong>stock-boundary · 98行 9列</strong><pre>文書にJira課題IDが含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,724トークン（内cache 0）／出力 1,501トークン／30.4秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">482字 · 5見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>ファイル取込の設計</h3><h4>背景と範囲</h4><p>ファイル取込を非同期で処理する。APIはファイルを受け付け、ワーカーが解析結果をデータベースへ保存する。本稿では、APIからワーカーまでのファイル受け渡しと保存処理を扱う。</p><h4>処理方式</h4><p>APIは受け取ったファイルをオブジェクトストレージへ保存し、保存先をキューへ登録する。ワーカーはキューから保存先を取得し、オブジェクトストレージのファイルを読み込んで解析する。解析結果はデータベースへ保存する。</p><p>ファイル本体はキューに登録しない。10MBのファイルがキューの1MB制限を超えるためである。</p><h4>失敗時の動作</h4><p>APIによるオブジェクトストレージへの保存に失敗した場合、APIは503を返し、保存先をキューへ登録しない。</p><p>キューへの登録に失敗した場合の回復方法は未決定である。登録失敗時にファイルを再処理する方法は、別途決定する。</p><h4>影響</h4><p>解析を非同期化するため、利用者が解析結果を確認できるまでの時間が延びる。ファイル本体をキューへ送らず保存先だけを渡すことで、キューのサイズ制限を回避する。</p></div>
+    <footer class="candidate-footer"><a href="documents/design-tradeoff.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>Design Doc（stock）の最小構成で作成。進行メモ（DATA-64、PR #203、今週の作業、担当者）は本文に含めていない。未確認事項はキューへの登録失敗時の回復方法。textlintは実行していない。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,192トークン（内cache 1,792）／出力 466トークン／12.2秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">API→ストレージ→保存先をキュー→ワーカー→DBの流れ、保存失敗503かつ登録しない条件、登録失敗回復の未決定、10MB対1MB、結果提示の遅れを残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>必要な処理フロー、保存失敗時の503・キュー非登録、キュー登録失敗回復の未決定、10MBと1MBの制約、非同期化による結果提示の遅れを含む。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>ストレージ保存→保存先のキュー登録→ワーカーの読込・解析→DB保存、保存失敗時の503・非登録、登録失敗回復の未決定、10MB対1MB、非同期化による結果確認の遅れを記載している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">再送・削除・通知・状態取得APIなど未記載の回復や仕様を確定事項として補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>保存失敗時のエラー記録・クライアント再試行、ジョブIDやメッセージ項目、状態取得API、削除・再送・再試行・隔離・冪等性など、資料にない仕様や回復策を多数追加している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>キュー登録失敗の回復については未決定・別途決定とするにとどめ、再送や削除などを確定仕様として追加していない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">本文にDATA-64、PR #203、今週の作業や担当佐藤の追跡情報を入れない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>本文の「進行状況」に今週のAPI実装および担当・佐藤を記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文にDATA-64、PR #203、今週の作業、担当者の追跡情報を含めていない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">ストレージ保存失敗とキュー登録失敗を区別し、代替案を採らない理由が分かる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>保存失敗とキュー登録失敗を別節で扱い、前者の503・非登録と後者の回復未決定を区別している。ファイル本体方式を採らないサイズ上の理由も明確である。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>ストレージ保存失敗時の503・キュー非登録と、キュー登録失敗時の回復未決定を明確に区別し、ファイル本体をキューに載せない理由も示している。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">必要な論点の節や表は許容する。導入・概要・まとめで同じ結論を繰り返さず、空の節や依頼外の実装計画を付けない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>依頼外の詳細なメッセージ設計、運用・再試行設計、実装方針、進行状況を追加しており、必要論点に対して過剰である。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>必要な方式、失敗時動作、影響に絞られており、空の節や依頼外の実装計画はない。</p></div></div></section></details></section>
+<section class="pair" id="design-tradeoff.2" data-case="design-tradeoff" data-repeat="2"><div class="pair-heading"><h2>Design Docの構成・失敗条件・代替案 <small>2回目</small></h2><a href="comparisons/design-tradeoff.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>実装者向けにファイル取込のDesign Docを作成して。確定した資料: APIはファイルをオブジェクトストレージへ保存し、その保存先をキューへ登録する。保存に失敗したら503を返し、キューには登録しない。ワーカーは保存先から読み、解析結果をDBへ保存する。キューへの登録失敗時の回復方法は未決定。ファイル本体をキューに載せる案は、10MBのファイルがキューの1MB制限を超えるため不採用。非同期化で利用者への結果提示が遅れる。進行メモ: DATA-64、PR #203、今週はAPI実装、担当佐藤。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>最終稿 · lint修正後</span></div><div class="metrics">1136字 · 12見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><h3>ファイル取込 Design Doc</h3><h4>1. 概要</h4><p>ファイル本体をオブジェクトストレージに保存し、保存先の参照情報をキューへ登録する非同期取込方式を採用する。ワーカーはキューから保存先を取得し、オブジェクトストレージ上のファイルを読み込んで解析し、解析結果をDBへ保存する。</p><h4>2. 背景と制約</h4><ul><li><p>ファイル本体をキューに載せる方式は採用しない。</p></li><li><p>10MBのファイルに対して、キューのサイズ上限が1MBであるため、ファイル本体を登録できない。</p></li><li><p>非同期化により、利用者が解析結果を確認できるまでの時間は従来より遅くなる。</p></li></ul><h4>3. 処理フロー</h4><h5>API</h5><ol start="1"><li><p>APIが利用者からファイルを受け取る。</p></li><li><p>ファイルをオブジェクトストレージへ保存する。</p></li><li><p>保存に成功した場合、保存先を識別できる情報をキューへ登録する。</p></li><li><p>受付完了を利用者へ返す。</p></li></ol><h5>ワーカー</h5><ol start="1"><li><p>キューから保存先情報を受け取る。</p></li><li><p>保存先からファイルを読み込む。</p></li><li><p>ファイルを解析する。</p></li><li><p>解析結果をDBへ保存する。</p></li></ol><h4>4. エラー処理</h4><h5>オブジェクトストレージへの保存失敗</h5><ul><li><p>APIは503を返す。</p></li><li><p>キューへの登録は行わない。</p></li><li><p>保存が失敗したファイルについて、ワーカーによる処理は発生しない。</p></li></ul><h5>キューへの登録失敗</h5><p>回復方法は未決定である。実装時は、失敗時の状態を追跡できるようにし、リトライ、再登録、孤立したオブジェクトの扱いなどを別途決定する必要がある。決定前に独自の回復仕様を実装しない。</p><h4>5. API実装上の方針</h4><ul><li><p>ファイル本体はキューに登録せず、オブジェクトストレージ上の保存先情報のみを登録する。</p></li><li><p>オブジェクトストレージへの保存が成功したことを確認してから、キューへの登録を行う。</p></li><li><p>保存失敗時は503を返し、キュー登録処理を実行しない。</p></li><li><p>非同期処理であること、および解析結果の提示に時間がかかることを利用者へ伝えられるよう、受付状態と結果取得方法は実装時に整理する。</p></li></ul><h4>6. データ連携</h4><p>キューに登録するデータには、少なくともワーカーが対象ファイルを一意に取得できる保存先情報を含める。具体的なメッセージ形式、受付ID、再処理用の識別子は実装時に決定する。</p><h4>7. 未決事項</h4><ul><li><p>キューへの登録失敗時の回復方法</p></li><li><p>キュー登録失敗後に残るオブジェクトストレージ上のファイルの扱い</p></li><li><p>キューのメッセージ形式と保存先情報の表現</p></li><li><p>受付状態および解析結果の参照方法</p></li><li><p>ワーカーでの解析失敗時の再試行・エラー管理</p></li><li><p>解析完了を利用者へ通知する方法</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/design-tradeoff.2.without_skill.2.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>課題IDなどの作業追跡情報はDesign Docから除外しました。進行メモとして、今週はAPI実装、担当は佐藤、関連PRは#203です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 3,720トークン（内cache 0）／出力 1,014トークン／21.7秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">628字 · 5見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h3>ファイル取込の設計</h3><h4>背景と目標</h4><p>APIで受け付けたファイルを非同期に解析し、解析結果をDBへ保存する。利用者はAPIの応答を待たずに処理を進められる一方、結果の提示は遅れる。</p><h4>設計</h4><p>APIはファイル本体をオブジェクトストレージへ保存し、保存先をキューへ登録する。保存に失敗した場合は503を返し、キューへ登録しない。</p><p>ワーカーはキューから保存先を取得し、オブジェクトストレージからファイルを読み込む。解析結果をDBへ保存する。</p><pre><code>API
+  └─ ファイル保存 → オブジェクトストレージ
+                         └─ 保存先を登録 → キュー
+                                               └─ ワーカーが読み込み
+                                                     └─ 解析結果をDBへ保存</code></pre><h4>不採用案</h4><p>ファイル本体をキューへ載せる案は採用しない。ファイルサイズは最大10MBであり、キューの上限1MBを超えるためである。</p><h4>影響と未決定事項</h4><p>非同期化により、利用者が解析結果を確認できるまでの時間が延びる。</p><p>キューへの登録に失敗した場合の回復方法は未決定である。登録失敗時に、オブジェクトストレージへ保存したファイルをどう扱うかを別途決める必要がある。</p></div>
+    <footer class="candidate-footer"><a href="documents/design-tradeoff.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>Design Doc（stock）として、進行メモの課題ID・PR番号・担当者・予定は本文から除外しました。採用段階は3（短い章立てで、設計・理由・影響・未決定事項を満たすため）。textlintは未実行です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,190トークン（内cache 0）／出力 485トークン／12.8秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿 · lint修正前</span></div><div class="metrics">1202字 · 13見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>ファイル取込 Design Doc</h3><h4>1. 概要</h4><p>ファイル本体をオブジェクトストレージに保存し、保存先の参照情報をキューへ登録する非同期取込方式を採用する。ワーカーはキューから保存先を取得し、オブジェクトストレージ上のファイルを読み込んで解析し、解析結果をDBへ保存する。</p><h4>2. 背景と制約</h4><ul><li><p>ファイル本体をキューに載せる方式は採用しない。</p></li><li><p>10MBのファイルに対して、キューのサイズ上限が1MBであるため、ファイル本体を登録できない。</p></li><li><p>非同期化により、利用者が解析結果を確認できるまでの時間は従来より遅くなる。</p></li></ul><h4>3. 処理フロー</h4><h5>API</h5><ol start="1"><li><p>APIが利用者からファイルを受け取る。</p></li><li><p>ファイルをオブジェクトストレージへ保存する。</p></li><li><p>保存に成功した場合、保存先を識別できる情報をキューへ登録する。</p></li><li><p>受付完了を利用者へ返す。</p></li></ol><h5>ワーカー</h5><ol start="1"><li><p>キューから保存先情報を受け取る。</p></li><li><p>保存先からファイルを読み込む。</p></li><li><p>ファイルを解析する。</p></li><li><p>解析結果をDBへ保存する。</p></li></ol><h4>4. エラー処理</h4><h5>オブジェクトストレージへの保存失敗</h5><ul><li><p>APIは503を返す。</p></li><li><p>キューへの登録は行わない。</p></li><li><p>保存が失敗したファイルについて、ワーカーによる処理は発生しない。</p></li></ul><h5>キューへの登録失敗</h5><p>回復方法は未決定である。実装時は、失敗時の状態を追跡できるようにし、リトライ、再登録、孤立したオブジェクトの扱いなどを別途決定する必要がある。決定前に独自の回復仕様を実装しない。</p><h4>5. API実装上の方針</h4><ul><li><p>ファイル本体はキューに登録せず、オブジェクトストレージ上の保存先情報のみを登録する。</p></li><li><p>オブジェクトストレージへの保存が成功したことを確認してから、キューへの登録を行う。</p></li><li><p>保存失敗時は503を返し、キュー登録処理を実行しない。</p></li><li><p>非同期処理であること、および解析結果の提示に時間がかかることを利用者へ伝えられるよう、受付状態と結果取得方法は実装時に整理する。</p></li></ul><h4>6. データ連携</h4><p>キューに登録するデータには、少なくともワーカーが対象ファイルを一意に取得できる保存先情報を含める。具体的なメッセージ形式、受付ID、再処理用の識別子は実装時に決定する。</p><h4>7. 未決事項</h4><ul><li><p>キューへの登録失敗時の回復方法</p></li><li><p>キュー登録失敗後に残るオブジェクトストレージ上のファイルの扱い</p></li><li><p>キューのメッセージ形式と保存先情報の表現</p></li><li><p>受付状態および解析結果の参照方法</p></li><li><p>ワーカーでの解析失敗時の再試行・エラー管理</p></li><li><p>解析完了を利用者へ通知する方法</p></li></ul><h4>8. 作業情報</h4><ul><li><p>チケット: DATA-64</p></li><li><p>関連PR: #203</p></li><li><p>今週の対象: API実装</p></li><li><p>担当: 佐藤</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/design-tradeoff.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>確定資料にない仕様は未決事項または実装時に決定する事項として記載しています。</p></details>
+      <details class="lint"><summary>lint: 1件の指摘</summary><div class="lint-message"><strong>stock-boundary · 63行 9列</strong><pre>文書にJira課題IDが含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,722トークン（内cache 1,792）／出力 952トークン／29.3秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">628字 · 5見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>ファイル取込の設計</h3><h4>背景と目標</h4><p>APIで受け付けたファイルを非同期に解析し、解析結果をDBへ保存する。利用者はAPIの応答を待たずに処理を進められる一方、結果の提示は遅れる。</p><h4>設計</h4><p>APIはファイル本体をオブジェクトストレージへ保存し、保存先をキューへ登録する。保存に失敗した場合は503を返し、キューへ登録しない。</p><p>ワーカーはキューから保存先を取得し、オブジェクトストレージからファイルを読み込む。解析結果をDBへ保存する。</p><pre><code>API
+  └─ ファイル保存 → オブジェクトストレージ
+                         └─ 保存先を登録 → キュー
+                                               └─ ワーカーが読み込み
+                                                     └─ 解析結果をDBへ保存</code></pre><h4>不採用案</h4><p>ファイル本体をキューへ載せる案は採用しない。ファイルサイズは最大10MBであり、キューの上限1MBを超えるためである。</p><h4>影響と未決定事項</h4><p>非同期化により、利用者が解析結果を確認できるまでの時間が延びる。</p><p>キューへの登録に失敗した場合の回復方法は未決定である。登録失敗時に、オブジェクトストレージへ保存したファイルをどう扱うかを別途決める必要がある。</p></div>
+    <footer class="candidate-footer"><a href="documents/design-tradeoff.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>Design Doc（stock）として、進行メモの課題ID・PR番号・担当者・予定は本文から除外しました。採用段階は3（短い章立てで、設計・理由・影響・未決定事項を満たすため）。textlintは未実行です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,190トークン（内cache 0）／出力 485トークン／12.8秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">API→ストレージ→保存先をキュー→ワーカー→DBの流れ、保存失敗503かつ登録しない条件、登録失敗回復の未決定、10MB対1MB、結果提示の遅れを残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>保存→保存先をキュー→ワーカーが保存先から読取・解析→DB、保存失敗時の503・非登録、登録失敗回復の未決定、10MB対1MB、結果提示の遅延を本文に記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>必要な処理フロー、保存失敗時の503とキュー非登録、キュー登録失敗回復の未決定、10MB対1MB、不採用理由、非同期化による結果提示遅延をすべて本文に含む。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">再送・削除・通知・状態取得APIなど未記載の回復や仕様を確定事項として補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>再送等は「別途決定」「独自の回復仕様を実装しない」と未決定としており、確定仕様としては補っていない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>キュー登録失敗後のファイルの扱いは「別途決める必要」としており、未記載の回復仕様を確定事項としていない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">本文にDATA-64、PR #203、今週の作業や担当佐藤の追跡情報を入れない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文にはDATA-64、PR #203、今週の作業、佐藤の記載がない。これらは本文外notesのみである。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文にDATA-64、PR #203、今週の作業、担当佐藤の追跡情報を含めていない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">ストレージ保存失敗とキュー登録失敗を区別し、代替案を採らない理由が分かる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>ストレージ保存失敗（503・キュー非登録）とキュー登録失敗（回復未決定）を別節で明確に区別し、10MBが1MB上限を超えるため代替案を不採用と説明している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>ストレージ保存失敗時の動作と、キュー登録失敗時に回復方法が未決定であることを分けて記し、不採用理由も数値で明確である。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">必要な論点の節や表は許容する。導入・概要・まとめで同じ結論を繰り返さず、空の節や依頼外の実装計画を付けない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>必要事項を超えて、受付状態・結果取得方法、メッセージ形式、受付ID、ワーカー再試行・通知などの実装検討項目を多数追加しており、依頼外の実装計画がある。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>設計・不採用理由・影響・未決定事項を簡潔に扱い、結論の重複、空の節、依頼外の実装計画がない。</p></div></div></section></details></section>
+<section class="pair" id="progress-retention.1" data-case="progress-retention" data-repeat="1"><div class="pair-heading"><h2>進捗報告で追跡情報を保持 <small>1回目</small></h2><a href="comparisons/progress-retention.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>担当チーム向けの進捗報告を簡潔に書いて。対象期間は2026-08-17〜2026-08-21。担当は鈴木。BILL-218で受付APIを実装済み、PR #106はレビュー待ち。次は再試行処理。最大回数が未決定で作業が止まっている。PdMに8月24日までの判断を依頼したい。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">162字 · 1見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h4>進捗報告（2026/08/17〜2026/08/21）</h4><ul><li><p>担当：鈴木</p></li><li><p>BILL-218：受付APIを実装済み。PR #106はレビュー待ち。</p></li><li><p>次の作業：再試行処理の実装</p></li><li><p>課題：再試行の最大回数が未決定のため、作業が停止中</p></li><li><p>依頼：PdMに対し、2026年8月24日までに最大回数の判断をお願いします。</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/progress-retention.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,653トークン（内cache 0）／出力 142トークン／8.1秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">152字 · 1見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h4>進捗報告（2026-08-17〜2026-08-21）</h4><p>担当は鈴木です。BILL-218の受付APIを実装しました。PR #106はレビュー待ちです。</p><p>次は再試行処理の実装です。再試行の最大回数が未決定のため、作業を停止しています。PdMは2026年8月24日までに最大回数を判断してください。</p></div>
+    <footer class="candidate-footer"><a href="documents/progress-retention.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>進捗報告として、必要情報が一段落で揃う最小構成（段3）を採用しました。検査は外部実行系で行ってください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,335トークン（内cache 0）／出力 244トークン／10.6秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">162字 · 1見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h4>進捗報告（2026/08/17〜2026/08/21）</h4><ul><li><p>担当：鈴木</p></li><li><p>BILL-218：受付APIを実装済み。PR #106はレビュー待ち。</p></li><li><p>次の作業：再試行処理の実装</p></li><li><p>課題：再試行の最大回数が未決定のため、作業が停止中</p></li><li><p>依頼：PdMに対し、2026年8月24日までに最大回数の判断をお願いします。</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/progress-retention.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,653トークン（内cache 0）／出力 142トークン／8.1秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">152字 · 1見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h4>進捗報告（2026-08-17〜2026-08-21）</h4><p>担当は鈴木です。BILL-218の受付APIを実装しました。PR #106はレビュー待ちです。</p><p>次は再試行処理の実装です。再試行の最大回数が未決定のため、作業を停止しています。PdMは2026年8月24日までに最大回数を判断してください。</p></div>
+    <footer class="candidate-footer"><a href="documents/progress-retention.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>進捗報告として、必要情報が一段落で揃う最小構成（段3）を採用しました。検査は外部実行系で行ってください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,335トークン（内cache 0）／出力 244トークン／10.6秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">対象期間の両端、鈴木、BILL-218、受付API実装済み、PR #106レビュー待ち、次の再試行処理を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>対象期間（2026/08/17〜2026/08/21）、鈴木、BILL-218、受付API実装済み、PR #106のレビュー待ち、次作業の再試行処理をすべて本文に明記している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>対象期間の両端、鈴木、BILL-218、受付API実装、PR #106レビュー待ち、次の再試行処理を本文に記載している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">レビュー完了やマージ済みと誤記せず、回数・仕様・担当を補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>PRをレビュー完了・マージ済みとは記載せず、未提示の回数・仕様・担当も補っていない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>レビュー完了・マージ済みとは誤記しておらず、未提示の回数・仕様・担当を追加していない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">課題とPRの追跡情報を削除せず、作業状況と判断依頼を報告する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>BILL-218、PR #106、最大回数未決定による停止、PdMへの判断依頼を保持している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>課題（最大回数未決定による停止）、課題番号、PR追跡情報、PdMへの判断依頼が本文に残っている。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">再試行上限が未決定で作業停止していること、PdMへの判断依頼と8月24日期限を結び付けて書く。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>再試行の最大回数が未決定で作業停止中であることと、PdMに8月24日までの判断を依頼することが明確に結び付いている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>最大回数未決定で作業を停止していること、およびPdMが2026年8月24日までに判断する依頼が明記されている。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">短い段落、箇条書き、表のいずれかで伝え、同じ状況を概要と詳細で繰り返さない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>簡潔な箇条書きで、同一状況の重複説明がない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>短い段落で必要事項を一度ずつ伝えており、概要と詳細の重複がない。</p></div></div></section></details></section>
+<section class="pair" id="progress-retention.2" data-case="progress-retention" data-repeat="2"><div class="pair-heading"><h2>進捗報告で追跡情報を保持 <small>2回目</small></h2><a href="comparisons/progress-retention.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>担当チーム向けの進捗報告を簡潔に書いて。対象期間は2026-08-17〜2026-08-21。担当は鈴木。BILL-218で受付APIを実装済み、PR #106はレビュー待ち。次は再試行処理。最大回数が未決定で作業が止まっている。PdMに8月24日までの判断を依頼したい。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">147字 · 1見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h4>進捗報告（2026/8/17〜8/21）</h4><ul><li><p>担当：鈴木</p></li><li><p>BILL-218：受付APIを実装済み。PR #106はレビュー待ち。</p></li><li><p>次の作業：再試行処理</p></li><li><p>課題：再試行の最大回数が未決定のため、作業停止中。</p></li><li><p>依頼：PdMに対し、8月24日までに最大回数の判断をお願いします。</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/progress-retention.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,653トークン（内cache 0）／出力 133トークン／5.9秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">141字 · 1見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h4>進捗報告（2026-08-17〜2026-08-21）</h4><p>担当は鈴木です。BILL-218の受付APIを実装しました。PR #106はレビュー待ちです。</p><p>次は再試行処理です。最大回数が未決定のため、作業を停止しています。PdMには2026年8月24日までの判断を依頼します。</p></div>
+    <footer class="candidate-footer"><a href="documents/progress-retention.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 3。期間、担当、進捗、次の作業、阻害要因、判断依頼を一段落で満たせるため。検査は未実施です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,333トークン（内cache 0）／出力 235トークン／7.9秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">147字 · 1見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h4>進捗報告（2026/8/17〜8/21）</h4><ul><li><p>担当：鈴木</p></li><li><p>BILL-218：受付APIを実装済み。PR #106はレビュー待ち。</p></li><li><p>次の作業：再試行処理</p></li><li><p>課題：再試行の最大回数が未決定のため、作業停止中。</p></li><li><p>依頼：PdMに対し、8月24日までに最大回数の判断をお願いします。</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/progress-retention.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,653トークン（内cache 0）／出力 133トークン／5.9秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">141字 · 1見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h4>進捗報告（2026-08-17〜2026-08-21）</h4><p>担当は鈴木です。BILL-218の受付APIを実装しました。PR #106はレビュー待ちです。</p><p>次は再試行処理です。最大回数が未決定のため、作業を停止しています。PdMには2026年8月24日までの判断を依頼します。</p></div>
+    <footer class="candidate-footer"><a href="documents/progress-retention.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 3。期間、担当、進捗、次の作業、阻害要因、判断依頼を一段落で満たせるため。検査は未実施です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,333トークン（内cache 0）／出力 235トークン／7.9秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">対象期間の両端、鈴木、BILL-218、受付API実装済み、PR #106レビュー待ち、次の再試行処理を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>対象期間は「2026/8/17〜8/21」と両端を示し、鈴木、BILL-218、受付API実装済み、PR #106レビュー待ち、次の再試行処理を記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>対象期間の両端、担当の鈴木、BILL-218の受付API実装済み、PR #106のレビュー待ち、次の再試行処理を記載している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">レビュー完了やマージ済みと誤記せず、回数・仕様・担当を補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>レビュー完了やマージ済みとは誤記せず、回数の具体値・追加仕様・担当を補っていない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>PRをレビュー完了・マージ済みとは記載せず、未決定の最大回数以外の仕様や担当を補っていない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">課題とPRの追跡情報を削除せず、作業状況と判断依頼を報告する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>BILL-218とPR #106を残し、進捗、停止中の課題、PdMへの判断依頼を報告している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>課題番号とPR番号を保持し、作業状況、停止要因、PdMへの判断依頼を報告している。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">再試行上限が未決定で作業停止していること、PdMへの判断依頼と8月24日期限を結び付けて書く。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>再試行最大回数の未決定による作業停止と、PdMへ8月24日までに判断を依頼する点が明示されている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>最大回数が未決定のため作業停止中であることと、PdMに2026年8月24日までの判断を依頼することが明確に結び付いている。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">短い段落、箇条書き、表のいずれかで伝え、同じ状況を概要と詳細で繰り返さない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>簡潔な箇条書きで構成され、概要と詳細の重複がない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>短い段落で必要事項を一度ずつ簡潔に伝えている。</p></div></div></section></details></section>
+<section class="pair" id="incident-record.1" data-case="incident-record" data-repeat="1"><div class="pair-heading"><h2>障害記録の時系列と仮説 <small>1回目</small></h2><a href="comparisons/incident-record.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>運用チーム向けに短いポストモーテムを書いて。8月19日09:10に請求検索のエラー増加を検知。09:17に当番の加藤が直前の変更を戻し、09:22に復旧を確認。影響は検索失敗340件、決済への影響なし。DB接続枯渇が原因という仮説だが、ログの確認は未完了。改善課題はOPS-315、接続数の記録追加を加藤が8月26日までに行う。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">295字 · 2見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><h4>請求検索エラー増加 ポストモーテム</h4><ul><li><p><strong>発生日時:</strong> 8月19日 09:10〜09:22</p></li><li><p><strong>検知:</strong> 09:10、請求検索のエラー増加を検知</p></li><li><p><strong>対応:</strong> 09:17、当番の加藤が直前の変更をロールバック。09:22、復旧を確認</p></li><li><p><strong>影響:</strong> 請求検索の失敗340件。決済への影響なし</p></li><li><p><strong>原因:</strong> DB接続枯渇が原因と推測。ログ確認は未完了で、確定には至っていない</p></li><li><p><strong>改善:</strong> OPS-315として、DB接続数の記録を追加。担当は加藤、期限は8月26日</p></li></ul><h4>次のアクション</h4><p>原因確定のためログ確認を完了し、接続数の記録追加を実施する。</p></div>
+    <footer class="candidate-footer"><a href="documents/incident-record.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,681トークン（内cache 1,792）／出力 230トークン／8.4秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">217字 · 5見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h3>請求検索エラー増加のポストモーテム</h3><h4>影響</h4><p>請求検索に340件の失敗が発生した。決済への影響はなかった。</p><h4>経過</h4><ul><li><p>8月19日09:10：運用チームがエラー増加を検知。</p></li><li><p>09:17：当番の加藤が直前の変更を戻した。</p></li><li><p>09:22：復旧を確認。</p></li></ul><h4>原因</h4><p>DB接続枯渇が原因と推測しているが、ログの確認は完了していない。</p><h4>改善</h4><p>加藤が8月26日までに接続数の記録を追加する。追跡課題はOPS-315。</p></div>
+    <footer class="candidate-footer"><a href="documents/incident-record.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>record・段4。原資料にない発生原因や再発防止策は補っていません。textlintは外部の実行系で検査してください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,385トークン（内cache 1,792）／出力 292トークン／9.7秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">295字 · 2見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h4>請求検索エラー増加 ポストモーテム</h4><ul><li><p><strong>発生日時:</strong> 8月19日 09:10〜09:22</p></li><li><p><strong>検知:</strong> 09:10、請求検索のエラー増加を検知</p></li><li><p><strong>対応:</strong> 09:17、当番の加藤が直前の変更をロールバック。09:22、復旧を確認</p></li><li><p><strong>影響:</strong> 請求検索の失敗340件。決済への影響なし</p></li><li><p><strong>原因:</strong> DB接続枯渇が原因と推測。ログ確認は未完了で、確定には至っていない</p></li><li><p><strong>改善:</strong> OPS-315として、DB接続数の記録を追加。担当は加藤、期限は8月26日</p></li></ul><h4>次のアクション</h4><p>原因確定のためログ確認を完了し、接続数の記録追加を実施する。</p></div>
+    <footer class="candidate-footer"><a href="documents/incident-record.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,681トークン（内cache 1,792）／出力 230トークン／8.4秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">217字 · 5見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>請求検索エラー増加のポストモーテム</h3><h4>影響</h4><p>請求検索に340件の失敗が発生した。決済への影響はなかった。</p><h4>経過</h4><ul><li><p>8月19日09:10：運用チームがエラー増加を検知。</p></li><li><p>09:17：当番の加藤が直前の変更を戻した。</p></li><li><p>09:22：復旧を確認。</p></li></ul><h4>原因</h4><p>DB接続枯渇が原因と推測しているが、ログの確認は完了していない。</p><h4>改善</h4><p>加藤が8月26日までに接続数の記録を追加する。追跡課題はOPS-315。</p></div>
+    <footer class="candidate-footer"><a href="documents/incident-record.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>record・段4。原資料にない発生原因や再発防止策は補っていません。textlintは外部の実行系で検査してください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,385トークン（内cache 1,792）／出力 292トークン／9.7秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">8月19日、09:10検知、09:17加藤が変更を戻す、09:22復旧、340件、決済影響なしを残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>8月19日、09:10検知、09:17に加藤がロールバック、09:22復旧、失敗340件、決済影響なしをすべて記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>8月19日、09:10検知、09:17に加藤が変更を戻したこと、09:22復旧、検索失敗340件、決済影響なしをすべて記載している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">DB接続枯渇を仮説として書き、ログ確認未完了を保つ。根本原因が確定したとは書かない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>DB接続枯渇を推測にとどめ、ログ確認未完了で確定していないことを明記している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>DB接続枯渇を「推測」とし、ログ確認未完了も明記しており、原因確定とはしていない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">OPS-315、接続数の記録追加、加藤、8月26日期限を保持する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>OPS-315、DB接続数の記録追加、加藤、8月26日の期限を記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>OPS-315、接続数の記録追加、担当の加藤、8月26日までの期限をすべて保持している。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">時系列が追え、観測した事実・原因仮説・改善予定を区別できる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>箇条書きで検知・対応・影響・原因・改善が区分され、経過と仮説、予定を追える。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>影響・経過・原因・改善が節で分かれ、時系列と事実／仮説／予定を区別できる。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">時系列の表・必要な節は許容する。事象の同じ要約を繰り返さず、架空の再発防止項目を増やさない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>本文外の「次のアクション」で、原資料にない「原因確定のためログ確認を完了」を追加し、接続数記録追加も改善欄と重複している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>必要な情報のみを一度ずつ記載し、資料にない再発防止項目を追加していない。</p></div></div></section></details></section>
+<section class="pair" id="incident-record.2" data-case="incident-record" data-repeat="2"><div class="pair-heading"><h2>障害記録の時系列と仮説 <small>2回目</small></h2><a href="comparisons/incident-record.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>運用チーム向けに短いポストモーテムを書いて。8月19日09:10に請求検索のエラー増加を検知。09:17に当番の加藤が直前の変更を戻し、09:22に復旧を確認。影響は検索失敗340件、決済への影響なし。DB接続枯渇が原因という仮説だが、ログの確認は未完了。改善課題はOPS-315、接続数の記録追加を加藤が8月26日までに行う。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>最終稿 · lint修正後</span></div><div class="metrics">295字 · 6見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h4>請求検索エラー増加ポストモーテム</h4><h5>概要</h5><p>8月19日09:10、請求検索のエラー増加を検知しました。直前の変更をロールバックし、09:22に復旧を確認しました。</p><h5>影響</h5><ul><li><p>検索失敗：340件</p></li><li><p>決済への影響：なし</p></li></ul><h5>タイムライン</h5><ul><li><p>09:10：請求検索のエラー増加を検知</p></li><li><p>09:17：当番の加藤が直前の変更をロールバック</p></li><li><p>09:22：復旧を確認</p></li></ul><h5>原因</h5><p>DB接続枯渇が原因と考えられます。ただし、ログ確認は未完了のため、現時点では未確定です。</p><h5>改善課題</h5><ul><li><p>OPS-315：DB接続数の記録を追加（担当：加藤、期限：8月26日）</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/incident-record.2.without_skill.2.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>原因はログ確認完了後に確定し、必要に応じて本文を更新します。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 3,101トークン（内cache 0）／出力 377トークン／10.2秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>最終稿 · lint修正後</span></div><div class="metrics">228字 · 5見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h3>請求検索エラー増加のポストモーテム</h3><h4>影響</h4><p>請求検索に340件の失敗が発生した。決済への影響はなかった。</p><h4>経過</h4><ul><li><p>8月19日09:10：運用チームがエラー増加を検知。</p></li><li><p>09:17：当番の加藤が直前の変更を戻した。</p></li><li><p>09:22：復旧を確認。</p></li></ul><h4>原因</h4><p>原因はDB接続枯渇と推測している。ただし、ログ確認は未完了で、確定していない。</p><h4>改善課題</h4><p>加藤が8月26日までに、DB接続数の記録を追加する。追跡先はOPS-315。</p></div>
+    <footer class="candidate-footer"><a href="documents/incident-record.2.with_skill.2.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>前稿の助詞重複を修正し、原資料の未確定情報を保った。textlint検査は外部の実行系で実施してください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,791トークン（内cache 1,792）／出力 468トークン／11.9秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿 · lint修正前</span></div><div class="metrics">296字 · 6見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h4>請求検索エラー増加ポストモーテム</h4><h5>概要</h5><p>8月19日09:10、請求検索のエラー増加を検知しました。直前の変更をロールバックし、09:22に復旧を確認しました。</p><h5>影響</h5><ul><li><p>検索失敗：340件</p></li><li><p>決済への影響：なし</p></li></ul><h5>タイムライン</h5><ul><li><p>09:10：請求検索のエラー増加を検知</p></li><li><p>09:17：当番の加藤が直前の変更をロールバック</p></li><li><p>09:22：復旧を確認</p></li></ul><h5>原因</h5><p>DB接続枯渇が原因である可能性がありますが、ログ確認が未完了のため、現時点では未確定です。</p><h5>改善課題</h5><ul><li><p>OPS-315：DB接続数の記録を追加（担当：加藤、期限：8月26日）</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/incident-record.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>原因はログ確認完了後に確定し、必要に応じて本文を更新します。</p></details>
+      <details class="lint"><summary>lint: 1件の指摘</summary><div class="lint-message"><strong>no-doubled-joshi · 16行 16列</strong><pre>一文に二回以上利用されている助詞 &quot;が&quot; がみつかりました。
+
+次の助詞が連続しているため、文を読みにくくしています。
+
+- &quot;が&quot;
+- &quot;が&quot;
+
+同じ助詞を連続して利用しない、文の中で順番を入れ替える、文を分割するなどを検討してください。
+</pre></div></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,683トークン（内cache 0）／出力 292トークン／9.0秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿 · lint修正前</span></div><div class="metrics">236字 · 5見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>請求検索エラー増加のポストモーテム</h3><h4>影響</h4><p>請求検索に340件の失敗が発生した。決済への影響はなかった。</p><h4>経過</h4><ul><li><p>8月19日09:10：運用チームがエラー増加を検知。</p></li><li><p>09:17：当番の加藤が直前の変更を戻した。</p></li><li><p>09:22：復旧を確認。</p></li></ul><h4>原因</h4><p>DB接続枯渇が原因である可能性がある。ただし、ログの確認が完了しておらず、原因は未確定である。</p><h4>改善課題</h4><p>加藤が8月26日までに、DB接続数の記録を追加する。追跡先はOPS-315。</p></div>
+    <footer class="candidate-footer"><a href="documents/incident-record.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段：4。影響、経過、原因、改善課題を分ける必要があるため。textlint検査は外部の実行系で実施してください。</p></details>
+      <details class="lint"><summary>lint: 1件の指摘</summary><div class="lint-message"><strong>no-doubled-joshi · 12行 16列</strong><pre>一文に二回以上利用されている助詞 &quot;が&quot; がみつかりました。
+
+次の助詞が連続しているため、文を読みにくくしています。
+
+- &quot;が&quot;
+- &quot;が&quot;
+
+同じ助詞を連続して利用しない、文の中で順番を入れ替える、文を分割するなどを検討してください。
+</pre></div></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,383トークン（内cache 0）／出力 336トークン／9.9秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">8月19日、09:10検知、09:17加藤が変更を戻す、09:22復旧、340件、決済影響なしを残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文に8月19日09:10の検知、09:17の加藤によるロールバック、09:22の復旧、検索失敗340件、決済影響なしがある。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文に8月19日09:10の検知、09:17の加藤による変更差し戻し、09:22の復旧、340件の検索失敗、決済影響なしがある。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">DB接続枯渇を仮説として書き、ログ確認未完了を保つ。根本原因が確定したとは書かない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>DB接続枯渇を未確定の見立てとして記載し、ログ確認未完了も明記している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>DB接続枯渇は推測とし、ログ確認未完了かつ未確定であることを明示している。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">OPS-315、接続数の記録追加、加藤、8月26日期限を保持する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>OPS-315、DB接続数の記録追加、担当の加藤、8月26日の期限を記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>追跡先OPS-315、DB接続数の記録追加、加藤、8月26日までの期限を保持している。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">時系列が追え、観測した事実・原因仮説・改善予定を区別できる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>概要・影響・時系列・原因・改善課題が分かれ、事実、仮説、予定を区別できる。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>影響、経過、原因、改善課題が分かれ、時系列と事実・仮説・予定を追える。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">時系列の表・必要な節は許容する。事象の同じ要約を繰り返さず、架空の再発防止項目を増やさない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>必要事項のみで構成され、同一事象の不必要な反復や架空の対策追加はない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>簡潔で、同じ事象の重複要約や根拠のない再発防止項目はない。</p></div></div></section></details></section>
+<section class="pair" id="runbook-missing.1" data-case="runbook-missing" data-repeat="1"><div class="pair-heading"><h2>資料不足の手順を完成扱いしない <small>1回目</small></h2><a href="comparisons/runbook-missing.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>当番が使う本番のキャッシュ再起動手順を書いて。資料は『監視でエラーを見たらキャッシュを再起動する』だけ。再起動コマンド、停止してよい条件、復旧確認方法、連絡先はまだ決まっていない。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">654字 · 6見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><h3>本番キャッシュ再起動手順（ドラフト）</h3><h4>1. 実施条件</h4><p>監視でエラーを検知した場合に、キャッシュ再起動を検討する。</p><p>ただし、以下は未確定のため、実施前に運用責任者の判断を仰ぐ。</p><ul><li><p>再起動してよい条件</p></li><li><p>再起動を避ける条件</p></li><li><p>影響範囲・停止許容時間</p></li><li><p>実施者の承認要否</p></li></ul><h4>2. 実施手順</h4><ol start="1"><li><p>監視で発生しているエラー、発生時刻、対象サービスを記録する。</p></li><li><p>運用責任者へ連絡し、再起動の可否を確認する。</p></li><li><p>承認後、対象キャッシュを停止・再起動する。</p></li><li><p>再起動コマンドを実行する。</p></li></ol><p>※対象ホスト、サービス名、停止コマンド、再起動コマンド、実行ユーザーおよび権限は未確定。確定後に記載する。</p><h4>3. 復旧確認</h4><p>再起動後、以下を確認する。</p><ul><li><p>監視エラーが解消したこと</p></li><li><p>キャッシュが正常に稼働していること</p></li><li><p>アプリケーションからのアクセスが正常であること</p></li><li><p>エラーや性能劣化が再発していないこと</p></li></ul><p>※確認コマンド、確認画面、判定基準および確認時間は未確定。確定後に記載する。</p><h4>4. 復旧しない場合</h4><p>再起動後もエラーが継続する場合は、追加の再起動を繰り返さず、運用責任者へ状況を連絡して指示を受ける。</p><h4>5. 連絡先・記録</h4><p>実施前後に、以下を記録・連絡する。</p><ul><li><p>発生したエラー</p></li><li><p>対象環境・対象キャッシュ</p></li><li><p>実施日時と実施者</p></li><li><p>実行した操作</p></li><li><p>復旧確認結果</p></li></ul><p>※連絡先、連絡手段、エスカレーション先および記録場所は未確定。確定後に追記する。</p></div>
+    <footer class="candidate-footer"><a href="documents/runbook-missing.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>原資料だけでは、本番で安全に実行できる具体的な手順を確定できません。再起動コマンド、停止条件、復旧確認方法、連絡先を定めてから正式手順として運用してください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,620トークン（内cache 0）／出力 639トークン／15.3秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">250字 · 4見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h3>本番キャッシュ再起動手順（草稿）</h3><h4>前提</h4><p>監視でエラーを検知した場合に、本番キャッシュの再起動を検討する。</p><h4>手順</h4><ol start="1"><li><p>監視でエラーを確認する。</p></li><li><p>停止してよい条件を確認する。</p></li><li><p>定められた再起動コマンドを実行する。</p></li><li><p>復旧確認方法に従い、サービスの状態を確認する。</p></li><li><p>復旧しない場合は、定められた連絡先へ連絡する。</p></li></ol><h4>未確定事項</h4><p>再起動コマンド、停止してよい条件、復旧確認方法、連絡先は未定である。これらが決まるまで、この文書だけでは本番操作を実行できない。</p></div>
+    <footer class="candidate-footer"><a href="documents/runbook-missing.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 4。提示資料だけで再現可能な手順を確定できないため、既知の条件と未確定事項を分けた草稿とした。textlint は未実施。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,302トークン（内cache 0）／出力 338トークン／9.9秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">654字 · 6見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>本番キャッシュ再起動手順（ドラフト）</h3><h4>1. 実施条件</h4><p>監視でエラーを検知した場合に、キャッシュ再起動を検討する。</p><p>ただし、以下は未確定のため、実施前に運用責任者の判断を仰ぐ。</p><ul><li><p>再起動してよい条件</p></li><li><p>再起動を避ける条件</p></li><li><p>影響範囲・停止許容時間</p></li><li><p>実施者の承認要否</p></li></ul><h4>2. 実施手順</h4><ol start="1"><li><p>監視で発生しているエラー、発生時刻、対象サービスを記録する。</p></li><li><p>運用責任者へ連絡し、再起動の可否を確認する。</p></li><li><p>承認後、対象キャッシュを停止・再起動する。</p></li><li><p>再起動コマンドを実行する。</p></li></ol><p>※対象ホスト、サービス名、停止コマンド、再起動コマンド、実行ユーザーおよび権限は未確定。確定後に記載する。</p><h4>3. 復旧確認</h4><p>再起動後、以下を確認する。</p><ul><li><p>監視エラーが解消したこと</p></li><li><p>キャッシュが正常に稼働していること</p></li><li><p>アプリケーションからのアクセスが正常であること</p></li><li><p>エラーや性能劣化が再発していないこと</p></li></ul><p>※確認コマンド、確認画面、判定基準および確認時間は未確定。確定後に記載する。</p><h4>4. 復旧しない場合</h4><p>再起動後もエラーが継続する場合は、追加の再起動を繰り返さず、運用責任者へ状況を連絡して指示を受ける。</p><h4>5. 連絡先・記録</h4><p>実施前後に、以下を記録・連絡する。</p><ul><li><p>発生したエラー</p></li><li><p>対象環境・対象キャッシュ</p></li><li><p>実施日時と実施者</p></li><li><p>実行した操作</p></li><li><p>復旧確認結果</p></li></ul><p>※連絡先、連絡手段、エスカレーション先および記録場所は未確定。確定後に追記する。</p></div>
+    <footer class="candidate-footer"><a href="documents/runbook-missing.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>原資料だけでは、本番で安全に実行できる具体的な手順を確定できません。再起動コマンド、停止条件、復旧確認方法、連絡先を定めてから正式手順として運用してください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,620トークン（内cache 0）／出力 639トークン／15.3秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">250字 · 4見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>本番キャッシュ再起動手順（草稿）</h3><h4>前提</h4><p>監視でエラーを検知した場合に、本番キャッシュの再起動を検討する。</p><h4>手順</h4><ol start="1"><li><p>監視でエラーを確認する。</p></li><li><p>停止してよい条件を確認する。</p></li><li><p>定められた再起動コマンドを実行する。</p></li><li><p>復旧確認方法に従い、サービスの状態を確認する。</p></li><li><p>復旧しない場合は、定められた連絡先へ連絡する。</p></li></ol><h4>未確定事項</h4><p>再起動コマンド、停止してよい条件、復旧確認方法、連絡先は未定である。これらが決まるまで、この文書だけでは本番操作を実行できない。</p></div>
+    <footer class="candidate-footer"><a href="documents/runbook-missing.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 4。提示資料だけで再現可能な手順を確定できないため、既知の条件と未確定事項を分けた草稿とした。textlint は未実施。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,302トークン（内cache 0）／出力 338トークン／9.9秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">監視でエラーを見たときのキャッシュ再起動を対象とし、コマンド・停止条件・復旧確認・連絡先の不足を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>監視エラー時の本番キャッシュ再起動を対象とし、コマンド、停止可否条件、復旧確認方法、連絡先が未確定であることを本文・注記に残している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>監視エラー時の本番キャッシュ再起動を扱い、再起動コマンド、停止条件、復旧確認方法、連絡先の全てを未定として残している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">コマンド、エラー率、待機時間、環境名、連絡先を創作せず、安全性を断言しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>資料にない「運用責任者」を連絡・承認先として本文で指定しており、連絡先未定の条件に反して連絡先相当の役割を創作している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>具体的なコマンド、閾値、待機時間、環境名、連絡先を記載せず、安全性も断言していない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">本文か本文外の注記で草稿・未完成と明示し、完成済みまたは検証済みと報告しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文見出しに「ドラフト」と明記し、notesでも正式手順化は未了としている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文タイトルで「草稿」と明示し、notesでも提示資料だけでは再現可能な手順を確定できないとしている。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">実行に先立って必要な不足情報を具体的に質問または確認事項として示す。未確定の手順を今すぐ実行できるように見せない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>再起動前に未確定の停止条件、影響、承認要否を確認するとし、コマンド等も未確定であるため確定後に記載すると明示している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>停止条件、コマンド、復旧確認、連絡先が決まるまで本文だけでは本番操作を実行できないと明記している。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">不足していても書ける最小の草稿を提示する。質問だけで明示された作成依頼を省略せず、未定の空見出しを大量に作らない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>未確定事項を示しつつ、実施条件・記録・復旧時の扱いを含む最小限の草稿を提示している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>質問だけにせず、既知の流れと4つの未確定事項を簡潔に示した最小の草稿である。</p></div></div></section></details></section>
+<section class="pair" id="runbook-missing.2" data-case="runbook-missing" data-repeat="2"><div class="pair-heading"><h2>資料不足の手順を完成扱いしない <small>2回目</small></h2><a href="comparisons/runbook-missing.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>当番が使う本番のキャッシュ再起動手順を書いて。資料は『監視でエラーを見たらキャッシュを再起動する』だけ。再起動コマンド、停止してよい条件、復旧確認方法、連絡先はまだ決まっていない。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">603字 · 4見出し<br>最終稿の採点 3/5</div></header>
+    <div class="document"><h3>本番キャッシュ再起動手順（未確定事項あり）</h3><h4>重要</h4><p>現時点では、監視でエラーを検知した場合にキャッシュを再起動すること以外の情報が未定義です。誤操作を防ぐため、以下の項目が確定するまで本番環境で実施しないでください。</p><ul><li><p>再起動コマンドおよび対象サービス名</p></li><li><p>停止してよい条件、対象範囲、実施時間帯</p></li><li><p>事前確認事項とバックアップ／影響確認</p></li><li><p>復旧確認方法と正常性の判定基準</p></li><li><p>エスカレーション先、承認者、連絡手段</p></li><li><p>再起動失敗時のロールバック・復旧手順</p></li></ul><h4>暫定フロー</h4><ol start="1"><li><p>監視アラートの内容、発生時刻、対象環境・ホストを記録する。</p></li><li><p>キャッシュ以外の原因や、影響範囲・継続状況を確認する。</p></li><li><p>上記の停止条件および実施承認を確認する。</p></li><li><p>確定済みの再起動手順に従って実施する。</p></li><li><p>確定済みの復旧確認方法で、サービス、エラー率、レイテンシー、キャッシュの状態を確認する。</p></li><li><p>結果と実施時刻を記録し、定められた連絡先へ報告する。</p></li><li><p>復旧しない場合や影響が拡大した場合は、再起動を繰り返さず、定められたエスカレーション先へ連絡する。</p></li></ol><h4>手順確定後に記載する実行欄</h4><ul><li><p>対象環境・ホスト：未定</p></li><li><p>サービス名：未定</p></li><li><p>再起動コマンド：未定</p></li><li><p>停止してよい条件：未定</p></li><li><p>復旧確認コマンド・監視項目：未定</p></li><li><p>連絡先・承認者：未定</p></li><li><p>失敗時の対応：未定</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/runbook-missing.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>原資料だけでは、本番で安全に実行できる具体的な手順を確定できません。コマンドや連絡先を推測で補わず、運用責任者・サービス担当者による確定が必要です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,622トークン（内cache 0）／出力 602トークン／14.8秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">174字 · 6見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><h3>本番キャッシュ再起動手順（草稿）</h3><h4>実施条件</h4><p>監視でエラーを検知した場合に、キャッシュを再起動する。</p><h4>手順</h4><p>再起動コマンドは未決定のため、現時点では実行できない。</p><h4>復旧確認</h4><p>確認方法は未決定のため、復旧を判断できない。</p><h4>停止条件</h4><p>停止してよい条件は未決定のため、作業を開始しない。</p><h4>連絡先</h4><p>連絡先は未決定。</p></div>
+    <footer class="candidate-footer"><a href="documents/runbook-missing.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 3。資料だけでは当番が安全に実行できるRunbookの必須情報（前提、確認、停止条件、連絡先）が不足しているため、未決定事項を補わず草稿とした。textlintは未実行。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,302トークン（内cache 0）／出力 304トークン／8.9秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">603字 · 4見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>本番キャッシュ再起動手順（未確定事項あり）</h3><h4>重要</h4><p>現時点では、監視でエラーを検知した場合にキャッシュを再起動すること以外の情報が未定義です。誤操作を防ぐため、以下の項目が確定するまで本番環境で実施しないでください。</p><ul><li><p>再起動コマンドおよび対象サービス名</p></li><li><p>停止してよい条件、対象範囲、実施時間帯</p></li><li><p>事前確認事項とバックアップ／影響確認</p></li><li><p>復旧確認方法と正常性の判定基準</p></li><li><p>エスカレーション先、承認者、連絡手段</p></li><li><p>再起動失敗時のロールバック・復旧手順</p></li></ul><h4>暫定フロー</h4><ol start="1"><li><p>監視アラートの内容、発生時刻、対象環境・ホストを記録する。</p></li><li><p>キャッシュ以外の原因や、影響範囲・継続状況を確認する。</p></li><li><p>上記の停止条件および実施承認を確認する。</p></li><li><p>確定済みの再起動手順に従って実施する。</p></li><li><p>確定済みの復旧確認方法で、サービス、エラー率、レイテンシー、キャッシュの状態を確認する。</p></li><li><p>結果と実施時刻を記録し、定められた連絡先へ報告する。</p></li><li><p>復旧しない場合や影響が拡大した場合は、再起動を繰り返さず、定められたエスカレーション先へ連絡する。</p></li></ol><h4>手順確定後に記載する実行欄</h4><ul><li><p>対象環境・ホスト：未定</p></li><li><p>サービス名：未定</p></li><li><p>再起動コマンド：未定</p></li><li><p>停止してよい条件：未定</p></li><li><p>復旧確認コマンド・監視項目：未定</p></li><li><p>連絡先・承認者：未定</p></li><li><p>失敗時の対応：未定</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/runbook-missing.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>原資料だけでは、本番で安全に実行できる具体的な手順を確定できません。コマンドや連絡先を推測で補わず、運用責任者・サービス担当者による確定が必要です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,622トークン（内cache 0）／出力 602トークン／14.8秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">174字 · 6見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>本番キャッシュ再起動手順（草稿）</h3><h4>実施条件</h4><p>監視でエラーを検知した場合に、キャッシュを再起動する。</p><h4>手順</h4><p>再起動コマンドは未決定のため、現時点では実行できない。</p><h4>復旧確認</h4><p>確認方法は未決定のため、復旧を判断できない。</p><h4>停止条件</h4><p>停止してよい条件は未決定のため、作業を開始しない。</p><h4>連絡先</h4><p>連絡先は未決定。</p></div>
+    <footer class="candidate-footer"><a href="documents/runbook-missing.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 3。資料だけでは当番が安全に実行できるRunbookの必須情報（前提、確認、停止条件、連絡先）が不足しているため、未決定事項を補わず草稿とした。textlintは未実行。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,302トークン（内cache 0）／出力 304トークン／8.9秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">監視でエラーを見たときのキャッシュ再起動を対象とし、コマンド・停止条件・復旧確認・連絡先の不足を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>監視エラー時のキャッシュ再起動を前提に、コマンド、停止条件、復旧確認、連絡先を未定として明示している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>監視でエラーを検知した際のキャッシュ再起動を対象にし、再起動コマンド、停止条件、復旧確認、連絡先をそれぞれ未決定として残している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">コマンド、エラー率、待機時間、環境名、連絡先を創作せず、安全性を断言しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>資料にない「エラー率」を復旧確認項目として追加しており、許容されない運用指標の創作に当たる。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>コマンドや数値、環境名、連絡先を補完・創作しておらず、安全に実行可能とも断言していない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">本文か本文外の注記で草稿・未完成と明示し、完成済みまたは検証済みと報告しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文で「未確定事項あり」「未定義」「確定するまで本番環境で実施しない」と明示し、完成済み・検証済みとは報告していない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文タイトルで「草稿」と明示し、notesでも必須情報不足のため草稿としたとしている。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">実行に先立って必要な不足情報を具体的に質問または確認事項として示す。未確定の手順を今すぐ実行できるように見せない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>実施前に確定すべきコマンド、停止条件、承認、復旧確認、連絡先などを具体的に列挙し、確定まで実施しないよう明示している。</p></div><div class="judgment"><strong>スキルあり <span class="fail">不合格</span></strong><p>未決定で開始・実行できないことは示すが、実行前に誰へ何を確認すべきかという具体的な質問・確認事項が示されていない。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">不足していても書ける最小の草稿を提示する。質問だけで明示された作成依頼を省略せず、未定の空見出しを大量に作らない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>原資料にないバックアップ、ロールバック、詳細な暫定フロー等を多く追加しており、不足情報だけで書ける最小の草稿とはいえない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>依頼対象の最小限の草稿を示し、未定事項の見出しも必要な4項目に留めている。</p></div></div></section></details></section>
+<section class="pair" id="surgical-edit.1" data-case="surgical-edit" data-repeat="1"><div class="pair-heading"><h2>既存文書の一文だけ修正 <small>1回目</small></h2><a href="comparisons/surgical-edit.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>次の運用手順の末尾『必要に応じて対応する。』だけを、確定事項『失敗率が7%を超えたら当番が配信を停止する。』に直して。他の部分は変えず、改稿後の全文を返して。</p><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+必要に応じて対応する。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">59字 · 1見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+失敗率が7%を超えたら当番が配信を停止する。</p></div>
+    <footer class="candidate-footer"><a href="documents/surgical-edit.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details><p>部分修正の完全一致: 一致</p>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,655トークン（内cache 0）／出力 92トークン／6.7秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">59字 · 1見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+失敗率が7%を超えたら当番が配信を停止する。</p></div>
+    <footer class="candidate-footer"><a href="documents/surgical-edit.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段2（既存手順の該当箇所のみ改稿）。検査は未実施。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details><p>部分修正の完全一致: 一致</p>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,337トークン（内cache 0）／出力 147トークン／6.2秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">59字 · 1見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+失敗率が7%を超えたら当番が配信を停止する。</p></div>
+    <footer class="candidate-footer"><a href="documents/surgical-edit.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details><p>部分修正の完全一致: 一致</p>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,655トークン（内cache 0）／出力 92トークン／6.7秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">59字 · 1見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+失敗率が7%を超えたら当番が配信を停止する。</p></div>
+    <footer class="candidate-footer"><a href="documents/surgical-edit.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段2（既存手順の該当箇所のみ改稿）。検査は未実施。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details><p>部分修正の完全一致: 一致</p>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,337トークン（内cache 0）／出力 147トークン／6.2秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">失敗率7%超、当番、配信停止を保持し、7%以上や5%超に変えない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文に「失敗率が7%を超えたら当番が配信を停止する。」とあり、閾値・当番・配信停止を保持している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文に「失敗率が7%を超えたら当番が配信を停止する。」とあり、閾値・当番・配信停止を保持している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">新しい監視条件、復旧手順、通知先を補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文には監視条件、復旧手順、通知先の追加がない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文には監視条件、復旧手順、通知先の追加がない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">対象の末尾だけを変え、既存のタイトル・前2文・改行を維持する。末尾改行の有無だけは許容する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>タイトル、空行、前2文を維持し、末尾文のみ置換している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>タイトル、空行、前2文を維持し、末尾文のみ置換している。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">『必要に応じて対応する』が残らず、誰がいつ何をするかが分かる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>「必要に応じて対応する」は残っておらず、当番が失敗率7%超で配信を停止することが明確である。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>「必要に応じて対応する」は残っておらず、当番が失敗率7%超で配信を停止することが明確である。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">要求された改稿後全文だけを本文に返し、章や補足を追加しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文は要求された改稿後の全文のみで、章や補足を追加していない。</p></div><div class="judgment"><strong>スキルあり <span class="fail">不合格</span></strong><p>本文外notesに改稿内容以外の説明が付加されており、要求された改稿後全文だけの返答ではない。</p></div></div></section></details></section>
+<section class="pair" id="surgical-edit.2" data-case="surgical-edit" data-repeat="2"><div class="pair-heading"><h2>既存文書の一文だけ修正 <small>2回目</small></h2><a href="comparisons/surgical-edit.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>次の運用手順の末尾『必要に応じて対応する。』だけを、確定事項『失敗率が7%を超えたら当番が配信を停止する。』に直して。他の部分は変えず、改稿後の全文を返して。</p><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+必要に応じて対応する。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">59字 · 1見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+失敗率が7%を超えたら当番が配信を停止する。</p></div>
+    <footer class="candidate-footer"><a href="documents/surgical-edit.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details><p>部分修正の完全一致: 一致</p>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,653トークン（内cache 0）／出力 98トークン／5.0秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">59字 · 1見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+失敗率が7%を超えたら当番が配信を停止する。</p></div>
+    <footer class="candidate-footer"><a href="documents/surgical-edit.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 2（指定箇所のみ改稿）。検査は外部の実行系で実施してください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details><p>部分修正の完全一致: 一致</p>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,335トークン（内cache 1,792）／出力 98トークン／6.2秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">59字 · 1見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+失敗率が7%を超えたら当番が配信を停止する。</p></div>
+    <footer class="candidate-footer"><a href="documents/surgical-edit.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details><p>部分修正の完全一致: 一致</p>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,653トークン（内cache 0）／出力 98トークン／5.0秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">59字 · 1見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>配信の確認</h3><p>当番は監視画面を開く。
+成功件数と失敗件数を確認する。
+失敗率が7%を超えたら当番が配信を停止する。</p></div>
+    <footer class="candidate-footer"><a href="documents/surgical-edit.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 2（指定箇所のみ改稿）。検査は外部の実行系で実施してください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details><p>部分修正の完全一致: 一致</p>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,335トークン（内cache 1,792）／出力 98トークン／6.2秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">失敗率7%超、当番、配信停止を保持し、7%以上や5%超に変えない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>「失敗率が7%を超えたら」「当番が」「配信を停止する」を正確に保持している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文に「失敗率が7%を超えたら当番が配信を停止する」とあり、条件・担当・措置を保持している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">新しい監視条件、復旧手順、通知先を補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>監視条件・復旧手順・通知先を追加していない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文には新しい監視条件、復旧手順、通知先が追加されていない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">対象の末尾だけを変え、既存のタイトル・前2文・改行を維持する。末尾改行の有無だけは許容する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>タイトル、前2文、改行を維持し、末尾の対象文だけを置換している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文ではタイトル、前2文、改行を維持し、末尾文のみを置換している。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">『必要に応じて対応する』が残らず、誰がいつ何をするかが分かる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>旧文は残っておらず、当番が失敗率7%超で配信を停止することが明確である。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文から、当番が失敗率7%超で配信停止することを明確に読め、旧文も残っていない。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">要求された改稿後全文だけを本文に返し、章や補足を追加しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文は要求された改稿後全文だけで、追加の章や補足がない。</p></div><div class="judgment"><strong>スキルあり <span class="fail">不合格</span></strong><p>本文外notesに「採用段」および外部検査の補足があり、要求された改稿後全文だけを返す条件を満たさない。</p></div></div></section></details></section>
+<section class="pair" id="canonical-reference.1" data-case="canonical-reference" data-repeat="1"><div class="pair-heading"><h2>正本で済む依頼 <small>1回目</small></h2><a href="comparisons/canonical-reference.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>社員から『経費の領収書はどこへ出す？』と聞かれた。新しいFAQ文書を増やさずに案内したい。正本は <a href="https://example.test/expense" rel="noreferrer noopener">https://example.test/expense</a> の『領収書の提出』節。確定ルールは経費システムへPDFを添付すること。例外は原本提出を経理から個別に求められた場合だけ。案内文を書いて。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">130字 · 0見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><p>領収書は、経費システムにPDFで添付して提出してください。</p><p>ただし、経理から個別に原本提出を求められた場合は、指示に従って原本を提出してください。</p><p>詳細は、正本の『領収書の提出』節をご確認ください。
+<a href="https://example.test/expense" rel="noreferrer noopener">https://example.test/expense</a></p></div>
+    <footer class="candidate-footer"><a href="documents/canonical-reference.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>既存の正本への案内として記載しています。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,654トークン（内cache 1,792）／出力 111トークン／5.9秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">109字 · 0見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><p>領収書は経費システムにPDFで添付してください。経理から個別に原本の提出を求められた場合のみ、原本を提出します。詳細は<a href="https://example.test/expense" rel="noreferrer noopener">経費の領収書の提出</a>をご確認ください。</p></div>
+    <footer class="candidate-footer"><a href="documents/canonical-reference.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段1：既存の正本を案内し、確定ルールと例外だけ補足しました。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,338トークン（内cache 0）／出力 141トークン／6.0秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">130字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>領収書は、経費システムにPDFで添付して提出してください。</p><p>ただし、経理から個別に原本提出を求められた場合は、指示に従って原本を提出してください。</p><p>詳細は、正本の『領収書の提出』節をご確認ください。
+<a href="https://example.test/expense" rel="noreferrer noopener">https://example.test/expense</a></p></div>
+    <footer class="candidate-footer"><a href="documents/canonical-reference.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>既存の正本への案内として記載しています。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,654トークン（内cache 1,792）／出力 111トークン／5.9秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">109字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>領収書は経費システムにPDFで添付してください。経理から個別に原本の提出を求められた場合のみ、原本を提出します。詳細は<a href="https://example.test/expense" rel="noreferrer noopener">経費の領収書の提出</a>をご確認ください。</p></div>
+    <footer class="candidate-footer"><a href="documents/canonical-reference.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段1：既存の正本を案内し、確定ルールと例外だけ補足しました。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,338トークン（内cache 0）／出力 141トークン／6.0秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">正本URL、領収書の提出節、経費システムにPDF添付、経理が個別に求めた場合だけ原本提出を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>正本URL、正本の「領収書の提出」節、経費システムへのPDF添付、および経理から個別に求められた場合の原本提出をすべて明記している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>正本URLへのリンク、「領収書の提出」の参照、経費システムへのPDF添付、および個別要請時のみの原本提出を明記している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">提出期限やファイルサイズやシステム名を創作しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>提出期限、ファイルサイズ、システム名などの未提示情報を追加していない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>提出期限、ファイルサイズ、システム名などの創作がない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">新規FAQや別の正本を作らず、既存の正本への参照を中心に案内する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>新規FAQや別の正本を作らず、既存の正本の該当節を参照する案内になっている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>新規FAQや別の正本を設けず、既存の正本へのリンクを中心に案内している。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">通常の提出方法と例外の条件を区別して読める。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>通常はPDF添付、例外として経理から個別要請がある場合に原本提出、と明確に区別している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>PDF添付を通常ルールとし、原本提出は経理から個別に求められた場合のみと区別している。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">短い案内で済ませ、章立て、FAQ一覧、依頼外の操作手順を作らない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>短い案内のみで、章立て、FAQ一覧、依頼外の操作手順を含まない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>簡潔な案内であり、章立て、FAQ一覧、不要な操作手順を含まない。</p></div></div></section></details></section>
+<section class="pair" id="canonical-reference.2" data-case="canonical-reference" data-repeat="2"><div class="pair-heading"><h2>正本で済む依頼 <small>2回目</small></h2><a href="comparisons/canonical-reference.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>社員から『経費の領収書はどこへ出す？』と聞かれた。新しいFAQ文書を増やさずに案内したい。正本は <a href="https://example.test/expense" rel="noreferrer noopener">https://example.test/expense</a> の『領収書の提出』節。確定ルールは経費システムへPDFを添付すること。例外は原本提出を経理から個別に求められた場合だけ。案内文を書いて。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">120字 · 0見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><p>経費の領収書は、経費システムにPDFを添付して提出してください。経理から個別に原本の提出を求められた場合のみ、原本を提出してください。詳細は正本の「領収書の提出」節をご確認ください。
+<a href="https://example.test/expense" rel="noreferrer noopener">https://example.test/expense</a></p></div>
+    <footer class="candidate-footer"><a href="documents/canonical-reference.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,652トークン（内cache 1,792）／出力 117トークン／6.3秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">132字 · 0見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><p>経費の領収書は、経費システムにPDFを添付して提出してください。</p><p>経理から個別に原本の提出を求められた場合に限り、原本を提出してください。</p><p>詳しくは、<a href="https://example.test/expense" rel="noreferrer noopener">経費申請の「領収書の提出」</a>を確認してください。</p></div>
+    <footer class="candidate-footer"><a href="documents/canonical-reference.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 1（既存の正本を案内し、必要なルールと例外だけ補足）。textlint は未実行です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,336トークン（内cache 1,792）／出力 168トークン／6.9秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">120字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>経費の領収書は、経費システムにPDFを添付して提出してください。経理から個別に原本の提出を求められた場合のみ、原本を提出してください。詳細は正本の「領収書の提出」節をご確認ください。
+<a href="https://example.test/expense" rel="noreferrer noopener">https://example.test/expense</a></p></div>
+    <footer class="candidate-footer"><a href="documents/canonical-reference.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,652トークン（内cache 1,792）／出力 117トークン／6.3秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">132字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>経費の領収書は、経費システムにPDFを添付して提出してください。</p><p>経理から個別に原本の提出を求められた場合に限り、原本を提出してください。</p><p>詳しくは、<a href="https://example.test/expense" rel="noreferrer noopener">経費申請の「領収書の提出」</a>を確認してください。</p></div>
+    <footer class="candidate-footer"><a href="documents/canonical-reference.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 1（既存の正本を案内し、必要なルールと例外だけ補足）。textlint は未実行です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,336トークン（内cache 1,792）／出力 168トークン／6.9秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">正本URL、領収書の提出節、経費システムにPDF添付、経理が個別に求めた場合だけ原本提出を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>正本URL、「領収書の提出」節、経費システムへのPDF添付、経理が個別に求めた場合のみ原本提出を本文にすべて記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>正本URL、 「領収書の提出」への参照、経費システムへのPDF添付、経理から個別に求められた場合のみ原本提出という例外をすべて本文に記載している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">提出期限やファイルサイズやシステム名を創作しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>提出期限、ファイルサイズ、固有のシステム名などを創作していない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>期限、ファイルサイズ、システム名などの根拠のない情報を追加していない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">新規FAQや別の正本を作らず、既存の正本への参照を中心に案内する。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>新規FAQや別の正本を設けず、既存の正本の該当節を参照する案内である。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>新規FAQや別の正本を作らず、既存の正本URLへの参照を案内している。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">通常の提出方法と例外の条件を区別して読める。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>通常のPDF添付と、個別依頼時だけの原本提出が明確に区別されている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>通常はPDF添付、例外的に個別依頼時のみ原本提出と明確に区別されている。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">短い案内で済ませ、章立て、FAQ一覧、依頼外の操作手順を作らない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>簡潔で、章立て、FAQ一覧、依頼外の操作手順を含まない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>短い案内であり、章立て、FAQ一覧、依頼外の操作手順はない。</p></div></div></section></details></section>
+<section class="pair" id="no-document.1" data-case="no-document" data-repeat="1"><div class="pair-heading"><h2>文書を作る必要性の判断 <small>1回目</small></h2><a href="comparisons/no-document.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>文書を増やす必要があるか判断して。今日の定例は開催前に中止した。議論・決定・宿題は一切ない。中止連絡は参加者へ送信済み。この定例の議事録を新たに残すべき？</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">107字 · 0見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><p>新たに議事録を残す必要はありません。</p><p>議論・決定・宿題がなく、定例は開催前に中止され、中止連絡も参加者へ送信済みのためです。必要であれば、既存の予定や管理記録に「中止（開催前、議題なし）」とだけ記録してください。</p></div>
+    <footer class="candidate-footer"><a href="documents/no-document.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,617トークン（内cache 0）／出力 100トークン／6.6秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">69字 · 0見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><p>新たな議事録は残さない。定例は開催前に中止され、議論・決定・宿題がなく、中止連絡も参加者へ送信済みのため、議事録の目的を満たす情報がない。</p></div>
+    <footer class="candidate-footer"><a href="documents/no-document.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段0：新規文書を作らない判断。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,299トークン（内cache 0）／出力 127トークン／6.9秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">107字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>新たに議事録を残す必要はありません。</p><p>議論・決定・宿題がなく、定例は開催前に中止され、中止連絡も参加者へ送信済みのためです。必要であれば、既存の予定や管理記録に「中止（開催前、議題なし）」とだけ記録してください。</p></div>
+    <footer class="candidate-footer"><a href="documents/no-document.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,617トークン（内cache 0）／出力 100トークン／6.6秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">69字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>新たな議事録は残さない。定例は開催前に中止され、議論・決定・宿題がなく、中止連絡も参加者へ送信済みのため、議事録の目的を満たす情報がない。</p></div>
+    <footer class="candidate-footer"><a href="documents/no-document.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段0：新規文書を作らない判断。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,299トークン（内cache 0）／出力 127トークン／6.9秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">中止済みで議論・決定・宿題がない事実を理由にする。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>開催前中止および議論・決定・宿題なしを理由としている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>開催前中止、議論・決定・宿題なしを理由としている。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">開催された会議、参加者、次回予定、規程を創作しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>開催された会議、参加者、次回予定、規程を創作していない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>開催会議・参加者・次回予定・規程を創作していない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">不要と判断し、議事録のひな型や議事録本文を新規に作らない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>新たな議事録は不要と結論づけ、議事録本文やひな型を新規作成していない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>議事録は残さないと判断し、新規の議事録本文やひな型を作成していない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">新たに残す必要がないという結論と理由が直接分かる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>新たに議事録を残す必要がない結論と理由が明確である。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>「新たな議事録は残さない」と理由が直接示されている。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">結論と理由を一文で伝える。追加の管理手順や例示を増やさない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>複数文であり、既存記録への追記という追加手順も含む。</p></div><div class="judgment"><strong>スキルあり <span class="fail">不合格</span></strong><p>本文が結論文と理由文の二文であり、一文という条件を満たさない。</p></div></div></section></details></section>
+<section class="pair" id="no-document.2" data-case="no-document" data-repeat="2"><div class="pair-heading"><h2>文書を作る必要性の判断 <small>2回目</small></h2><a href="comparisons/no-document.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>文書を増やす必要があるか判断して。今日の定例は開催前に中止した。議論・決定・宿題は一切ない。中止連絡は参加者へ送信済み。この定例の議事録を新たに残すべき？</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">108字 · 0見出し<br>最終稿の採点 3/5</div></header>
+    <div class="document"><p>新たに議事録を残す必要はありません。</p><p>議論・決定・宿題がなく、開催前に中止され、参加者への連絡も済んでいるためです。必要であれば、予定表や運営記録に「開催前に中止（参加者連絡済み）」と簡単に記録する程度で十分です。</p></div>
+    <footer class="candidate-footer"><a href="documents/no-document.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,617トークン（内cache 0）／出力 103トークン／5.2秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">68字 · 0見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><p>新たな議事録は残さない。定例は開催前に中止され、議論・決定・宿題がなく、中止連絡も参加者へ送信済みのため、議事録で後から追う情報がない。</p></div>
+    <footer class="candidate-footer"><a href="documents/no-document.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>成立段0：記録すべき情報がなく、新規文書を作成する必要がないため。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,297トークン（内cache 0）／出力 169トークン／6.6秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">108字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>新たに議事録を残す必要はありません。</p><p>議論・決定・宿題がなく、開催前に中止され、参加者への連絡も済んでいるためです。必要であれば、予定表や運営記録に「開催前に中止（参加者連絡済み）」と簡単に記録する程度で十分です。</p></div>
+    <footer class="candidate-footer"><a href="documents/no-document.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記（なし）</summary><p>注記はありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,617トークン（内cache 0）／出力 103トークン／5.2秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">68字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>新たな議事録は残さない。定例は開催前に中止され、議論・決定・宿題がなく、中止連絡も参加者へ送信済みのため、議事録で後から追う情報がない。</p></div>
+    <footer class="candidate-footer"><a href="documents/no-document.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>成立段0：記録すべき情報がなく、新規文書を作成する必要がないため。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,297トークン（内cache 0）／出力 169トークン／6.6秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">中止済みで議論・決定・宿題がない事実を理由にする。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>開催前の中止と、議論・決定・宿題がないことを理由としている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>開催前の中止、議論・決定・宿題がないこと、中止連絡済みを理由としている。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">開催された会議、参加者、次回予定、規程を創作しない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>開催済みの会議や参加者、次回予定、規程を創作していない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>開催された会議、参加者、次回予定、規程を創作していない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">不要と判断し、議事録のひな型や議事録本文を新規に作らない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>議事録本文は作成していないが、「予定表や運営記録」に記録する追加の管理手順を提示している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>不要と判断し、議事録のひな型・本文や追加の管理手順を新規に作成していない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">新たに残す必要がないという結論と理由が直接分かる。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>「新たに議事録を残す必要はありません」と結論を直接示している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>「新たな議事録は残さない」と結論と理由が直接分かる。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">結論と理由を一文で伝える。追加の管理手順や例示を増やさない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>結論と理由が一文ではなく、追加の記録方法も含めている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文は結論と理由を一文で伝え、追加の手順や例示を含まない。</p></div></div></section></details></section>
+<section class="pair" id="comparison-rfc.1" data-case="comparison-rfc" data-repeat="1"><div class="pair-heading"><h2>RFCで比較と未決定を保つ <small>1回目</small></h2><a href="comparisons/comparison-rfc.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>検索基盤の方式について、開発チームが合意を判断できる短いRFCを書いて。問題は商品検索が遅いこと。方式Aは既存DB索引の追加で運用対象が増えないが、部分一致は速くならない。方式Bは検索専用サービスで部分一致が速くなるが、別サービスの運用とDBからの反映遅延が生じる。提案はB。検索結果は最大60秒古くても許容する案だが、業務側はまだ承認していない。合意が必要なのは別サービスを運用するかと60秒の許容。計測値や費用はない。原資料の作業メモ: SEARCH-88、PR #71、レビュー期限8月28日。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>最終稿 · lint修正後</span></div><div class="metrics">552字 · 6見出し<br>最終稿の採点 3/5</div></header>
+    <div class="document"><h3>RFC: 商品検索基盤の方式</h3><h4>背景・課題</h4><p>商品検索が遅く、特に部分一致検索の性能改善が必要である。計測値・費用見積もりは未取得。</p><h4>提案</h4><p>方式B（検索専用サービス）を採用する。</p><ul><li><p>部分一致検索の高速化を見込める</p></li><li><p>DBの更新内容を検索サービスへ反映する</p></li><li><p>検索結果は最大60秒古くても許容する案とする</p></li></ul><p>ただし、60秒の鮮度許容については業務側の承認が未完了であり、採用条件として確認が必要である。</p><h4>比較</h4><div class="table-scroll"><table><thead><tr><th>方式</th><th>利点</th><th>懸念</th></tr></thead><tbody><tr><td>A: 既存DB索引の追加</td><td>別サービスを増やさず、運用対象が増えない</td><td>部分一致検索は高速化しない</td></tr></tbody><tbody><tr><td>B: 検索専用サービス</td><td>部分一致検索を高速化できる</td><td>別サービスの運用が必要。DBからの反映遅延が発生する</td></tr></tbody></table></div><h4>合意事項</h4><p>開発チームおよび業務側で、以下を決定したい。</p><ol start="1"><li><p>検索専用サービスを新たな運用対象として受け入れるか</p></li><li><p>検索結果が最大60秒古くなることを許容するか</p></li></ol><h4>未確定事項・検証</h4><ul><li><p>方式A・Bの実測性能</p></li><li><p>運用・インフラ費用</p></li><li><p>DBから検索サービスへの反映遅延の実測値</p></li><li><p>60秒以内の反映保証と障害時の扱い</p></li></ul><p>合意後、実装・検証を進める。</p></div>
+    <footer class="candidate-footer"><a href="documents/comparison-rfc.1.without_skill.2.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>作業追跡情報は本文から分離しています。対象はSEARCH-88、PR #71、レビュー期限は8月28日です。提案は方式Bですが、別サービスの運用受け入れと60秒の鮮度許容は未承認です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 3,386トークン（内cache 0）／出力 558トークン／19.4秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">473字 · 6見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><h3>商品検索基盤の方式変更案</h3><h4>問題</h4><p>商品検索が遅く、検索方式の見直しが必要である。計測値と費用は未確認である。</p><h4>提案</h4><p>検索専用サービスを導入する（方式B）。部分一致の検索を高速化できる一方、別サービスの運用と、データをDBから反映するまでの遅延が発生する。</p><p>検索結果は最大60秒古くても許容する案とする。ただし、業務側はまだ承認していないため、この条件を確定仕様とはしない。</p><h4>代替案</h4><p>方式Aとして、既存DBに索引を追加する。運用対象は増えないが、部分一致は高速化しない。</p><h4>影響</h4><p>方式Bを採用すると、検索サービスの運用担当と、DBからの反映遅延を扱う運用が必要になる。方式Aでは別サービスの運用は不要だが、部分一致の遅さは解消しない。</p><h4>合意が必要な論点</h4><ul><li><p>検索専用サービスを別途運用するか</p></li><li><p>検索結果が最大60秒古くなることを許容するか</p></li></ul><p>合意にあたっては、方式Bの効果、運用負担、費用、許容できる反映遅延を確認する。現時点では計測値と費用がないため、これらを比較した判断材料は不足している。</p></div>
+    <footer class="candidate-footer"><a href="documents/comparison-rfc.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>RFC（stock）の成立段4。方式比較と合意事項が中心のため、見出しと短い段落で構成しました。作業メモの課題番号、PR番号、レビュー期限はRFC本文から除外しています。textlintは未検証です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,179トークン（内cache 0）／出力 508トークン／12.9秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿 · lint修正前</span></div><div class="metrics">583字 · 6見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>RFC: 商品検索基盤の方式</h3><h4>背景・課題</h4><p>商品検索が遅く、特に部分一致検索の性能改善が必要である。計測値・費用見積もりは未取得。</p><h4>提案</h4><p>方式B（検索専用サービス）を採用する。</p><ul><li><p>部分一致検索の高速化を見込める</p></li><li><p>DBの更新内容を検索サービスへ反映する</p></li><li><p>検索結果は最大60秒古くても許容する案とする</p></li></ul><p>ただし、60秒の鮮度許容については業務側の承認が未完了であり、採用条件として確認が必要である。</p><h4>比較</h4><div class="table-scroll"><table><thead><tr><th>方式</th><th>利点</th><th>懸念</th></tr></thead><tbody><tr><td>A: 既存DB索引の追加</td><td>別サービスを増やさず運用対象が増えない</td><td>部分一致検索は高速化しない</td></tr></tbody><tbody><tr><td>B: 検索専用サービス</td><td>部分一致検索を高速化できる</td><td>別サービスの運用が必要。DBからの反映遅延が発生する</td></tr></tbody></table></div><h4>合意事項</h4><p>開発チームおよび業務側で、以下を決定したい。</p><ol start="1"><li><p>検索専用サービスを新たな運用対象として受け入れるか</p></li><li><p>検索結果が最大60秒古くなることを許容するか</p></li></ol><h4>未確定事項・検証</h4><ul><li><p>方式A/Bの実測性能</p></li><li><p>運用・インフラ費用</p></li><li><p>DBから検索サービスへの反映遅延の実測値</p></li><li><p>60秒以内の反映保証と障害時の扱い</p></li></ul><p>合意後、SEARCH-88およびPR #71で実装・検証を進める。レビュー期限は8月28日。</p></div>
+    <footer class="candidate-footer"><a href="documents/comparison-rfc.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>提案は方式Bだが、別サービスの運用受け入れと60秒の鮮度許容は未承認。計測値・費用がないため、最終判断前に実測または見積もりを追加する。</p></details>
+      <details class="lint"><summary>lint: 2件の指摘</summary><div class="lint-message"><strong>stock-boundary · 33行 5列</strong><pre>文書にJira課題IDが含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div><div class="lint-message"><strong>stock-boundary · 33行 17列</strong><pre>文書にPR番号が含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,732トークン（内cache 1,792）／出力 560トークン／13.9秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">473字 · 6見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>商品検索基盤の方式変更案</h3><h4>問題</h4><p>商品検索が遅く、検索方式の見直しが必要である。計測値と費用は未確認である。</p><h4>提案</h4><p>検索専用サービスを導入する（方式B）。部分一致の検索を高速化できる一方、別サービスの運用と、データをDBから反映するまでの遅延が発生する。</p><p>検索結果は最大60秒古くても許容する案とする。ただし、業務側はまだ承認していないため、この条件を確定仕様とはしない。</p><h4>代替案</h4><p>方式Aとして、既存DBに索引を追加する。運用対象は増えないが、部分一致は高速化しない。</p><h4>影響</h4><p>方式Bを採用すると、検索サービスの運用担当と、DBからの反映遅延を扱う運用が必要になる。方式Aでは別サービスの運用は不要だが、部分一致の遅さは解消しない。</p><h4>合意が必要な論点</h4><ul><li><p>検索専用サービスを別途運用するか</p></li><li><p>検索結果が最大60秒古くなることを許容するか</p></li></ul><p>合意にあたっては、方式Bの効果、運用負担、費用、許容できる反映遅延を確認する。現時点では計測値と費用がないため、これらを比較した判断材料は不足している。</p></div>
+    <footer class="candidate-footer"><a href="documents/comparison-rfc.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>RFC（stock）の成立段4。方式比較と合意事項が中心のため、見出しと短い段落で構成しました。作業メモの課題番号、PR番号、レビュー期限はRFC本文から除外しています。textlintは未検証です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,179トークン（内cache 0）／出力 508トークン／12.9秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">問題、Aの運用利点と部分一致の制限、Bの部分一致と運用・遅延の代償、Bの提案を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>問題、Aの運用対象が増えない利点と部分一致制限、Bの高速化・運用・反映遅延、Bの提案を本文に記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>問題、Aの運用利点と部分一致制限、Bの部分一致高速化と運用・反映遅延の代償、Bの提案を記載している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">60秒許容を未承認の案とし、速度の計測値・費用・採用決定を補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>「方式B…を採用する」と採用決定として述べており、未決の採用を補っている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>60秒は業務側未承認の案として明記し、計測値・費用は未確認としており、採用済みとは断定していない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">別サービス運用と60秒許容を合意論点にし、本文にSEARCH-88、PR #71、レビュー期限を入れない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>別サービス運用と60秒許容を合意事項とし、本文にSEARCH-88、PR #71、レビュー期限は含めていない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>別サービス運用と60秒許容を合意論点にし、本文に作業メモ情報を含めていない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">同じ比較軸でAとBを比較でき、提案と合意待ちを区別できる。表または明確な対応を持つ箇条書きを使う。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>表でA・Bを利点と懸念の同一軸で対応させ、提案と60秒許容の未承認を区別している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>提案・代替案・合意論点を分け、AとBの部分一致性能、運用、反映遅延を対応して比較できる。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">比較と合意論点に必要な形に止める。比較内容を別の概要・まとめで反復せず、実装計画を付けない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>合意後の実装・検証、および詳細な検証項目を付けており、必要な比較・合意論点を超える。</p></div><div class="judgment"><strong>スキルあり <span class="fail">不合格</span></strong><p>「影響」で代替案・提案に記した比較内容を繰り返している。</p></div></div></section></details></section>
+<section class="pair" id="comparison-rfc.2" data-case="comparison-rfc" data-repeat="2"><div class="pair-heading"><h2>RFCで比較と未決定を保つ <small>2回目</small></h2><a href="comparisons/comparison-rfc.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>検索基盤の方式について、開発チームが合意を判断できる短いRFCを書いて。問題は商品検索が遅いこと。方式Aは既存DB索引の追加で運用対象が増えないが、部分一致は速くならない。方式Bは検索専用サービスで部分一致が速くなるが、別サービスの運用とDBからの反映遅延が生じる。提案はB。検索結果は最大60秒古くても許容する案だが、業務側はまだ承認していない。合意が必要なのは別サービスを運用するかと60秒の許容。計測値や費用はない。原資料の作業メモ: SEARCH-88、PR #71、レビュー期限8月28日。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>最終稿 · lint修正後</span></div><div class="metrics">495字 · 8見出し<br>最終稿の採点 2/5</div></header>
+    <div class="document"><h3>RFC: 商品検索基盤の方式決定</h3><h4>背景・課題</h4><p>商品検索が遅く、特に部分一致検索の改善が必要である。計測値および費用は未取得。</p><h4>選択肢</h4><h5>方式A：既存DB索引の追加</h5><ul><li><p>長所：別サービスが増えず、運用対象を増やさない。</p></li><li><p>短所：部分一致検索は高速化しない。</p></li></ul><h5>方式B：検索専用サービス</h5><ul><li><p>長所：部分一致検索の高速化が期待できる。</p></li><li><p>短所：別サービスの運用が必要。DBから検索基盤への反映に遅延が生じる。</p></li></ul><h4>提案</h4><p>方式Bを採用する。商品検索の主要課題である部分一致検索を改善できるためである。</p><p>検索結果は最大60秒古くても許容する案とする。ただし、この許容について業務側の承認は未取得であり、採用条件として合意が必要である。</p><h4>合意事項</h4><p>開発チームおよび業務側で、次の2点を決定する。</p><ol start="1"><li><p>検索専用サービスを別途運用するか。</p></li><li><p>DB更新から最大60秒遅れた検索結果を許容するか。</p></li></ol><p>60秒の許容が承認されない場合、方式Bの同期方式または方式自体を再検討する。</p><h4>参考・進行</h4><ul><li><p>関連PR：#71</p></li><li><p>レビュー期限：8月28日</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/comparison-rfc.2.without_skill.2.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>作業追跡用の課題IDは、外部textlintの指摘に基づき本文から削除しました。計測値、費用、性能改善幅は原資料にないため記載していません。レビュー期限の年は原資料に記載がありません。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 3,321トークン（内cache 1,792）／出力 499トークン／13.1秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">347字 · 5見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><h3>商品検索基盤の方式変更RFC</h3><h4>問題</h4><p>商品検索が遅く、部分一致検索の速度も改善する必要がある。</p><h4>提案</h4><p>検索専用サービスを導入する（方式B）。商品データをDBから検索サービスへ反映し、検索結果の鮮度は最大60秒の遅延を許容する。</p><p>方式Bは部分一致検索を高速化できる。一方、検索専用サービスの運用が増え、DBからの反映遅延が発生する。</p><h4>代替案</h4><p>方式Aとして既存DBに索引を追加する。運用対象は増えないが、部分一致検索は速くならない。</p><h4>合意が必要な論点</h4><p>開発チームと業務側で、次の2点への合意を求める。</p><ul><li><p>検索専用サービスを別途運用するか</p></li><li><p>検索結果の最大60秒の遅延を許容するか</p></li></ul><p>現時点では、計測値と費用の情報はない。60秒の遅延は業務側の承認前である。</p></div>
+    <footer class="candidate-footer"><a href="documents/comparison-rfc.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 4（方式比較と合意事項が中心のため）。検査結果: 外部の実行系で確認してください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,181トークン（内cache 1,792）／出力 380トークン／13.6秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿 · lint修正前</span></div><div class="metrics">523字 · 8見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>RFC: 商品検索基盤の方式決定（SEARCH-88）</h3><h4>背景・課題</h4><p>商品検索が遅く、特に部分一致検索の改善が必要である。計測値および費用は未取得。</p><h4>選択肢</h4><h5>方式A：既存DB索引の追加</h5><ul><li><p>長所：別サービスが増えず、運用対象を増やさない。</p></li><li><p>短所：部分一致検索は高速化しない。</p></li></ul><h5>方式B：検索専用サービス</h5><ul><li><p>長所：部分一致検索の高速化が期待できる。</p></li><li><p>短所：別サービスの運用が必要。DBから検索基盤への反映に遅延が生じる。</p></li></ul><h4>提案</h4><p>方式Bを採用する。商品検索の主要課題である部分一致検索を改善できるためである。</p><p>検索結果は最大60秒古くても許容する案とする。ただし、この許容について業務側の承認は未取得であり、採用条件として合意が必要である。</p><h4>合意事項</h4><p>開発チームおよび業務側で、次の2点を決定する。</p><ol start="1"><li><p>検索専用サービスを別途運用するか。</p></li><li><p>DB更新から最大60秒遅れた検索結果を許容するか。</p></li></ol><p>60秒の許容が承認されない場合、方式Bの同期方式または方式自体を再検討する。</p><h4>参考・進行</h4><ul><li><p>作業項目：SEARCH-88</p></li><li><p>関連PR：#71</p></li><li><p>レビュー期限：8月28日</p></li></ul></div>
+    <footer class="candidate-footer"><a href="documents/comparison-rfc.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>計測値、費用、性能改善幅は原資料にないため記載していません。レビュー期限の年は原資料に記載がありません。</p></details>
+      <details class="lint"><summary>lint: 2件の指摘</summary><div class="lint-message"><strong>stock-boundary · 1行 20列</strong><pre>文書にJira課題IDが含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div><div class="lint-message"><strong>stock-boundary · 30行 8列</strong><pre>文書にJira課題IDが含まれています。作業追跡はチケットまたは進捗文書へ移してください。</pre></div></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,732トークン（内cache 0）／出力 480トークン／12.4秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">347字 · 5見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><h3>商品検索基盤の方式変更RFC</h3><h4>問題</h4><p>商品検索が遅く、部分一致検索の速度も改善する必要がある。</p><h4>提案</h4><p>検索専用サービスを導入する（方式B）。商品データをDBから検索サービスへ反映し、検索結果の鮮度は最大60秒の遅延を許容する。</p><p>方式Bは部分一致検索を高速化できる。一方、検索専用サービスの運用が増え、DBからの反映遅延が発生する。</p><h4>代替案</h4><p>方式Aとして既存DBに索引を追加する。運用対象は増えないが、部分一致検索は速くならない。</p><h4>合意が必要な論点</h4><p>開発チームと業務側で、次の2点への合意を求める。</p><ul><li><p>検索専用サービスを別途運用するか</p></li><li><p>検索結果の最大60秒の遅延を許容するか</p></li></ul><p>現時点では、計測値と費用の情報はない。60秒の遅延は業務側の承認前である。</p></div>
+    <footer class="candidate-footer"><a href="documents/comparison-rfc.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>採用段: 4（方式比較と合意事項が中心のため）。検査結果: 外部の実行系で確認してください。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 12,181トークン（内cache 1,792）／出力 380トークン／13.6秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">問題、Aの運用利点と部分一致の制限、Bの部分一致と運用・遅延の代償、Bの提案を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>問題と両方式の利点・制限・代償を箇条書きで示し、方式Bを提案している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>問題、Aの運用対象を増やさない利点と部分一致の制限、Bの部分一致高速化と運用・反映遅延の代償、方式Bの提案を記載している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">60秒許容を未承認の案とし、速度の計測値・費用・採用決定を補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>「方式Bを採用する」と断定しており、原資料で未決定の採用決定を補っている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>60秒は業務側承認前と明記し、計測値・費用・採用決定を補っていない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">別サービス運用と60秒許容を合意論点にし、本文にSEARCH-88、PR #71、レビュー期限を入れない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>本文の「参考・進行」にPR #71とレビュー期限8月28日を入れており、本文に入れない条件に反する。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>別サービス運用と60秒許容を合意論点にし、本文にSEARCH-88、PR #71、レビュー期限を記載していない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">同じ比較軸でAとBを比較でき、提案と合意待ちを区別できる。表または明確な対応を持つ箇条書きを使う。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>A・Bを長所／短所で同じ軸により比較し、60秒許容は業務側承認前で合意が必要と区別している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>方式Bと方式Aを対応する説明で比較し、方式Bの提案と60秒許容の承認待ちを区別している。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">比較と合意論点に必要な形に止める。比較内容を別の概要・まとめで反復せず、実装計画を付けない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>60秒不承認時の同期方式・方式自体の再検討という追加の進行記述があり、比較と合意論点に必要な範囲を超える。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>比較、提案、合意論点に限定され、比較の反復や実装計画がない。</p></div></div></section></details></section>
+<section class="pair" id="plain-japanese.1" data-case="plain-japanese" data-repeat="1"><div class="pair-heading"><h2>曖昧な表現を根拠に沿って具体化 <small>1回目</small></h2><a href="comparisons/plain-japanese.1.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>CS担当向けの仕様説明を推敲して。草稿:『既存基盤をレバレッジし、シームレスな体験を提供する。価値創出最大化基盤により適切に対応する。』確定事項: 利用者は既存の認証で請求画面へ移れる。再ログインは不要。認証の有効期限が切れている場合だけログイン画面を表示する。草稿中の造語は正式名称ではない。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">113字 · 0見出し<br>最終稿の採点 4/5</div></header>
+    <div class="document"><p>利用者は、既存の認証情報を利用して請求画面へ移動できます。請求画面へ移る際に、再度ログインする必要はありません。</p><p>ただし、認証の有効期限が切れている場合は、ログイン画面が表示されます。画面の案内に従ってログインしてください。</p></div>
+    <footer class="candidate-footer"><a href="documents/plain-japanese.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>草稿に含まれていた造語や抽象的な表現は使用せず、確定事項に基づいて具体的に記載しました。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,665トークン（内cache 0）／出力 159トークン／6.3秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">68字 · 0見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><p>利用者は既存の認証情報で請求画面へ移動できます。再ログインは不要です。ただし、認証の有効期限が切れている場合はログイン画面を表示します。</p></div>
+    <footer class="candidate-footer"><a href="documents/plain-japanese.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段3（一段落で必要情報が揃うため）。textlintは未検査です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,346トークン（内cache 0）／出力 119トークン／6.8秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">113字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>利用者は、既存の認証情報を利用して請求画面へ移動できます。請求画面へ移る際に、再度ログインする必要はありません。</p><p>ただし、認証の有効期限が切れている場合は、ログイン画面が表示されます。画面の案内に従ってログインしてください。</p></div>
+    <footer class="candidate-footer"><a href="documents/plain-japanese.1.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>草稿に含まれていた造語や抽象的な表現は使用せず、確定事項に基づいて具体的に記載しました。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,665トークン（内cache 0）／出力 159トークン／6.3秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">68字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>利用者は既存の認証情報で請求画面へ移動できます。再ログインは不要です。ただし、認証の有効期限が切れている場合はログイン画面を表示します。</p></div>
+    <footer class="candidate-footer"><a href="documents/plain-japanese.1.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段3（一段落で必要情報が揃うため）。textlintは未検査です。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,346トークン（内cache 0）／出力 119トークン／6.8秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">既存認証で請求画面へ移る、再ログイン不要、有効期限切れの場合だけログイン画面を表示する条件を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>既存認証での請求画面への移動、再ログイン不要、有効期限切れ時のみログイン画面を表示する条件を本文に含む。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>既存の認証情報で請求画面へ移動でき、再ログイン不要、認証の有効期限切れの場合はログイン画面を表示する、という全確定事項を本文に含む。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">自動更新、認証方式名、別のエラー動作など資料にない仕様を補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="fail">不合格</span></strong><p>「画面の案内に従ってログインしてください」は、資料にない案内の存在および追加の利用者対応を本文に加えている。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>資料にない認証方式、自動更新、追加のエラー時動作を補っていない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">CSが利用者への説明に使える仕様本文を返し、書き換え手順の解説を本文に混ぜない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文はCSが利用者へ説明するための記述であり、書き換え手順は混在していない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>CSが利用者へそのまま説明できる仕様本文であり、書き換え手順は本文に含まれない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">レバレッジ・シームレス・価値創出最大化基盤・適切に対応するを、条件と具体的な動作へ書き換える。引用やコードに逃がさない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>草稿の抽象表現を使わず、認証状態に応じた具体的な画面遷移を記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>抽象語を用いず、遷移条件とログイン画面の表示条件を具体的に記載している。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">短い段落で伝え、見出しを並べたり同じ内容を繰り返したりしない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>短い二段落で構成され、見出しの列挙や同内容の反復はない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>一つの短い段落で、見出しや重複なく必要事項を伝えている。</p></div></div></section></details></section>
+<section class="pair" id="plain-japanese.2" data-case="plain-japanese" data-repeat="2"><div class="pair-heading"><h2>曖昧な表現を根拠に沿って具体化 <small>2回目</small></h2><a href="comparisons/plain-japanese.2.md">GitHub用の比較Markdown</a></div><details class="prompt"><summary>原依頼・資料を読む</summary><div><p>CS担当向けの仕様説明を推敲して。草稿:『既存基盤をレバレッジし、シームレスな体験を提供する。価値創出最大化基盤により適切に対応する。』確定事項: 利用者は既存の認証で請求画面へ移れる。再ログインは不要。認証の有効期限が切れている場合だけログイン画面を表示する。草稿中の造語は正式名称ではない。</p></div></details><div class="draft" data-stage="final"><p class="stage-label">最終稿</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">76字 · 0見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><p>利用者は、既存の認証情報を引き継いで請求画面へ移動できます。再ログインは不要です。ただし、認証の有効期限が切れている場合は、ログイン画面が表示されます。</p></div>
+    <footer class="candidate-footer"><a href="documents/plain-japanese.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>草稿中の造語は使用せず、確定事項に基づいて具体的な仕様として整理しました。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,667トークン（内cache 0）／出力 131トークン／6.7秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">68字 · 0見出し<br>最終稿の採点 5/5</div></header>
+    <div class="document"><p>利用者は既存の認証情報で請求画面へ移動できます。再ログインは不要です。ただし、認証の有効期限が切れている場合はログイン画面を表示します。</p></div>
+    <footer class="candidate-footer"><a href="documents/plain-japanese.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段3（一段落で必要情報が揃うため）。草稿の抽象表現と造語を、確定事項に基づく具体的な説明へ改めました。検査は外部の実行系に委ねます。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,348トークン（内cache 1,792）／出力 148トークン／6.3秒</p></details>
+    </footer>
+  </article></div></div><div class="draft" data-stage="initial"><p class="stage-label">初稿（意味の採点対象外）</p><div class="columns"><article class="candidate without_skill">
+    <header class="candidate-header"><div><h3>スキルなし</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">76字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>利用者は、既存の認証情報を引き継いで請求画面へ移動できます。再ログインは不要です。ただし、認証の有効期限が切れている場合は、ログイン画面が表示されます。</p></div>
+    <footer class="candidate-footer"><a href="documents/plain-japanese.2.without_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>草稿中の造語は使用せず、確定事項に基づいて具体的な仕様として整理しました。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 2,667トークン（内cache 0）／出力 131トークン／6.7秒</p></details>
+    </footer>
+  </article><article class="candidate with_skill">
+    <header class="candidate-header"><div><h3>スキルあり</h3><span>初稿＝最終稿 · 修正なし</span></div><div class="metrics">68字 · 0見出し<br>初稿は意味の採点対象外</div></header>
+    <div class="document"><p>利用者は既存の認証情報で請求画面へ移動できます。再ログインは不要です。ただし、認証の有効期限が切れている場合はログイン画面を表示します。</p></div>
+    <footer class="candidate-footer"><a href="documents/plain-japanese.2.with_skill.1.md">この本文をMarkdownで開く</a>
+      <details class="notes"><summary>本文外の注記</summary><p>段3（一段落で必要情報が揃うため）。草稿の抽象表現と造語を、確定事項に基づく具体的な説明へ改めました。検査は外部の実行系に委ねます。</p></details>
+      <details class="lint"><summary>lint: 合格</summary><p>指摘はありません。</p></details>
+      <details><summary>この稿の生成量・時間</summary><p>入力 10,348トークン（内cache 1,792）／出力 148トークン／6.3秒</p></details>
+    </footer>
+  </article></div></div><details class="judgments"><summary>採点基準と理由を読み比べる（最終稿のみ）</summary><p class="caveat">単一LLMによる判定です。本文外の注記による減点など、採点の誤りを含みます。元の判定をそのまま表示しています。<a href="../../findings.md">採点の照合メモ</a></p><section class="criterion"><h3>事実の保持 <small>facts</small></h3><p class="criterion-source">既存認証で請求画面へ移る、再ログイン不要、有効期限切れの場合だけログイン画面を表示する条件を残す。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>既存の認証情報で請求画面へ移動でき、再ログイン不要であり、有効期限切れの場合のみログイン画面を表示する条件をすべて記載している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>既存の認証情報で請求画面へ移動でき、再ログイン不要であり、有効期限切れの場合のみログイン画面を表示する条件をすべて記載している。</p></div></div></section><section class="criterion"><h3>根拠のない補完を避ける <small>grounding</small></h3><p class="criterion-source">自動更新、認証方式名、別のエラー動作など資料にない仕様を補わない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>自動更新、認証方式名、追加のエラー時動作など、資料にない仕様を加えていない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文には資料外の自動更新、認証方式、別のエラー動作などの追加仕様がない。</p></div></div></section><section class="criterion"><h3>文書の役割 <small>role</small></h3><p class="criterion-source">CSが利用者への説明に使える仕様本文を返し、書き換え手順の解説を本文に混ぜない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>本文はCS担当者が利用者へそのまま説明できる仕様文であり、書き換え手順の解説は本文に含まれない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>本文はCS担当者が利用者に説明するための仕様文であり、書き換え手順の説明を本文へ混在させていない。</p></div></div></section><section class="criterion"><h3>説明の明確さ <small>clarity</small></h3><p class="criterion-source">レバレッジ・シームレス・価値創出最大化基盤・適切に対応するを、条件と具体的な動作へ書き換える。引用やコードに逃がさない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>抽象表現や造語を用いず、認証の引継ぎ、再ログイン不要、有効期限切れ時の画面表示という具体的な動作と条件で示している。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>草稿の抽象語・造語を使わず、認証情報の利用、再ログイン不要、有効期限切れ時の表示という具体的な仕様に置き換えている。</p></div></div></section><section class="criterion"><h3>簡潔さ <small>economy</small></h3><p class="criterion-source">短い段落で伝え、見出しを並べたり同じ内容を繰り返したりしない。</p><div class="columns"><div class="judgment"><strong>スキルなし <span class="pass">合格</span></strong><p>短い一段落で必要事項を重複なく伝えており、見出しの列挙もない。</p></div><div class="judgment"><strong>スキルあり <span class="pass">合格</span></strong><p>短い一段落で要点を重複なく記載し、見出しを並べていない。</p></div></div></section></details></section></main><footer class="page-footer">保存済みの本文・注記・判定から生成。JSONを開かずに内容を確認できます。意味の採点は最終稿のみです。</footer></div><script>(() => {
+  const pairs = [...document.querySelectorAll(".pair")];
+  const caseSelect = document.querySelector("#case-select");
+  const repeatSelect = document.querySelector("#repeat-select");
+  const stages = [...document.querySelectorAll("button[data-stage]")];
+  const previous = document.querySelector("#previous");
+  const next = document.querySelector("#next");
+  let index = 0;
+  let stage = "final";
+
+  function show() {
+    const parts = location.hash.slice(1).split(".");
+    const found = pairs.findIndex((p) => p.id === `${parts[0]}.${parts[1]}`);
+    index = found < 0 ? 0 : found;
+    stage = parts[2] === "initial" ? "initial" : "final";
+    const selected = pairs[index];
+    pairs.forEach((p) => { p.hidden = p !== selected; });
+    document.querySelectorAll(".draft").forEach((d) => { d.hidden = d.dataset.stage !== stage; });
+    caseSelect.value = selected.dataset.case;
+    repeatSelect.value = selected.dataset.repeat;
+    stages.forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.stage === stage)));
+    previous.disabled = index === 0;
+    next.disabled = index === pairs.length - 1;
+    document.querySelector("#position").textContent = `${index + 1} / ${pairs.length} 比較`;
+    document.querySelector("#permalink").href = `#${selected.id}.${stage}`;
+    document.title = `${selected.querySelector("h2").textContent} · ${stage === "final" ? "最終稿" : "初稿"} | 執筆比較`;
+    window.scrollTo(0, 0);
+  }
+  function navigate(id, value = stage) {
+    location.hash = `${id}.${value}`;
+  }
+  caseSelect.addEventListener("change", () => navigate(`${caseSelect.value}.${repeatSelect.value}`));
+  repeatSelect.addEventListener("change", () => navigate(`${caseSelect.value}.${repeatSelect.value}`));
+  stages.forEach((b) => b.addEventListener("click", () => navigate(pairs[index].id, b.dataset.stage)));
+  previous.addEventListener("click", () => navigate(pairs[index - 1].id));
+  next.addEventListener("click", () => navigate(pairs[index + 1].id));
+  window.addEventListener("hashchange", show);
+  show();
+  document.querySelector(".controls").hidden = false;
+  document.querySelector(".pagination").hidden = false;
+})();
+</script></body></html>

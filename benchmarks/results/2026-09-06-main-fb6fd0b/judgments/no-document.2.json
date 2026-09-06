@@ -1,0 +1,65 @@
+{
+  "caseId": "no-document",
+  "repeat": 2,
+  "mapping": {
+    "A": "without_skill",
+    "B": "with_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "開催前の中止と、議論・決定・宿題がないことを理由としている。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "開催済みの会議や参加者、次回予定、規程を創作していない。"
+        },
+        "role": {
+          "pass": false,
+          "evidence": "議事録本文は作成していないが、「予定表や運営記録」に記録する追加の管理手順を提示している。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "「新たに議事録を残す必要はありません」と結論を直接示している。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "結論と理由が一文ではなく、追加の記録方法も含めている。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "開催前の中止、議論・決定・宿題がないこと、中止連絡済みを理由としている。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "開催された会議、参加者、次回予定、規程を創作していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "不要と判断し、議事録のひな型・本文や追加の管理手順を新規に作成していない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "「新たな議事録は残さない」と結論と理由が直接分かる。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "本文は結論と理由を一文で伝え、追加の手順や例示を含まない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 4732,
+      "cached_input_tokens": 3840,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 443,
+      "reasoning_output_tokens": 62
+    },
+    "elapsedMs": 13286
+  },
+  "promptHash": "1ae0d1f45cc12a2e2124567364a2a37f223ab8663b458fb669746c59cdba4552"
+}

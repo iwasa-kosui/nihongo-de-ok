@@ -1,0 +1,65 @@
+{
+  "caseId": "runbook-missing",
+  "repeat": 2,
+  "mapping": {
+    "A": "with_skill",
+    "B": "without_skill"
+  },
+  "result": {
+    "response": {
+      "A": {
+        "facts": {
+          "pass": true,
+          "evidence": "監視でエラーを検知した際のキャッシュ再起動を対象にし、再起動コマンド、停止条件、復旧確認、連絡先をそれぞれ未決定として残している。"
+        },
+        "grounding": {
+          "pass": true,
+          "evidence": "コマンドや数値、環境名、連絡先を補完・創作しておらず、安全に実行可能とも断言していない。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文タイトルで「草稿」と明示し、notesでも必須情報不足のため草稿としたとしている。"
+        },
+        "clarity": {
+          "pass": false,
+          "evidence": "未決定で開始・実行できないことは示すが、実行前に誰へ何を確認すべきかという具体的な質問・確認事項が示されていない。"
+        },
+        "economy": {
+          "pass": true,
+          "evidence": "依頼対象の最小限の草稿を示し、未定事項の見出しも必要な4項目に留めている。"
+        }
+      },
+      "B": {
+        "facts": {
+          "pass": true,
+          "evidence": "監視エラー時のキャッシュ再起動を前提に、コマンド、停止条件、復旧確認、連絡先を未定として明示している。"
+        },
+        "grounding": {
+          "pass": false,
+          "evidence": "資料にない「エラー率」を復旧確認項目として追加しており、許容されない運用指標の創作に当たる。"
+        },
+        "role": {
+          "pass": true,
+          "evidence": "本文で「未確定事項あり」「未定義」「確定するまで本番環境で実施しない」と明示し、完成済み・検証済みとは報告していない。"
+        },
+        "clarity": {
+          "pass": true,
+          "evidence": "実施前に確定すべきコマンド、停止条件、承認、復旧確認、連絡先などを具体的に列挙し、確定まで実施しないよう明示している。"
+        },
+        "economy": {
+          "pass": false,
+          "evidence": "原資料にないバックアップ、ロールバック、詳細な暫定フロー等を多く追加しており、不足情報だけで書ける最小の草稿とはいえない。"
+        }
+      }
+    },
+    "usage": {
+      "input_tokens": 5408,
+      "cached_input_tokens": 3840,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 985,
+      "reasoning_output_tokens": 450
+    },
+    "elapsedMs": 23658
+  },
+  "promptHash": "a028c552b836e52a79290cd288ab48849fd7bb6e28e5a40bc4a5f19fb19e8787"
+}

@@ -1,0 +1,69 @@
+{
+  "reviewId": "r-e6820eca27f073a50c560b0c371ff9ee72b33afab61a56b88e3a72e4c6ee7ed3",
+  "inputHash": "e6820eca27f073a50c560b0c371ff9ee72b33afab61a56b88e3a72e4c6ee7ed3",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "実装者がファイル取込の構成、データフロー、失敗条件、制約と未決定事項を把握するためのDesign Doc。",
+        "status": "revision_needed",
+        "summary": "基本構成、保存失敗時の動作、不採用案の理由は理解できる。一方、資料にない受付完了応答が確定したフローとして追加されているため修正が必要。キュー登録失敗時の回復などは、資料の追加確認なしには実装を確定できない。",
+        "strengths": [
+          "APIからストレージ、キュー、ワーカー、DBまでの処理とデータの流れが明確。",
+          "保存失敗時の503応答とキュー登録禁止を正確に示している。",
+          "10MBのファイルとキューの1MB制限を区別し、不採用理由と非同期化のトレードオフを説明している。"
+        ],
+        "findings": [
+          {
+            "severity": "major",
+            "kind": "claim",
+            "basis": "source",
+            "excerpt": "4. 受付完了を利用者へ返す。",
+            "source_excerpt": "APIはファイルをオブジェクトストレージへ保存し、その保存先をキューへ登録する。",
+            "finding": "原資料は正常時のAPI応答を定めていないが、本文はキュー登録後に受付完了を返すことを確定した処理として追加している。後段で受付状態を未決事項としても、この応答方針が未確定であるとは読み取れない。",
+            "impact": "実装者が受付完了応答とその返却タイミングを合意済みのAPI契約と解釈し、クライアント側も含めて実装を進める可能性がある。",
+            "suggested_change": "受付完了応答を確定フローから外すか、応答内容・返却条件を要確認の案として明示する。未確認のステータスコードや応答形式は補わない。"
+          }
+        ],
+        "source_gaps": [
+          {
+            "missing_information": "キュー登録失敗時の回復方法、API応答、保存済みファイルの扱い。",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "回復方法は未決定である。",
+            "consequence": "保存成功後にキュー登録だけが失敗する経路の実装は確定できない。本文は回復方法の未決定を明示している。"
+          },
+          {
+            "missing_information": "正常時のAPI応答内容と返却条件。",
+            "blocks_use": true,
+            "handled_appropriately": false,
+            "excerpt": "4. 受付完了を利用者へ返す。",
+            "consequence": "受付完了の意味を含むAPI契約を確定できないが、本文では確定済みに見える。"
+          },
+          {
+            "missing_information": "キューメッセージの具体的な形式、および受付状態・解析結果の参照方法。",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "具体的なメッセージ形式、受付ID、再処理用の識別子は実装時に決定する。",
+            "consequence": "APIとワーカー間の具体的な連携、および利用者が結果を取得する機能の実装には追加の設計判断が必要。"
+          },
+          {
+            "missing_information": "ワーカーの読込・解析・DB保存が失敗した場合の扱い。",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "ワーカーでの解析失敗時の再試行・エラー管理",
+            "consequence": "本文は解析失敗時の未決定を示しているが、資料には読込失敗やDB保存失敗の方針もない。ワーカーの異常系全体はまだ実装を確定できない。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6786,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 1655,
+        "reasoning_output_tokens": 678
+      },
+      "elapsedMs": 62153,
+      "validationErrors": null
+    }
+  ]
+}

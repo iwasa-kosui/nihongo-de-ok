@@ -1,0 +1,58 @@
+{
+  "reviewId": "r-801c2e18c2537c2364ba1742d77dccedfe5e13fcffa533424117f001753a89d3",
+  "inputHash": "801c2e18c2537c2364ba1742d77dccedfe5e13fcffa533424117f001753a89d3",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "当番向けの本番キャッシュ再起動Runbookの草稿",
+        "status": "source_limited",
+        "summary": "未確定事項の整理と手順確定に向けた検討に使えます。本番操作には必要情報が不足していますが、実施禁止と暫定フローを明確に区別しており、草稿として適切です。",
+        "strengths": [
+          "必要事項が確定するまで本番で実施しないよう、冒頭で明示しています。",
+          "未定のコマンドや連絡先を創作せず、実行欄でも未定と示しています。",
+          "暫定フローに復旧確認、記録、失敗・影響拡大時の連絡まで含め、今後具体化する流れを示しています。"
+        ],
+        "findings": [],
+        "source_gaps": [
+          {
+            "missing_information": "再起動コマンドと操作対象",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "- 再起動コマンドおよび対象サービス名",
+            "consequence": "対象を特定して再起動を実行できません。本文は確定まで実施禁止としています。"
+          },
+          {
+            "missing_information": "停止してよい条件と実施可能な範囲",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "- 停止してよい条件、対象範囲、実施時間帯",
+            "consequence": "監視エラーを検知しても、本番停止の可否を判断できません。未確定事項として明示されています。"
+          },
+          {
+            "missing_information": "復旧確認方法と正常性の判定基準",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "- 復旧確認方法と正常性の判定基準",
+            "consequence": "再起動後の復旧完了を判定できません。暫定フローは確定済みの確認方法を使う前提になっています。"
+          },
+          {
+            "missing_information": "連絡先と再起動失敗時の具体的な対応",
+            "blocks_use": true,
+            "handled_appropriately": true,
+            "excerpt": "- 連絡先・承認者：未定\n- 失敗時の対応：未定",
+            "consequence": "異常継続時の連絡や復旧対応を実行できません。本文は未定と明示し、再起動を繰り返さない暫定方針を示しています。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6405,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 790,
+        "reasoning_output_tokens": 147
+      },
+      "elapsedMs": 28151,
+      "validationErrors": null
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "reviewId": "r-c2b50bb51e80d6db8f8836864f857f457bd480dcc1971df8e846ee1579d95d2a",
+  "inputHash": "c2b50bb51e80d6db8f8836864f857f457bd480dcc1971df8e846ee1579d95d2a",
+  "attempts": [
+    {
+      "response": {
+        "intended_use": "運用チーム向けの短いポストモーテム",
+        "status": "usable",
+        "summary": "影響、対応経過、原因仮説、改善の担当・期限を区別できる。原因確定にはログ確認が必要。検知主体の記述に軽微な補足がある。",
+        "strengths": [
+          "検知・変更の差し戻し・復旧確認の時刻が明確。",
+          "検索失敗件数と決済への影響が正確で、原因仮説と未完了の確認を区別している。",
+          "改善内容、担当者、期限、追跡課題が揃っている。"
+        ],
+        "findings": [
+          {
+            "severity": "minor",
+            "kind": "claim",
+            "basis": "source",
+            "excerpt": "8月19日09:10：運用チームがエラー増加を検知。",
+            "source_excerpt": "8月19日09:10に請求検索のエラー増加を検知。",
+            "finding": "原資料は検知主体を明示しておらず、運用チームによる検知と断定する根拠はない。",
+            "impact": "検知体制を振り返る際、確認されていない主体が実績として扱われる可能性がある。",
+            "suggested_change": "「運用チームが」を削除し、検知時刻と事象のみを記す。"
+          }
+        ],
+        "source_gaps": [
+          {
+            "missing_information": "ログ確認の結果と、DB接続枯渇の仮説を裏付ける証拠。",
+            "blocks_use": false,
+            "handled_appropriately": true,
+            "excerpt": "DB接続枯渇が原因と推測しているが、ログの確認は完了していない。",
+            "consequence": "暫定的な振り返りには使えるが、原因の確定はできない。"
+          }
+        ]
+      },
+      "usage": {
+        "input_tokens": 6116,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 954,
+        "reasoning_output_tokens": 465
+      },
+      "elapsedMs": 38798,
+      "validationErrors": null
+    }
+  ]
+}

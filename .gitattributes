@@ -1,0 +1,5 @@
+# Generated Markdown retains the exact model output, including Markdown hard breaks.
+benchmarks/results/*/documents/*.md whitespace=-blank-at-eol
+benchmarks/results/*/comparisons/*.md whitespace=-blank-at-eol
+benchmarks/results/*/document-review/artifacts/*.md whitespace=-blank-at-eol
+benchmarks/results/*/document-review/comparisons/*.md whitespace=-blank-at-eol

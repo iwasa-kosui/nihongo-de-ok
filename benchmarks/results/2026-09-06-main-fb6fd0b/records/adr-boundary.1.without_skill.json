@@ -1,0 +1,63 @@
+{
+  "id": "adr-boundary.1.without_skill",
+  "caseId": "adr-boundary",
+  "repeat": 1,
+  "arm": "without_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# ADR: 請求書PDF生成を非同期キュー処理にする\n\n- **日付**: 2026-08-20\n- **ステータス**: 採用\n- **関連**: BILL-218、PR #106（進捗70%）\n\n## コンテキスト\n\n請求書PDFの生成には最大45秒かかる場合があり、同期処理ではAPI接続が切断される。利用者がリクエスト完了まで待ち続ける方式は、安定性とユーザー体験の面で適さない。\n\n## 決定\n\n請求書PDFの生成をキューによる非同期処理で行う。APIは生成処理を受け付けた時点で受付IDを返し、クライアントはその受付IDを使って処理状況や生成結果を確認する。\n\n## 影響\n\n- API接続を長時間維持する必要がなくなる。\n- 利用者はPDFの完成まで待つ必要がある。\n- クライアントは受付IDに基づく状態確認や完了通知の仕組みを実装する必要がある。\n- 生成失敗時の再試行方針が必要になる。\n\n## 未決事項\n\n再試行回数の上限は未決定である。運用開始前に、無限再試行を避ける上限、失敗時の状態、通知方法を決定すること。",
+        "notes": "原資料の作業メモに記載された関連情報（BILL-218、PR #106、進捗70%）を反映しました。"
+      },
+      "usage": {
+        "input_tokens": 2666,
+        "cached_input_tokens": 1792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 437,
+        "reasoning_output_tokens": 34
+      },
+      "elapsedMs": 11833,
+      "metrics": {
+        "characters": 469,
+        "headings": 5,
+        "lint": [
+          {
+            "ruleId": "stock-boundary",
+            "line": 5,
+            "column": 11,
+            "message": "文書にJira課題IDが含まれています。作業追跡はチケットまたは進捗文書へ移してください。"
+          },
+          {
+            "ruleId": "stock-boundary",
+            "line": 5,
+            "column": 20,
+            "message": "文書にPR番号が含まれています。作業追跡はチケットまたは進捗文書へ移してください。"
+          }
+        ],
+        "exactEdit": null
+      },
+      "promptHash": "6bb6f1039d7fa2c8857ef860ba137ce38bd2012fa1af6d1194029eca7de871da"
+    },
+    {
+      "response": {
+        "body": "# ADR: 請求書PDF生成を非同期キュー処理にする\n\n- **日付**: 2026-08-20\n- **ステータス**: 採用\n\n## コンテキスト\n\n請求書PDFの生成には最大45秒かかる場合があり、同期処理ではAPI接続が切断される。利用者がリクエスト完了まで待ち続ける方式は、安定性とユーザー体験の面で適さない。\n\n## 決定\n\n請求書PDFの生成をキューによる非同期処理で行う。APIは生成処理を受け付けた時点で受付IDを返し、クライアントはその受付IDを使って処理状況や生成結果を確認する。\n\n## 影響\n\n- API接続を長時間維持する必要がなくなる。\n- 利用者はPDFの完成まで待つ必要がある。\n- クライアントは受付IDに基づく状態確認や完了通知の仕組みを実装する必要がある。\n- 生成失敗時の再試行方針が必要になる。\n\n## 未決事項\n\n再試行回数の上限は未決定である。運用開始前に、無限再試行を避ける上限、失敗時の状態、通知方法を決定すること。",
+        "notes": "作業追跡用の課題ID、PR番号、進捗情報はADR本文から除外しました。"
+      },
+      "usage": {
+        "input_tokens": 3214,
+        "cached_input_tokens": 1792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 424,
+        "reasoning_output_tokens": 50
+      },
+      "elapsedMs": 10880,
+      "metrics": {
+        "characters": 435,
+        "headings": 5,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "bd007778c102a597d488c667afb03d789f433182e6776e0e82a6f2ba1396aa06"
+    }
+  ]
+}

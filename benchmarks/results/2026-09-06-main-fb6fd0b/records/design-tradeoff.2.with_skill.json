@@ -1,0 +1,29 @@
+{
+  "id": "design-tradeoff.2.with_skill",
+  "caseId": "design-tradeoff",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# ファイル取込の設計\n\n## 背景と目標\n\nAPIで受け付けたファイルを非同期に解析し、解析結果をDBへ保存する。利用者はAPIの応答を待たずに処理を進められる一方、結果の提示は遅れる。\n\n## 設計\n\nAPIはファイル本体をオブジェクトストレージへ保存し、保存先をキューへ登録する。保存に失敗した場合は503を返し、キューへ登録しない。\n\nワーカーはキューから保存先を取得し、オブジェクトストレージからファイルを読み込む。解析結果をDBへ保存する。\n\n```text\nAPI\n  └─ ファイル保存 → オブジェクトストレージ\n                         └─ 保存先を登録 → キュー\n                                               └─ ワーカーが読み込み\n                                                     └─ 解析結果をDBへ保存\n```\n\n## 不採用案\n\nファイル本体をキューへ載せる案は採用しない。ファイルサイズは最大10MBであり、キューの上限1MBを超えるためである。\n\n## 影響と未決定事項\n\n非同期化により、利用者が解析結果を確認できるまでの時間が延びる。\n\nキューへの登録に失敗した場合の回復方法は未決定である。登録失敗時に、オブジェクトストレージへ保存したファイルをどう扱うかを別途決める必要がある。",
+        "notes": "Design Doc（stock）として、進行メモの課題ID・PR番号・担当者・予定は本文から除外しました。採用段階は3（短い章立てで、設計・理由・影響・未決定事項を満たすため）。textlintは未実行です。"
+      },
+      "usage": {
+        "input_tokens": 12190,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 485,
+        "reasoning_output_tokens": 31
+      },
+      "elapsedMs": 12802,
+      "metrics": {
+        "characters": 628,
+        "headings": 5,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "3342a964778ca749fab6ae7ad9293c4a0effd8085fc8bcb0b3fae6bb3e5494e7"
+    }
+  ]
+}

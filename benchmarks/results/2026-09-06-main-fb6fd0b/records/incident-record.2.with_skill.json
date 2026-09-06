@@ -1,0 +1,57 @@
+{
+  "id": "incident-record.2.with_skill",
+  "caseId": "incident-record",
+  "repeat": 2,
+  "arm": "with_skill",
+  "attempts": [
+    {
+      "response": {
+        "body": "# 請求検索エラー増加のポストモーテム\n\n## 影響\n請求検索に340件の失敗が発生した。決済への影響はなかった。\n\n## 経過\n- 8月19日09:10：運用チームがエラー増加を検知。\n- 09:17：当番の加藤が直前の変更を戻した。\n- 09:22：復旧を確認。\n\n## 原因\nDB接続枯渇が原因である可能性がある。ただし、ログの確認が完了しておらず、原因は未確定である。\n\n## 改善課題\n加藤が8月26日までに、DB接続数の記録を追加する。追跡先はOPS-315。",
+        "notes": "採用段：4。影響、経過、原因、改善課題を分ける必要があるため。textlint検査は外部の実行系で実施してください。"
+      },
+      "usage": {
+        "input_tokens": 10383,
+        "cached_input_tokens": 0,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 336,
+        "reasoning_output_tokens": 84
+      },
+      "elapsedMs": 9896,
+      "metrics": {
+        "characters": 236,
+        "headings": 5,
+        "lint": [
+          {
+            "ruleId": "no-doubled-joshi",
+            "line": 12,
+            "column": 16,
+            "message": "一文に二回以上利用されている助詞 \"が\" がみつかりました。\n\n次の助詞が連続しているため、文を読みにくくしています。\n\n- \"が\"\n- \"が\"\n\n同じ助詞を連続して利用しない、文の中で順番を入れ替える、文を分割するなどを検討してください。\n"
+          }
+        ],
+        "exactEdit": null
+      },
+      "promptHash": "2279e4fa21f1e8e2b4eef9ad5a5034a7f86541793fbbad45921c45a49a7f089f"
+    },
+    {
+      "response": {
+        "body": "# 請求検索エラー増加のポストモーテム\n\n## 影響\n請求検索に340件の失敗が発生した。決済への影響はなかった。\n\n## 経過\n- 8月19日09:10：運用チームがエラー増加を検知。\n- 09:17：当番の加藤が直前の変更を戻した。\n- 09:22：復旧を確認。\n\n## 原因\n原因はDB接続枯渇と推測している。ただし、ログ確認は未完了で、確定していない。\n\n## 改善課題\n加藤が8月26日までに、DB接続数の記録を追加する。追跡先はOPS-315。",
+        "notes": "前稿の助詞重複を修正し、原資料の未確定情報を保った。textlint検査は外部の実行系で実施してください。"
+      },
+      "usage": {
+        "input_tokens": 10791,
+        "cached_input_tokens": 1792,
+        "cache_write_input_tokens": 0,
+        "output_tokens": 468,
+        "reasoning_output_tokens": 224
+      },
+      "elapsedMs": 11881,
+      "metrics": {
+        "characters": 228,
+        "headings": 5,
+        "lint": [],
+        "exactEdit": null
+      },
+      "promptHash": "6c69578bda5660e7690140d5a967f80a0d036ae35eb7e12ff837c3d27bc19dea"
+    }
+  ]
+}
