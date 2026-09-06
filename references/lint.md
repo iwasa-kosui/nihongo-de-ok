@@ -15,9 +15,23 @@ node /absolute/path/to/nihongo-de-ok/scripts/lint.mjs \
 
 ## 検査するルール
 
-`preset-japanese` は助詞の重複や二重否定など、既存の日本語ルールを検査します。`no-ai-jargon` は直訳調・抽象表現を検出します。`no-opaque-compound` は意味を読み取りにくい造語を検出します。`no-vague-action` は主体・対象・条件が不明確になりやすい限定的な動作表現を検出します。
+`preset-japanese` は助詞の重複や二重否定など、既存の日本語ルールを検査します。`no-ai-jargon` は既知の直訳調・抽象表現を、語と述語の組み合わせから検出します。`no-opaque-compound` は対象・抽象的な変化・仕組みを重ねた名詞句を検出します。`no-vague-action` は程度・条件・参照先が不明確になりやすい修飾句と動作を検出します。
 
 ストック文書には `stock-boundary` も適用され、作業進捗、チェックボックス、PR・Jira の追跡情報を検出します。`table-cell-length` は全区分に適用され、Markdown の表の見出しと本文セルを検査します。
+
+## 日本語の文型と検出範囲
+
+独自の文章ルールは、[kuromojin](https://github.com/azu/kuromojin) で文を形態素に分け、基本形・品詞・助詞の接続を調べます。例えば `適切に対応しました`、`適切な対応を行う`、`十分なリスク評価を行う` は、活用や名詞化が違っても判断基準を確認する候補になります。指示語の後の `を`、`に`、`については` なども、動作との関係として扱います。助詞を一律に削って照合することはありません。
+
+名詞句は全文一致の造語辞書に限りません。例えば `業務の効率化の基盤` は対象・変化・仕組みの連結として検出します。既存の仕組みに対する操作を表す `画像処理システムの最適化` とは、語の順序で区別します。長い専門用語を文字数や名詞数だけで指摘しません。
+
+語義の選択は意味の点検で判断し、`段3` のように再現できる不自然な番号表記は既知の候補として検出します。`3段` の助数詞や `階段`、`段落` まで一律に禁止しません。
+
+段落・見出し・表セルごとに表示される本文を集めるため、強調やリンク表示文にまたがる表現も検査します。コード・引用・URL・画像・HTML・明示的な改行を境界として扱い、前後を連結して架空の文型を作りません。通常の折り返し改行は文を分けません。指摘は元のMarkdownの範囲へ戻し、否定や補助述語まで確認できる形で返します。
+
+実装は [no-doubled-joshi](https://github.com/textlint-ja/textlint-rule-no-doubled-joshi) の文分割と原文位置への復元、[no-double-negative-ja](https://github.com/textlint-ja/textlint-rule-no-double-negative-ja) の基本形・品詞・助詞による照合を参考にしています。[morpheme-match](https://github.com/textlint-ja/textlint-rule-morpheme-match) も、文字列の表層だけでなく形態素の属性を使う設計の参考です。文分割に [sentence-splitter](https://github.com/textlint-rule/sentence-splitter)、原文位置の復元に [textlint-util-to-string](https://github.com/textlint/textlint-util-to-string) を使います。
+
+形態素解析は係り受け解析や意味判定ではありません。語彙群にない表現、遠く離れた修飾関係、文脈に合う訳語かどうかは意味の点検で補います。検出済みの語も、原資料で範囲・条件が明確な場合や専門用語として必要な場合は文脈を確認します。未知の問題を見つけたら、同じ構造の言い換えと近い正用例を回帰テストに加え、検出漏れと誤検出の両方を確認します。
 
 ## 表の文字数
 

@@ -49,7 +49,7 @@ test("no-ai-jargon reports every visible occurrence with exact positions", async
   assert.deepEqual(jargon.map(({ line, column }) => [line, column]), [[1, 1], [1, 7], [2, 2]]);
 });
 
-test("no-ai-jargon keeps a finite phrase dictionary with concrete alternatives", async () => {
+test("no-ai-jargon reports known lexical and predicate patterns with concrete alternatives", async () => {
   const found = await messages("flow", "ホリスティックに検討し、プロアクティブに進める。ロバストな実装で価値を解き放つ。ゲームチェンジャーとしてアラインメントを取る。", config({ "no-ai-jargon": { allow: [] } }));
   const jargon = found.filter((message) => message.ruleId === "no-ai-jargon");
   assert.equal(jargon.length, 6);
@@ -92,7 +92,7 @@ test("invalid empty or non-string allow entries fail instead of suppressing chec
   }
 });
 
-test("no-opaque-compound is a finite dictionary and supports allow", async () => {
+test("no-opaque-compound reports abstract noun combinations and supports allow", async () => {
   const visible = await messages("flow", "価値創出最大化基盤と意思決定高度化レイヤー。\n[価値創出最大化基盤](https://example.test/価値創出最大化基盤)\n`価値創出最大化基盤`\n> 価値創出最大化基盤\nhttps://example.test/価値創出最大化基盤\n価値提供と課題解決は具体的に書く。\n", config({ "no-opaque-compound": { allow: [] } }));
   assert.deepEqual(visible.filter((message) => message.ruleId === "no-opaque-compound").map(({ line, column }) => [line, column]), [[1, 1], [1, 11], [2, 2]]);
   const allowed = await messages("flow", "価値創出最大化基盤", config({ "no-opaque-compound": { allow: ["価値創出最大化基盤"] } }));
