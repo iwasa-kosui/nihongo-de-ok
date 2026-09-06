@@ -111,5 +111,5 @@ test("dry-run validates every case and never invokes a model", () => {
   const stdout = execFileSync(process.execPath, [join(root, "benchmarks/benchmark.mjs"), "run", "--out", "/tmp/not-created-nihongo-dry", "--model", "not-a-model", "--judge-model", "not-a-judge", "--dry-run"], { encoding: "utf8", env: { ...process.env, CODEX_BIN: "/does/not/exist" } });
   const plan = JSON.parse(stdout);
   assert.equal(plan.plan.length, 40);
-  assert.ok(plan.sourceHashes["rules/lib/phrase-rule.mjs"], "Nested lint helpers must be fingerprinted for safe resume");
+  assert.ok(plan.sourceHashes["rules/lib/japanese-rule.mjs"], "Nested lint helpers must be fingerprinted for safe resume");
 });

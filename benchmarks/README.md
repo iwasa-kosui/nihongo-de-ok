@@ -31,7 +31,7 @@ GitHub上では、[課題別の比較一覧](results/2026-09-06-main-fb6fd0b/rep
 
 ## 課題と採点
 
-[cases.json](cases.json)に原資料と事前に決めた基準を保存する。10課題はADR、Design Doc、進捗、障害記録、不足のあるRunbook、一文だけの修正、正本参照、文書不要の判断、RFC比較、曖昧な日本語の改稿を扱う。ラダーの段0〜5とstock/flow/recordの境界を含む。40文書種別すべてや自動発火の陰性例は網羅しない。
+[cases.json](cases.json)に原資料と事前に決めた基準を保存する。10課題はADR、Design Doc、進捗、障害記録、不足のあるRunbook、一文だけの修正、正本参照、文書不要の判断、RFC比較、曖昧な日本語の改稿を扱う。ステップ0〜5とstock/flow/recordの境界を含む。40文書種別すべてや自動発火の陰性例は網羅しない。
 
 生成側に渡すのは`prompt`と、スキルあり側の参照情報だけ。`criteria`と`expectedBody`は渡さない。各課題の最終出力を次の5基準で採点する。
 
