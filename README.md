@@ -4,24 +4,15 @@
 
 ## インストール
 
-GitとNode.js 22以降が必要です。使うエージェントの配置先を選びます（個人用）。
-
-| エージェント | 配置先 |
-| --- | --- |
-| [Claude Code](https://code.claude.com/docs/en/skills) | `$HOME/.claude/skills` |
-| [Codex](https://learn.chatgpt.com/docs/build-skills) | `$HOME/.agents/skills` |
-| [Cursor](https://cursor.com/docs/skills) | `$HOME/.cursor/skills` |
-
-`skills_dir` を上の配置先に合わせて実行します。`SKILL.md` と検査用スクリプトを含むリポジトリ全体をインストールします。
+[GitHub CLI](https://cli.github.com/) 2.90以降とNode.js 22以降が必要です。
 
 ```sh
-skills_dir="$HOME/.agents/skills" # 配置先を選ぶ（Codexの例）
-mkdir -p "$skills_dir"
-git clone --depth 1 https://github.com/iwasa-kosui/nihongo-de-ok.git "$skills_dir/nihongo-de-ok"
-npm ci --prefix "$skills_dir/nihongo-de-ok"
+gh skills install iwasa-kosui/nihongo-de-ok nihongo-de-ok --scope user
 ```
 
-他のエージェントでも、スキルの配置先を指定して導入できます。スキルを自動認識しない場合は、配置した `SKILL.md` のパスを伝えて読み込ませてください。
+対話画面で利用するエージェントを選ぶと、個人用の配置先にインストールされます。`--agent claude-code`、`--agent codex`、`--agent cursor` などで指定することもできます。詳細は[インストールの公式手順](https://cli.github.com/manual/gh_skill_install)を参照してください。
+
+文書検査に必要な依存関係は、初回利用時にエージェントがスキルの配置先で `npm ci` を実行して導入します。
 
 ## 使い方
 
