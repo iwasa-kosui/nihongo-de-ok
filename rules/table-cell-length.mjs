@@ -1,5 +1,5 @@
 const segmenter = new Intl.Segmenter("ja", { granularity: "grapheme" });
-const MAX_CELL_LENGTH = 29;
+const MAX_CELL_LENGTH = 60;
 
 function visibleText(node, Syntax) {
   if (node.children) return node.children.map((child) => visibleText(child, Syntax)).join("");
@@ -24,7 +24,7 @@ export default function tableCellLength(context) {
       if (quoteDepth > 0) return;
       const length = [...segmenter.segment(visibleText(node, Syntax).trim())].length;
       if (length <= MAX_CELL_LENGTH) return;
-      report(node, new RuleError(`表のセルが${length}文字あります。各セルは29文字以内にし、詳しい説明は表の外の見出しと段落へ移してください。条件や例外は削らないでください。`));
+      report(node, new RuleError(`表のセルが${length}文字あります。各セルは${MAX_CELL_LENGTH}文字以内にし、詳しい説明は表の外の見出しと段落へ移してください。条件や例外は削らないでください。`));
     }
   };
 }

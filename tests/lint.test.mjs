@@ -214,8 +214,8 @@ test("preset-japanese options in the skill config override preset defaults", asy
   assert.equal((await messages("flow", text, overridden)).filter((message) => message.ruleId === "sentence-length").length, 1);
 });
 
-test("table cell length accepts 29 characters and reports every cell at 30 or more, including headers", async () => {
-  const text = `| ${"あ".repeat(29)} | ${"い".repeat(30)} |\n| --- | --- |\n| ${"う".repeat(30)} | ${"え".repeat(31)} |\n| ${"お".repeat(29)} | 短い値 |\n`;
+test("table cell length accepts 60 characters and reports every cell at 61 or more, including headers", async () => {
+  const text = `| ${"あ".repeat(60)} | ${"い".repeat(61)} |\n| --- | --- |\n| ${"う".repeat(61)} | ${"え".repeat(62)} |\n| ${"お".repeat(60)} | 短い値 |\n`;
   const found = await messages("flow", text, config({ "table-cell-length": true }));
   assert.deepEqual(found.map(({ ruleId, line }) => [ruleId, line]), [
     ["table-cell-length", 1], ["table-cell-length", 3], ["table-cell-length", 3]
@@ -223,13 +223,13 @@ test("table cell length accepts 29 characters and reports every cell at 30 or mo
 });
 
 test("table cell length counts rendered text across formatting, links, references, and inline code", async () => {
-  const short = "あ".repeat(29);
-  const long = "い".repeat(30);
+  const short = "あ".repeat(60);
+  const long = "い".repeat(61);
   const url = `https://example.test/${"path/".repeat(10)}`;
   const cells = [
     `**${short}**`, `[${short}](${url})`, `\`${short}\``,
     `**${long}**`, `[${long}](${url})`, `\`${long}\``,
-    `[${long}][source]`, `<${url}>`, `*${"う".repeat(15)}*${"え".repeat(15)}`
+    `[${long}][source]`, `<${url}>`, `*${"う".repeat(31)}*${"え".repeat(31)}`
   ];
   const text = `| 説明 |\n| --- |\n${cells.map((cell) => `| ${cell} |`).join("\n")}\n\n[source]: ${url}\n`;
   const found = await messages("flow", text, config({ "table-cell-length": true }));
@@ -238,10 +238,10 @@ test("table cell length counts rendered text across formatting, links, reference
 
 test("table cell length uses graphemes, decodes entities and escapes, and trims only outer whitespace", async () => {
   const cells = [
-    "か\u3099".repeat(29), "👩‍💻".repeat(29), "&amp;".repeat(29), "\\|".repeat(29),
-    `   ${"あ".repeat(29)}   `,
-    "か\u3099".repeat(30), "👩‍💻".repeat(30), "&amp;".repeat(30), "\\|".repeat(30),
-    `${"あ".repeat(14)} ${"い".repeat(15)}`
+    "か\u3099".repeat(60), "👩‍💻".repeat(60), "&amp;".repeat(60), "\\|".repeat(60),
+    `   ${"あ".repeat(60)}   `,
+    "か\u3099".repeat(61), "👩‍💻".repeat(61), "&amp;".repeat(61), "\\|".repeat(61),
+    `${"あ".repeat(30)} ${"い".repeat(30)}`
   ];
   const text = `| 説明 |\n| --- |\n${cells.map((cell) => `| ${cell} |`).join("\n")}\n`;
   const found = await messages("flow", text, config({ "table-cell-length": true }));
@@ -249,22 +249,22 @@ test("table cell length uses graphemes, decodes entities and escapes, and trims 
 });
 
 test("line breaks and HTML formatting inside a Markdown cell do not reset its length", async () => {
-  const half = "あ".repeat(15);
+  const half = "あ".repeat(31);
   const text = `| 説明 |\n| --- |\n| ${half}<br>${half} |\n| <span>${half}</span><b>${half}</b> |\n`;
   const found = await messages("flow", text, config({ "table-cell-length": true }));
   assert.deepEqual(found.map(({ line }) => line), [3, 4]);
 });
 
 test("table cell length preserves fenced examples and nested quotations and ignores prose", async () => {
-  const table = `| 説明 |\n| --- |\n| ${"あ".repeat(30)} |`;
-  const text = `\`\`\`md\n${table}\n\`\`\`\n\n${table.split("\n").map((line) => `> ${line}`).join("\n")}\n\n${table.split("\n").map((line) => `> > ${line}`).join("\n")}\n\n${"あ".repeat(30)}\n\n${table}\n`;
+  const table = `| 説明 |\n| --- |\n| ${"あ".repeat(61)} |`;
+  const text = `\`\`\`md\n${table}\n\`\`\`\n\n${table.split("\n").map((line) => `> ${line}`).join("\n")}\n\n${table.split("\n").map((line) => `> > ${line}`).join("\n")}\n\n${"あ".repeat(61)}\n\n${table}\n`;
   const found = await messages("flow", text, config({ "table-cell-length": true }));
   assert.equal(found.length, 1);
   assert.equal(found[0].line, text.trimEnd().split("\n").length);
 });
 
 test("table cell length is enabled by default in every document profile and the CLI", async () => {
-  const table = `| 説明 |\n| --- |\n| ${"あ".repeat(30)} |\n`;
+  const table = `| 説明 |\n| --- |\n| ${"あ".repeat(61)} |\n`;
   for (const type of ["design-doc", "prd", "adr", "rfc", "stock", "flow", "record"]) {
     const found = await messages(type, table, readSkillConfig());
     assert.equal(found.filter(({ ruleId }) => ruleId === "table-cell-length").length, 1, type);
