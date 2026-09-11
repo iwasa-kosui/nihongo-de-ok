@@ -27,4 +27,8 @@ nihongo-de-ok を使って、この設計書を開発者向けに短く推敲し
 
 詳しくは[スキルの手順](SKILL.md)、[CLIでの検査](references/lint.md)、[出力の比較](benchmarks/results/2026-09-06-main-fb6fd0b/document-review/report.md)を参照してください。
 
+## 設計の参考
+
+[ponytail](https://github.com/DietrichGebert/ponytail/blob/main/skills/ponytail/SKILL.md)の「成立する最小の手段で止める」を文書に応用しました。常時有効化やコード専用の出力制約は引き継いでいません。
+
 [MIT License](LICENSE)
