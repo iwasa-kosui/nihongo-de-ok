@@ -51,7 +51,8 @@ node <スキルルート>/scripts/lint.mjs --type design-doc <成果物の絶対
 | 知りたいこと | 参照先 |
 |---|---|
 | 種別・読者・目的・区分の決め方 | [文書分類](references/document-types.md) |
-| 構成と本文の形、日本語の判断 | [日本語の基準](references/japanese.md) |
+| 節の組み方と本文の形 | [文書の構成](references/structure.md) |
+| 文と語の日本語の判断 | [日本語の基準](references/japanese.md) |
 | PRD・設計・ADR の書き分け | [書き分け](references/document-shapes.md) |
 | 委譲、予算、合格判定の手順 | [委譲と検査](references/delegation.md) |
 | lint の設定と `allow` | [CLIと静的検査](references/lint.md) |

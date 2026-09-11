@@ -64,6 +64,7 @@ export function skillContext(c, files) {
     ["SKILL.md", files["SKILL.md"]],
     ["references/delegation.md", files["references/delegation.md"]],
     ["references/japanese.md", files["references/japanese.md"]],
+    ["references/structure.md", files["references/structure.md"]],
     ["references/document-types.md (区分と該当行)", [...classification.slice(0, 11), "| 種別 | 主な読者 | 目的 | 目的ではないこと | 最小内容 | 区分 |", row].join("\n")]
   ];
   if (c.shapes) parts.push(["references/document-shapes.md", files["references/document-shapes.md"]]);
@@ -291,7 +292,7 @@ async function run(o) {
   }) : allCases;
   validateCases(cases);
   const files = {};
-  for (const name of ["SKILL.md", "references/delegation.md", "references/japanese.md", "references/document-types.md", "references/document-shapes.md"]) files[name] = await text(join(root, name));
+  for (const name of ["SKILL.md", "references/delegation.md", "references/japanese.md", "references/structure.md", "references/document-types.md", "references/document-shapes.md"]) files[name] = await text(join(root, name));
   const sourceHashes = {};
   for (const name of [...Object.keys(files), "package-lock.json", ".textlintrc.json", "scripts/lint.mjs", "benchmarks/benchmark.mjs", "benchmarks/readable-report.mjs", "benchmarks/comparison.css", "benchmarks/comparison.js", "benchmarks/cases.json", "benchmarks/author-instructions.txt", "benchmarks/judge-instructions.txt", "benchmarks/author.schema.json", ...await ruleFiles()]) sourceHashes[name] = hash(await text(join(root, name)));
   const settings = { model: o.model, judgeModel: o.judgeModel, effort: o.effort, repeats: o.repeats, seed: o.seed, jobs: o.jobs, timeout: o.timeout, maxLintRevisions: 1 };
